@@ -1,0 +1,290 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>企业级智能助手 RAG 搭建指南 | 李苟蛋の家</title><meta name="keywords" content="AI技术"><meta name="author" content="李苟蛋"><meta name="copyright" content="李苟蛋"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="从零搭建企业级 RAG 智能问答助手：架构设计、技术选型、向量库对比、核心代码与生产落地经验">
+<meta property="og:type" content="article">
+<meta property="og:title" content="企业级智能助手 RAG 搭建指南">
+<meta property="og:url" content="https://lizejiao.github.io/2026/10/12/AI%E6%8A%80%E6%9C%AF/%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8BRAG%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="李苟蛋の家">
+<meta property="og:description" content="从零搭建企业级 RAG 智能问答助手：架构设计、技术选型、向量库对比、核心代码与生产落地经验">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lizejiao.github.io/images/ai/rag_cover.png">
+<meta property="article:published_time" content="2026-10-12T03:20:00.000Z">
+<meta property="article:modified_time" content="2026-10-12T03:22:22.182Z">
+<meta property="article:author" content="李苟蛋">
+<meta property="article:tag" content="AI技术">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lizejiao.github.io/images/ai/rag_cover.png"><link rel="shortcut icon" href="https://gitee.com/lizejiao/img-go/raw/master/images/favicon.jpg"><link rel="canonical" href="https://lizejiao.github.io/2026/10/12/AI%E6%8A%80%E6%9C%AF/%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8BRAG%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":800},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '企业级智能助手 RAG 搭建指南',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-10-12 11:22:22'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const fontSizeVal = saveToLocal.get('global-font-size')
+    if (fontSizeVal !== undefined) {
+      document.documentElement.style.setProperty('--global-font-size', fontSizeVal + 'px')
+    }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 5.4.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/head.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/%E5%85%B3%E4%BA%8E%E6%88%91/"><i class="fa-fw fas fa-user"></i><span> 关于我</span></a></div><div class="menus_item"><a class="site-page" href="/message/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/images/ai/rag_cover.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">李苟蛋の家</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/%E5%85%B3%E4%BA%8E%E6%88%91/"><i class="fa-fw fas fa-user"></i><span> 关于我</span></a></div><div class="menus_item"><a class="site-page" href="/message/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">企业级智能助手 RAG 搭建指南</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-12T03:20:00.000Z" title="发表于 2026-10-12 11:20:00">2026-10-12</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-12T03:22:22.182Z" title="更新于 2026-10-12 11:22:22">2026-10-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%95%99%E7%A8%8B/">教程</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>7分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="企业级智能助手 RAG 搭建指南"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h2><ul>
+<li>大模型火了这几年，很多企业的第一个落地场景都是”智能问答助手”：把内部文档、规章制度、产品手册喂给大模型，让员工或客户直接提问。但直接用大模型有两个致命问题：<strong>知识截止日期</strong>（训练数据是旧的）和<strong>幻觉</strong>（一本正经地胡说八道）。RAG（Retrieval-Augmented Generation，检索增强生成）就是解决这两个问题的主流方案——先从企业知识库里检索相关内容，再把检索结果连同问题一起交给大模型作答。<span id="more"></span></li>
+<li>这篇文章记录我搭建企业级 RAG 助手的完整过程：从架构设计、技术选型，到向量库对比、核心代码，最后是生产环境踩过的坑。读完你可以直接照着搭一套能用的系统。</li>
+</ul>
+<p><img src="/images/ai/rag_architecture.png" alt="RAG 系统架构图"></p>
+<h2 id="1、为什么需要-RAG"><a href="#1、为什么需要-RAG" class="headerlink" title="1、为什么需要 RAG"></a>1、为什么需要 RAG</h2><p>在决定动手之前，先想清楚 RAG 到底解决什么问题，别为了技术而技术。</p>
+<h3 id="1-1、大模型的两大硬伤"><a href="#1-1、大模型的两大硬伤" class="headerlink" title="1.1、大模型的两大硬伤"></a>1.1、大模型的两大硬伤</h3><ol>
+<li><strong>知识时效性</strong>：模型的训练数据有截止日期，公司上个月新发的报销制度它根本不知道</li>
+<li><strong>私有知识缺失</strong>：企业内部文档不在公开语料里，模型从没”学”过你的产品手册</li>
+<li><strong>幻觉问题</strong>：问它不知道的，它不会说”不知道”，而是编一个看起来很专业的答案</li>
+</ol>
+<h3 id="1-2、RAG-与微调怎么选"><a href="#1-2、RAG-与微调怎么选" class="headerlink" title="1.2、RAG 与微调怎么选"></a>1.2、RAG 与微调怎么选</h3><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>RAG</th>
+<th>微调（Fine-tuning）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>知识更新</td>
+<td>实时，重新灌库即可</td>
+<td>需重新训练</td>
+</tr>
+<tr>
+<td>成本</td>
+<td>低，只需向量库+检索</td>
+<td>高，需要算力和标注数据</td>
+</tr>
+<tr>
+<td>可解释性</td>
+<td>强，能给出引用出处</td>
+<td>弱，黑盒</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>知识密集型问答</td>
+<td>风格/格式/领域语言学习</td>
+</tr>
+</tbody></table>
+<p>一句话总结：<strong>知识问题用 RAG，能力问题用微调</strong>。企业助手 90% 的需求是知识问答，RAG 是首选。</p>
+<h2 id="2、整体架构设计"><a href="#2、整体架构设计" class="headerlink" title="2、整体架构设计"></a>2、整体架构设计</h2><p>一套生产可用的 RAG 系统，核心分两条链路：</p>
+<h3 id="2-1、离线索引链路（写入侧）"><a href="#2-1、离线索引链路（写入侧）" class="headerlink" title="2.1、离线索引链路（写入侧）"></a>2.1、离线索引链路（写入侧）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">原始文档 → 解析抽取 → 文本切块 → 向量化(Embedding) → 写入向量库</span><br><span class="line">   PDF/Word/网页     Chunking      调用嵌入模型      Milvus/ES</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2、在线问答链路（查询侧）"><a href="#2-2、在线问答链路（查询侧）" class="headerlink" title="2.2、在线问答链路（查询侧）"></a>2.2、在线问答链路（查询侧）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用户提问 → 问题向量化 → 相似度检索 → 重排序(Rerank) → 组装Prompt → LLM生成 → 引用溯源</span><br></pre></td></tr></table></figure>
+
+<p>两条链路各自独立，文档更新只影响写入侧，问答服务无感知——这是生产环境高可用的基础设计。</p>
+<h2 id="3、技术选型"><a href="#3、技术选型" class="headerlink" title="3、技术选型"></a>3、技术选型</h2><h3 id="3-1、向量数据库对比"><a href="#3-1、向量数据库对比" class="headerlink" title="3.1、向量数据库对比"></a>3.1、向量数据库对比</h3><p>选型时我实测了四家主流产品：</p>
+<table>
+<thead>
+<tr>
+<th>产品</th>
+<th>部署方式</th>
+<th>优势</th>
+<th>劣势</th>
+<th>适用规模</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Milvus</td>
+<td>自建集群</td>
+<td>性能强、生态全、支持标量过滤</td>
+<td>运维成本高</td>
+<td>亿级以上</td>
+</tr>
+<tr>
+<td>Qdrant</td>
+<td>单机/Docker</td>
+<td>Rust 编写性能好、过滤查询强</td>
+<td>中文生态一般</td>
+<td>中小型</td>
+</tr>
+<tr>
+<td>Weaviate</td>
+<td>单机/集群</td>
+<td>内置混合检索、模块化</td>
+<td>资源占用偏高</td>
+<td>中型</td>
+</tr>
+<tr>
+<td>Elasticsearch 8+</td>
+<td>集群</td>
+<td>复用现有 ES、BM25+向量混合检索</td>
+<td>向量性能非最优</td>
+<td>已有ES的团队</td>
+</tr>
+</tbody></table>
+<p>我们的选择：<strong>文档量在百万级以内、团队已有 ES 运维经验，最终选了 ES 8.x 的混合检索</strong>（BM25 关键词 + KNN 向量），一套存储搞定两种召回，省了一个组件。</p>
+<h3 id="3-2、模型选择"><a href="#3-2、模型选择" class="headerlink" title="3.2、模型选择"></a>3.2、模型选择</h3><ul>
+<li><strong>Embedding 模型</strong>：中文场景首选 BGE 系列（bge-large-zh-v1.5），MTEB 榜单表现好且开源可私有化；走 API 可选各云厂商的 embedding 服务</li>
+<li><strong>生成模型</strong>：私有化用 Qwen / DeepSeek 系列开源自部署；上云则按预算和合规要求选</li>
+<li><strong>Rerank 模型</strong>：bge-reranker-v2-m3，检索后再精排，召回质量提升非常明显</li>
+</ul>
+<h2 id="4、核心实现"><a href="#4、核心实现" class="headerlink" title="4、核心实现"></a>4、核心实现</h2><h3 id="4-1、文档切块（Chunking）"><a href="#4-1、文档切块（Chunking）" class="headerlink" title="4.1、文档切块（Chunking）"></a>4.1、文档切块（Chunking）</h3><p>切块策略直接决定检索质量，是最容易被低估的环节：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.text_splitter <span class="keyword">import</span> RecursiveCharacterTextSplitter</span><br><span class="line"></span><br><span class="line">splitter = RecursiveCharacterTextSplitter(</span><br><span class="line">    chunk_size=<span class="number">512</span>,        <span class="comment"># 每块 token 数，中文建议 256~512</span></span><br><span class="line">    chunk_overlap=<span class="number">64</span>,      <span class="comment"># 相邻块重叠，保证语义连续</span></span><br><span class="line">    separators=[<span class="string">&quot;\n\n&quot;</span>, <span class="string">&quot;\n&quot;</span>, <span class="string">&quot;。&quot;</span>, <span class="string">&quot;；&quot;</span>, <span class="string">&quot;，&quot;</span>, <span class="string">&quot; &quot;</span>, <span class="string">&quot;&quot;</span>]</span><br><span class="line">)</span><br><span class="line">chunks = splitter.split_text(document_text)</span><br></pre></td></tr></table></figure>
+
+<p>实践心得：</p>
+<ol>
+<li><strong>不要迷信固定长度切块</strong>：规章制度类文档按”第X条”切，技术手册按章节切，效果远好于暴力切</li>
+<li><strong>块里带元数据</strong>：每个 chunk 附上来源文件、章节标题、部门，检索后可以直接做权限过滤和引用溯源</li>
+<li><strong>表格和代码单独处理</strong>：整表作为一个 chunk，别打散</li>
+</ol>
+<h3 id="4-2、向量写入与检索"><a href="#4-2、向量写入与检索" class="headerlink" title="4.2、向量写入与检索"></a>4.2、向量写入与检索</h3><p>以 Elasticsearch 8.x 为例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建索引（含向量字段）</span></span><br><span class="line"><span class="keyword">from</span> elasticsearch <span class="keyword">import</span> Elasticsearch</span><br><span class="line"></span><br><span class="line">es = Elasticsearch(<span class="string">&quot;http://localhost:9200&quot;</span>)</span><br><span class="line">mapping = &#123;</span><br><span class="line">  <span class="string">&quot;mappings&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;properties&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;content&quot;</span>: &#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;text&quot;</span>, <span class="string">&quot;analyzer&quot;</span>: <span class="string">&quot;ik_max_word&quot;</span>&#125;,</span><br><span class="line">      <span class="string">&quot;embedding&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;dense_vector&quot;</span>,</span><br><span class="line">        <span class="string">&quot;dims&quot;</span>: <span class="number">1024</span>,</span><br><span class="line">        <span class="string">&quot;index&quot;</span>: true,</span><br><span class="line">        <span class="string">&quot;similarity&quot;</span>: <span class="string">&quot;cosine&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;source_file&quot;</span>: &#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;keyword&quot;</span>&#125;,</span><br><span class="line">      <span class="string">&quot;department&quot;</span>: &#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;keyword&quot;</span>&#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">es.indices.create(index=<span class="string">&quot;kb_docs&quot;</span>, body=mapping)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 混合检索：BM25 + KNN，RRF 融合</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hybrid_search</span>(<span class="params">query: <span class="built_in">str</span>, query_emb: <span class="built_in">list</span>, top_k: <span class="built_in">int</span> = <span class="number">10</span></span>):</span></span><br><span class="line">    body = &#123;</span><br><span class="line">      <span class="string">&quot;retriever&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;rrf&quot;</span>: &#123;</span><br><span class="line">          <span class="string">&quot;retrievers&quot;</span>: [</span><br><span class="line">            &#123;<span class="string">&quot;standard&quot;</span>: &#123;<span class="string">&quot;query&quot;</span>: &#123;<span class="string">&quot;match&quot;</span>: &#123;<span class="string">&quot;content&quot;</span>: query&#125;&#125;&#125;&#125;,</span><br><span class="line">            &#123;<span class="string">&quot;knn&quot;</span>: &#123;<span class="string">&quot;field&quot;</span>: <span class="string">&quot;embedding&quot;</span>, <span class="string">&quot;query_vector&quot;</span>: query_emb,</span><br><span class="line">                      <span class="string">&quot;k&quot;</span>: top_k, <span class="string">&quot;num_candidates&quot;</span>: <span class="number">100</span>&#125;&#125;</span><br><span class="line">          ],</span><br><span class="line">          <span class="string">&quot;rank_window_size&quot;</span>: <span class="number">50</span>,</span><br><span class="line">          <span class="string">&quot;rank_constant&quot;</span>: <span class="number">20</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> es.search(index=<span class="string">&quot;kb_docs&quot;</span>, body=body)</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-3、带引用溯源的生成"><a href="#4-3、带引用溯源的生成" class="headerlink" title="4.3、带引用溯源的生成"></a>4.3、带引用溯源的生成</h3><p>把检索结果组装进 Prompt，让模型只基于给定材料回答：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">PROMPT = <span class="string">&quot;&quot;&quot;你是企业知识库助手。请仅根据以下参考材料回答问题，</span></span><br><span class="line"><span class="string">如果材料中没有相关信息，直接回答&quot;知识库中未找到相关内容&quot;，</span></span><br><span class="line"><span class="string">禁止编造。回答末尾请标注引用来源。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">参考材料：</span></span><br><span class="line"><span class="string">&#123;context&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">问题：&#123;question&#125;</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>引用溯源是企业级落地的刚需</strong>——法务、财务场景下，答案必须能追溯到原始文档，否则没人敢用。</p>
+<h2 id="5、生产环境踩坑记录"><a href="#5、生产环境踩坑记录" class="headerlink" title="5、生产环境踩坑记录"></a>5、生产环境踩坑记录</h2><p>上线过程中踩的坑，按疼痛程度排序：</p>
+<h3 id="5-1、检索质量类"><a href="#5-1、检索质量类" class="headerlink" title="5.1、检索质量类"></a>5.1、检索质量类</h3><ol>
+<li><strong>top_k 不是越大越好</strong>：塞太多无关内容进 Prompt，模型反而被带偏，配合 Rerank 后 top_k=5 通常最优</li>
+<li><strong>必须做查询改写</strong>：用户口语化提问（”报销超了咋整”）直接检索命中率很低，加一步 LLM 改写成规范表述，召回率提升约 20%</li>
+<li><strong>文档去重常被遗忘</strong>：同一份制度改了三版都在库里，检索出旧版就出事故。写入时按内容 hash 去重 + 按 version 字段过滤</li>
+</ol>
+<h3 id="5-2、工程类"><a href="#5-2、工程类" class="headerlink" title="5.2、工程类"></a>5.2、工程类</h3><ol>
+<li><strong>Embedding 模型升级是大事</strong>：换嵌入模型必须全量重建向量库，新旧向量不能混用（维度和语义空间都变了）</li>
+<li><strong>权限过滤要在检索层做</strong>：部门隔离文档在检索时用 filter 实现，绝不能检索完再在应用层过滤（会砍掉 top_k 导致内容不足）</li>
+<li><strong>流式响应必备</strong>：生成答案动辄几秒，不做 streaming 用户体验极差</li>
+</ol>
+<h3 id="5-3、评估体系"><a href="#5-3、评估体系" class="headerlink" title="5.3、评估体系"></a>5.3、评估体系</h3><p>没有评估就没有优化方向。我们维护了一个 200 条的黄金问答集，每次调整切块策略或换模型都跑一遍：</p>
+<ul>
+<li><strong>检索指标</strong>：Recall@5（前 5 条召回是否包含正确出处）</li>
+<li><strong>生成指标</strong>：忠实度（答案是否忠于材料）、相关性（是否回答了问题）</li>
+</ul>
+<h2 id="6、效果与总结"><a href="#6、效果与总结" class="headerlink" title="6、效果与总结"></a>6、效果与总结</h2><p>上线后的数据：常见问题准确率从基线的 62% 提升到 **91%**，平均响应 2.3 秒，每周节省客服人工约 40 小时。</p>
+<p>回头看整个搭建过程，三条最重要的经验：</p>
+<ol>
+<li><strong>切块策略 &gt; 模型能力</strong>：检索质量的天花板在数据预处理，别急着调模型</li>
+<li><strong>混合检索 + Rerank 是性价比之王</strong>：两行配置换来召回率大幅提升</li>
+<li><strong>引用溯源决定系统生死</strong>：能给出处的答案才有人敢信、有人敢用</li>
+</ol>
+<p>RAG 不神秘，它本质是”搜索 + 大模型摘要”的工程化组合。把检索做扎实，把链路做稳，企业级智能助手就成了。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">李苟蛋</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://lizejiao.github.io/2026/10/12/AI%E6%8A%80%E6%9C%AF/%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8BRAG%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97/">https://lizejiao.github.io/2026/10/12/AI技术/企业级智能助手RAG搭建指南/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://lizejiao.github.io" target="_blank">老李家の苟蛋子</a> 许可协议。转载请注明来自 <a href="https://lizejiao.github.io" target="_blank">李苟蛋の家</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI%E6%8A%80%E6%9C%AF/">AI技术</a></div><div class="post_share"><div class="social-share" data-image="/images/ai/rag_cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat_pay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat_pay.jpg" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2026/10/12/%E9%9D%A2%E8%AF%95%E5%9F%BA%E5%9C%B0/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95/"><img class="next-cover" src="/images/cover/20210914232913.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">数据结构和算法</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">李苟蛋</div><div class="author-info__description">欢迎来到李苟蛋的博客....</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lizejiao"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/lizejiao" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:xxxxxx@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">欢迎来到李苟蛋的个人微博，对本站的文章和技术问题有疑问和建议请联系作者：QQ：8356132</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F%E8%A8%80"><span class="toc-text">序言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81-RAG"><span class="toc-text">1、为什么需要 RAG</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1%E3%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E4%B8%A4%E5%A4%A7%E7%A1%AC%E4%BC%A4"><span class="toc-text">1.1、大模型的两大硬伤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2%E3%80%81RAG-%E4%B8%8E%E5%BE%AE%E8%B0%83%E6%80%8E%E4%B9%88%E9%80%89"><span class="toc-text">1.2、RAG 与微调怎么选</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-text">2、整体架构设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1%E3%80%81%E7%A6%BB%E7%BA%BF%E7%B4%A2%E5%BC%95%E9%93%BE%E8%B7%AF%EF%BC%88%E5%86%99%E5%85%A5%E4%BE%A7%EF%BC%89"><span class="toc-text">2.1、离线索引链路（写入侧）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2%E3%80%81%E5%9C%A8%E7%BA%BF%E9%97%AE%E7%AD%94%E9%93%BE%E8%B7%AF%EF%BC%88%E6%9F%A5%E8%AF%A2%E4%BE%A7%EF%BC%89"><span class="toc-text">2.2、在线问答链路（查询侧）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B"><span class="toc-text">3、技术选型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1%E3%80%81%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AF%B9%E6%AF%94"><span class="toc-text">3.1、向量数据库对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2%E3%80%81%E6%A8%A1%E5%9E%8B%E9%80%89%E6%8B%A9"><span class="toc-text">3.2、模型选择</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81%E6%A0%B8%E5%BF%83%E5%AE%9E%E7%8E%B0"><span class="toc-text">4、核心实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1%E3%80%81%E6%96%87%E6%A1%A3%E5%88%87%E5%9D%97%EF%BC%88Chunking%EF%BC%89"><span class="toc-text">4.1、文档切块（Chunking）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2%E3%80%81%E5%90%91%E9%87%8F%E5%86%99%E5%85%A5%E4%B8%8E%E6%A3%80%E7%B4%A2"><span class="toc-text">4.2、向量写入与检索</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3%E3%80%81%E5%B8%A6%E5%BC%95%E7%94%A8%E6%BA%AF%E6%BA%90%E7%9A%84%E7%94%9F%E6%88%90"><span class="toc-text">4.3、带引用溯源的生成</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5%E3%80%81%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95"><span class="toc-text">5、生产环境踩坑记录</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1%E3%80%81%E6%A3%80%E7%B4%A2%E8%B4%A8%E9%87%8F%E7%B1%BB"><span class="toc-text">5.1、检索质量类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2%E3%80%81%E5%B7%A5%E7%A8%8B%E7%B1%BB"><span class="toc-text">5.2、工程类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3%E3%80%81%E8%AF%84%E4%BC%B0%E4%BD%93%E7%B3%BB"><span class="toc-text">5.3、评估体系</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6%E3%80%81%E6%95%88%E6%9E%9C%E4%B8%8E%E6%80%BB%E7%BB%93"><span class="toc-text">6、效果与总结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/10/12/AI%E6%8A%80%E6%9C%AF/%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8BRAG%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97/" title="企业级智能助手 RAG 搭建指南"><img src="/images/ai/rag_cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="企业级智能助手 RAG 搭建指南"/></a><div class="content"><a class="title" href="/2026/10/12/AI%E6%8A%80%E6%9C%AF/%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8BRAG%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97/" title="企业级智能助手 RAG 搭建指南">企业级智能助手 RAG 搭建指南</a><time datetime="2026-10-12T03:20:00.000Z" title="发表于 2026-10-12 11:20:00">2026-10-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/12/%E9%9D%A2%E8%AF%95%E5%9F%BA%E5%9C%B0/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95/" title="数据结构和算法"><img src="/images/cover/20210914232913.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据结构和算法"/></a><div class="content"><a class="title" href="/2026/10/12/%E9%9D%A2%E8%AF%95%E5%9F%BA%E5%9C%B0/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95/" title="数据结构和算法">数据结构和算法</a><time datetime="2026-10-12T03:05:02.154Z" title="发表于 2026-10-12 11:05:02">2026-10-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/12/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E5%85%B7/git%E7%AC%94%E8%AE%B0/" title="Git笔记-常用命令以及日常操作技巧汇总"><img src="/images/cover/git.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Git笔记-常用命令以及日常操作技巧汇总"/></a><div class="content"><a class="title" href="/2026/10/12/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E5%85%B7/git%E7%AC%94%E8%AE%B0/" title="Git笔记-常用命令以及日常操作技巧汇总">Git笔记-常用命令以及日常操作技巧汇总</a><time datetime="2026-10-12T03:05:02.153Z" title="发表于 2026-10-12 11:05:02">2026-10-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/12/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E5%85%B7/%E4%B8%BAMacOS%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%82%AB%E9%85%B7%E7%BB%88%E7%AB%AF-/" title="为MacOS打造自己炫酷终端-Iterm2+oh-my-zsh"><img src="/images/cover/iterm2.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="为MacOS打造自己炫酷终端-Iterm2+oh-my-zsh"/></a><div class="content"><a class="title" href="/2026/10/12/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E5%85%B7/%E4%B8%BAMacOS%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%82%AB%E9%85%B7%E7%BB%88%E7%AB%AF-/" title="为MacOS打造自己炫酷终端-Iterm2+oh-my-zsh">为MacOS打造自己炫酷终端-Iterm2+oh-my-zsh</a><time datetime="2026-10-12T03:05:02.153Z" title="发表于 2026-10-12 11:05:02">2026-10-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/12/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E5%85%B7/%E5%85%8D%E8%B4%B9%E5%AF%86%E7%A0%81%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7KeePass%E6%B0%B8%E8%BF%9C%E7%9A%84%E7%A5%9E/" title="军事级别安全强度，免费密码管理工具KeePass，永远滴神"><img src="/images/cover/KeePass.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="军事级别安全强度，免费密码管理工具KeePass，永远滴神"/></a><div class="content"><a class="title" href="/2026/10/12/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E5%85%B7/%E5%85%8D%E8%B4%B9%E5%AF%86%E7%A0%81%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7KeePass%E6%B0%B8%E8%BF%9C%E7%9A%84%E7%A5%9E/" title="军事级别安全强度，免费密码管理工具KeePass，永远滴神">军事级别安全强度，免费密码管理工具KeePass，永远滴神</a><time datetime="2026-10-12T03:05:02.153Z" title="发表于 2026-10-12 11:05:02">2026-10-12</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('/images/ai/rag_cover.png')"><div id="footer-wrap"><div class="copyright">&copy;2021 - 2026 By 李苟蛋</div><div class="footer_custom_text">_φ(❐_❐✧ 人丑就要多读书😂，睡觉没前途(￣o￣) . z Z　🤣</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="font-plus" type="button" title="放大字体"><i class="fas fa-plus"></i></button><button id="font-minus" type="button" title="缩小字体"><i class="fas fa-minus"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/chocolate.js"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="false" data-text="渴望,生锈,十七,黎明,火炉,苟蛋,善良,回家,货车,士兵" data-fontsize="15px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
