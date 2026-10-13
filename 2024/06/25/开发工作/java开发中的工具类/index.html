@@ -1,0 +1,645 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>java开发中的工具类 | 李苟蛋の家</title><meta name="author" content="李苟蛋"><meta name="copyright" content="李苟蛋"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="从业多年总结的一些开发规范和高校开发技巧">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java开发中的工具类">
+<meta property="og:url" content="https://lizejiao.github.io/2024/06/25/%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C/java%E5%BC%80%E5%8F%91%E4%B8%AD%E7%9A%84%E5%B7%A5%E5%85%B7%E7%B1%BB/index.html">
+<meta property="og:site_name" content="李苟蛋の家">
+<meta property="og:description" content="从业多年总结的一些开发规范和高校开发技巧">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lizejiao.github.io/images/cover/%E5%B7%A5%E5%85%B7%E7%B1%BB.jpg">
+<meta property="article:published_time" content="2024-06-25T02:54:00.000Z">
+<meta property="article:modified_time" content="2024-09-30T08:20:00.000Z">
+<meta property="article:author" content="李苟蛋">
+<meta property="article:tag" content="开发技巧">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lizejiao.github.io/images/cover/%E5%B7%A5%E5%85%B7%E7%B1%BB.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "java开发中的工具类",
+  "url": "https://lizejiao.github.io/2024/06/25/%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C/java%E5%BC%80%E5%8F%91%E4%B8%AD%E7%9A%84%E5%B7%A5%E5%85%B7%E7%B1%BB/",
+  "image": "https://lizejiao.github.io/images/cover/%E5%B7%A5%E5%85%B7%E7%B1%BB.jpg",
+  "datePublished": "2024-06-25T02:54:00.000Z",
+  "dateModified": "2024-09-30T08:20:00.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "李苟蛋",
+      "url": "https://lizejiao.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="https://gitee.com/lizejiao/img-go/raw/master/images/favicon.jpg"><link rel="canonical" href="https://lizejiao.github.io/2024/06/25/%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C/java%E5%BC%80%E5%8F%91%E4%B8%AD%E7%9A%84%E5%B7%A5%E5%85%B7%E7%B1%BB/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.14/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const start = 6
+          const end = 18
+          const isNight =
+            start < end
+                ? hour < start || hour >= end
+                : hour >= start || hour < end
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":800,"highlightFullpage":true,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'java开发中的工具类',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 5.4.0"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/url(/img/index_img.jpg));"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">25</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/%E5%85%B3%E4%BA%8E%E6%88%91/"><i class="fa-fw fas fa-user"></i><span> 关于我</span></a></div><div class="menus_item"><a class="site-page" href="/message/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/images/cover/%E5%B7%A5%E5%85%B7%E7%B1%BB.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">李苟蛋の家</span></a><a class="nav-page-title" href="/"><span class="site-name">java开发中的工具类</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/%E5%85%B3%E4%BA%8E%E6%88%91/"><i class="fa-fw fas fa-user"></i><span> 关于我</span></a></div><div class="menus_item"><a class="site-page" href="/message/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">java开发中的工具类</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-06-25T02:54:00.000Z" title="发表于 2024-06-25 10:54:00">2024-06-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-09-30T08:20:00.000Z" title="更新于 2024-09-30 16:20:00">2024-09-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%95%99%E7%A8%8B/">教程</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">2.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>9分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><div id="post-outdate-notice" data="{&quot;limitDay&quot;:365,&quot;messagePrev&quot;:&quot;本文最后更新于&quot;,&quot;messageNext&quot;:&quot;天前，其中的内容可能已经过时。&quot;,&quot;postUpdate&quot;:&quot;2024-09-30 16:20:00&quot;}" hidden></div><h2 id="SpringBoot内置工具类"><a href="#SpringBoot内置工具类" class="headerlink" title="SpringBoot内置工具类"></a>SpringBoot内置工具类</h2><h3 id="断言"><a href="#断言" class="headerlink" title="断言"></a>断言</h3><ol>
+<li><p>断言是一个逻辑判断，用于检查不应该发生的情况</p>
+</li>
+<li><p>Assert 关键字在 JDK1.4 中引入，可通过 JVM 参数<code>-enableassertions</code>开启</p>
+</li>
+<li><p>SpringBoot 中提供了 Assert 断言工具类，通常用于数据合法性检查</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 要求参数 object 必须为非空（Not Null），否则抛出异常，不予放行</span></span><br><span class="line"><span class="comment">// 参数 message 参数用于定制异常信息。</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">notNull</span><span class="params">(Object object, String message)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 要求参数必须空（Null），否则抛出异常，不予『放行』。</span></span></span><br><span class="line"><span class="function"><span class="comment">// 和 notNull() 方法断言规则相反</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">isNull</span><span class="params">(Object object, String message)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 要求参数必须为真（True），否则抛出异常，不予『放行』。</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">isTrue</span><span class="params">(<span class="keyword">boolean</span> expression, String message)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 要求参数（List/Set）必须非空（Not Empty），否则抛出异常，不予放行</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">notEmpty</span><span class="params">(Collection collection, String message)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 要求参数（String）必须有长度（即，Not Empty），否则抛出异常，不予放行</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">hasLength</span><span class="params">(String text, String message)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 要求参数（String）必须有内容（即，Not Blank），否则抛出异常，不予放行</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">hasText</span><span class="params">(String text, String message)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 要求参数是指定类型的实例，否则抛出异常，不予放行</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">isInstanceOf</span><span class="params">(Class type, Object obj, String message)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 要求参数 `subType` 必须是参数 superType 的子类或实现类，否则抛出异常，不予放行</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">isAssignable</span><span class="params">(Class superType, Class subType, String message)</span></span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="对象-数组-集合"><a href="#对象-数组-集合" class="headerlink" title="对象/数组/集合"></a>对象/数组/集合</h3><h4 id="ObjectUtils"><a href="#ObjectUtils" class="headerlink" title="ObjectUtils"></a>ObjectUtils</h4><ol>
+<li><p>获取对象的基本信息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取对象的类名。参数为 null 时，返回字符串：&quot;null&quot; </span></span><br><span class="line"><span class="function">String <span class="title">nullSafeClassName</span><span class="params">(Object obj)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 参数为 null 时，返回 0</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">nullSafeHashCode</span><span class="params">(Object object)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 参数为 null 时，返回字符串：&quot;null&quot;</span></span></span><br><span class="line"><span class="function">String <span class="title">nullSafeToString</span><span class="params">(<span class="keyword">boolean</span>[] array)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 获取对象 HashCode（十六进制形式字符串）。参数为 null 时，返回 0 </span></span></span><br><span class="line"><span class="function">String <span class="title">getIdentityHexString</span><span class="params">(Object obj)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 获取对象的类名和 HashCode。 参数为 null 时，返回字符串：&quot;&quot; </span></span></span><br><span class="line"><span class="function">String <span class="title">identityToString</span><span class="params">(Object obj)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 相当于 toString()方法，但参数为 null 时，返回字符串：&quot;&quot;</span></span></span><br><span class="line"><span class="function">String <span class="title">getDisplayString</span><span class="params">(Object obj)</span></span></span><br></pre></td></tr></table></figure></li>
+<li><p>判断工具</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断数组是否为空</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">(Object[] array)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 判断参数对象是否是数组</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isArray</span><span class="params">(Object obj)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 判断数组中是否包含指定元素</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">containsElement</span><span class="params">(Object[] array, Object element)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 相等，或同为 null时，返回 true</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">nullSafeEquals</span><span class="params">(Object o1, Object o2)</span></span></span><br><span class="line"><span class="function"><span class="comment">/*</span></span></span><br><span class="line"><span class="comment"><span class="function">判断参数对象是否为空，判断标准为：</span></span></span><br><span class="line"><span class="comment"><span class="function">    Optional: Optional.empty()</span></span></span><br><span class="line"><span class="comment"><span class="function">       Array: length == 0</span></span></span><br><span class="line"><span class="comment"><span class="function">CharSequence: length == 0</span></span></span><br><span class="line"><span class="comment"><span class="function">  Collection: Collection.isEmpty()</span></span></span><br><span class="line"><span class="comment"><span class="function">         Map: Map.isEmpty()</span></span></span><br><span class="line"><span class="comment"><span class="function"> */</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">(Object obj)</span></span></span><br></pre></td></tr></table></figure></li>
+<li><p>其他工具方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 向参数数组的末尾追加新元素，并返回一个新数组</span></span><br><span class="line">&lt;A, O extends A&gt; A[] addObjectToArray(A[] array, O obj)</span><br><span class="line"><span class="comment">// 原生基础类型数组 --&gt; 包装类数组</span></span><br><span class="line">Object[] toObjectArray(Object source)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="StringUtils"><a href="#StringUtils" class="headerlink" title="StringUtils"></a>StringUtils</h4><ol>
+<li><p>字符串判断工具</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断字符串是否为 null，或 &quot;&quot;。注意，包含空白符的字符串为非空</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">(Object str)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 判断字符串是否是以指定内容结束。忽略大小写</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">endsWithIgnoreCase</span><span class="params">(String str, String suffix)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 判断字符串是否已指定内容开头。忽略大小写</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">startsWithIgnoreCase</span><span class="params">(String str, String prefix)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 是否包含空白符</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">containsWhitespace</span><span class="params">(String str)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 判断字符串非空且长度不为 0，即，Not Empty</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">hasLength</span><span class="params">(CharSequence str)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 判断字符串是否包含实际内容，即非仅包含空白符，也就是 Not Blank</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">hasText</span><span class="params">(CharSequence str)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 判断字符串指定索引处是否包含一个子串。</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">substringMatch</span><span class="params">(CharSequence str, <span class="keyword">int</span> index, CharSequence substring)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 计算一个字符串中指定子串的出现次数</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">countOccurrencesOf</span><span class="params">(String str, String sub)</span></span></span><br></pre></td></tr></table></figure></li>
+<li><p>字符串操作工具</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 查找并替换指定子串</span></span><br><span class="line"><span class="function">String <span class="title">replace</span><span class="params">(String inString, String oldPattern, String newPattern)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 去除尾部的特定字符</span></span></span><br><span class="line"><span class="function">String <span class="title">trimTrailingCharacter</span><span class="params">(String str, <span class="keyword">char</span> trailingCharacter)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 去除头部的特定字符</span></span></span><br><span class="line"><span class="function">String <span class="title">trimLeadingCharacter</span><span class="params">(String str, <span class="keyword">char</span> leadingCharacter)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 去除头部的空白符</span></span></span><br><span class="line"><span class="function">String <span class="title">trimLeadingWhitespace</span><span class="params">(String str)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 去除头部的空白符</span></span></span><br><span class="line"><span class="function">String <span class="title">trimTrailingWhitespace</span><span class="params">(String str)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 去除头部和尾部的空白符</span></span></span><br><span class="line"><span class="function">String <span class="title">trimWhitespace</span><span class="params">(String str)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 删除开头、结尾和中间的空白符</span></span></span><br><span class="line"><span class="function">String <span class="title">trimAllWhitespace</span><span class="params">(String str)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 删除指定子串</span></span></span><br><span class="line"><span class="function">String <span class="title">delete</span><span class="params">(String inString, String pattern)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 删除指定字符（可以是多个）</span></span></span><br><span class="line"><span class="function">String <span class="title">deleteAny</span><span class="params">(String inString, String charsToDelete)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 对数组的每一项执行 trim() 方法</span></span></span><br><span class="line"><span class="function">String[] <span class="title">trimArrayElements</span><span class="params">(String[] array)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 将 URL 字符串进行解码</span></span></span><br><span class="line"><span class="function">String <span class="title">uriDecode</span><span class="params">(String source, Charset charset)</span></span></span><br></pre></td></tr></table></figure></li>
+<li><p>路径相关工具方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 解析路径字符串，优化其中的 “..” </span></span><br><span class="line"><span class="function">String <span class="title">cleanPath</span><span class="params">(String path)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 解析路径字符串，解析出文件名部分</span></span></span><br><span class="line"><span class="function">String <span class="title">getFilename</span><span class="params">(String path)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 解析路径字符串，解析出文件后缀名</span></span></span><br><span class="line"><span class="function">String <span class="title">getFilenameExtension</span><span class="params">(String path)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 比较两个两个字符串，判断是否是同一个路径。会自动处理路径中的 “..” </span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">pathEquals</span><span class="params">(String path1, String path2)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 删除文件路径名中的后缀部分</span></span></span><br><span class="line"><span class="function">String <span class="title">stripFilenameExtension</span><span class="params">(String path)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 以 “. 作为分隔符，获取其最后一部分</span></span></span><br><span class="line"><span class="function">String <span class="title">unqualify</span><span class="params">(String qualifiedName)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 以指定字符作为分隔符，获取其最后一部分</span></span></span><br><span class="line"><span class="function">String <span class="title">unqualify</span><span class="params">(String qualifiedName, <span class="keyword">char</span> separator)</span></span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="CollectionUtils"><a href="#CollectionUtils" class="headerlink" title="CollectionUtils"></a>CollectionUtils</h4><ol>
+<li><p>集合判断工具. 我是程序汪</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断 List/Set 是否为空</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">(Collection&lt;?&gt; collection)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 判断 Map 是否为空</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">(Map&lt;?,?&gt; map)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 判断 List/Set 中是否包含某个对象</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">containsInstance</span><span class="params">(Collection&lt;?&gt; collection, Object element)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 以迭代器的方式，判断 List/Set 中是否包含某个对象</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(Iterator&lt;?&gt; iterator, Object element)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 判断 List/Set 是否包含某些对象中的任意一个</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">containsAny</span><span class="params">(Collection&lt;?&gt; source, Collection&lt;?&gt; candidates)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 判断 List/Set 中的每个元素是否唯一。即 List/Set 中不存在重复元素</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">hasUniqueObject</span><span class="params">(Collection&lt;?&gt; collection)</span></span></span><br></pre></td></tr></table></figure></li>
+<li><p>集合操作工具</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将 Array 中的元素都添加到 List/Set 中</span></span><br><span class="line">&lt;E&gt; <span class="function"><span class="keyword">void</span> <span class="title">mergeArrayIntoCollection</span><span class="params">(Object array, Collection&lt;E&gt; collection)</span>  </span></span><br><span class="line"><span class="function"><span class="comment">// 将 Properties 中的键值对都添加到 Map 中</span></span></span><br><span class="line"><span class="function">&lt;K,V&gt; <span class="keyword">void</span> <span class="title">mergePropertiesIntoMap</span><span class="params">(Properties props, Map&lt;K,V&gt; map)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 返回 List 中最后一个元素</span></span></span><br><span class="line"><span class="function">&lt;T&gt; T <span class="title">lastElement</span><span class="params">(List&lt;T&gt; list)</span>  </span></span><br><span class="line"><span class="function"><span class="comment">// 返回 Set 中最后一个元素</span></span></span><br><span class="line"><span class="function">&lt;T&gt; T <span class="title">lastElement</span><span class="params">(Set&lt;T&gt; set)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 返回参数 candidates 中第一个存在于参数 source 中的元素</span></span></span><br><span class="line"><span class="function">&lt;E&gt; E <span class="title">findFirstMatch</span><span class="params">(Collection&lt;?&gt; source, Collection&lt;E&gt; candidates)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 返回 List/Set 中指定类型的元素。</span></span></span><br><span class="line"><span class="function">&lt;T&gt; T <span class="title">findValueOfType</span><span class="params">(Collection&lt;?&gt; collection, Class&lt;T&gt; type)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 返回 List/Set 中指定类型的元素。如果第一种类型未找到，则查找第二种类型，以此类推</span></span></span><br><span class="line"><span class="function">Object <span class="title">findValueOfType</span><span class="params">(Collection&lt;?&gt; collection, Class&lt;?&gt;[] types)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 返回 List/Set 中元素的类型</span></span></span><br><span class="line"><span class="function">Class&lt;?&gt; <span class="title">findCommonElementType</span><span class="params">(Collection&lt;?&gt; collection)</span></span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="文件、资源、IO-流"><a href="#文件、资源、IO-流" class="headerlink" title="文件、资源、IO 流"></a>文件、资源、IO 流</h3><h4 id="FileCopyUtils"><a href="#FileCopyUtils" class="headerlink" title="FileCopyUtils"></a>FileCopyUtils</h4><ol>
+<li><p>输入</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从文件中读入到字节数组中</span></span><br><span class="line"><span class="keyword">byte</span>[] copyToByteArray(File in)</span><br><span class="line"><span class="comment">// 从输入流中读入到字节数组中</span></span><br><span class="line"><span class="keyword">byte</span>[] copyToByteArray(InputStream in)</span><br><span class="line"><span class="comment">// 从输入流中读入到字符串中</span></span><br><span class="line"><span class="function">String <span class="title">copyToString</span><span class="params">(Reader in)</span></span></span><br><span class="line"><span class="function"></span></span><br></pre></td></tr></table></figure></li>
+<li><p>输出</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从字节数组到文件</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">copy</span><span class="params">(<span class="keyword">byte</span>[] in, File out)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 从文件到文件</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">copy</span><span class="params">(File in, File out)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 从字节数组到输出流</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">copy</span><span class="params">(<span class="keyword">byte</span>[] in, OutputStream out)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 从输入流到输出流</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">copy</span><span class="params">(InputStream in, OutputStream out)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 从输入流到输出流</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">copy</span><span class="params">(Reader in, Writer out)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 从字符串到输出流</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">copy</span><span class="params">(String in, Writer out)</span></span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="ResourceUtils"><a href="#ResourceUtils" class="headerlink" title="ResourceUtils"></a>ResourceUtils</h4><ol>
+<li><p>从资源路径获取文件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断字符串是否是一个合法的 URL 字符串。</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isUrl</span><span class="params">(String resourceLocation)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 获取 URL</span></span></span><br><span class="line"><span class="function"><span class="keyword">static</span> URL <span class="title">getURL</span><span class="params">(String resourceLocation)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 获取文件（在 JAR 包内无法正常使用，需要是一个独立的文件）</span></span></span><br><span class="line"><span class="function"><span class="keyword">static</span> File <span class="title">getFile</span><span class="params">(String resourceLocation)</span></span></span><br></pre></td></tr></table></figure></li>
+<li><p>Resource</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 文件系统资源 D:\...</span></span><br><span class="line">FileSystemResource</span><br><span class="line"><span class="comment">// URL 资源，如 file://... http://...</span></span><br><span class="line">UrlResource</span><br><span class="line"><span class="comment">// 类路径下的资源，classpth:...</span></span><br><span class="line">ClassPathResource</span><br><span class="line"><span class="comment">// Web 容器上下文中的资源（jar 包、war 包）</span></span><br><span class="line">ServletContextResource</span><br><span class="line">  </span><br><span class="line"><span class="comment">// 判断资源是否存在</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">exists</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 从资源中获得 File 对象</span></span></span><br><span class="line"><span class="function">File <span class="title">getFile</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 从资源中获得 URI 对象</span></span></span><br><span class="line"><span class="function">URI <span class="title">getURI</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 从资源中获得 URI 对象</span></span></span><br><span class="line"><span class="function">URL <span class="title">getURL</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 获得资源的 InputStream</span></span></span><br><span class="line"><span class="function">InputStream <span class="title">getInputStream</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 获得资源的描述信息</span></span></span><br><span class="line"><span class="function">String <span class="title">getDescription</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="StreamUtils"><a href="#StreamUtils" class="headerlink" title="StreamUtils"></a>StreamUtils</h4><ol>
+<li><p>输入</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">copy</span><span class="params">(<span class="keyword">byte</span>[] in, OutputStream out)</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">copy</span><span class="params">(InputStream in, OutputStream out)</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">copy</span><span class="params">(String in, Charset charset, OutputStream out)</span></span></span><br><span class="line"><span class="function"><span class="keyword">long</span> <span class="title">copyRange</span><span class="params">(InputStream in, OutputStream out, <span class="keyword">long</span> start, <span class="keyword">long</span> end)</span></span></span><br></pre></td></tr></table></figure></li>
+<li><p>输出</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span>[] copyToByteArray(InputStream in)</span><br><span class="line"><span class="function">String <span class="title">copyToString</span><span class="params">(InputStream in, Charset charset)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 舍弃输入流中的内容</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">drain</span><span class="params">(InputStream in)</span></span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="反射、AOP"><a href="#反射、AOP" class="headerlink" title="反射、AOP"></a>反射、AOP</h3><h4 id="ReflectionUtils"><a href="#ReflectionUtils" class="headerlink" title="ReflectionUtils"></a>ReflectionUtils</h4><ol>
+<li><p>获取方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在类中查找指定方法</span></span><br><span class="line"><span class="function">Method <span class="title">findMethod</span><span class="params">(Class&lt;?&gt; clazz, String name)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 同上，额外提供方法参数类型作查找条件</span></span></span><br><span class="line"><span class="function">Method <span class="title">findMethod</span><span class="params">(Class&lt;?&gt; clazz, String name, Class&lt;?&gt;... paramTypes)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 获得类中所有方法，包括继承而来的</span></span></span><br><span class="line"><span class="function">Method[] <span class="title">getAllDeclaredMethods</span><span class="params">(Class&lt;?&gt; leafClass)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 在类中查找指定构造方法</span></span></span><br><span class="line"><span class="function">Constructor&lt;T&gt; <span class="title">accessibleConstructor</span><span class="params">(Class&lt;T&gt; clazz, Class&lt;?&gt;... parameterTypes)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 是否是 equals() 方法</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isEqualsMethod</span><span class="params">(Method method)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 是否是 hashCode() 方法 </span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isHashCodeMethod</span><span class="params">(Method method)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 是否是 toString() 方法</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isToStringMethod</span><span class="params">(Method method)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 是否是从 Object 类继承而来的方法</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isObjectMethod</span><span class="params">(Method method)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 检查一个方法是否声明抛出指定异常</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">declaresException</span><span class="params">(Method method, Class&lt;?&gt; exceptionType)</span></span></span><br></pre></td></tr></table></figure></li>
+<li><p>执行方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 执行方法</span></span><br><span class="line"><span class="function">Object <span class="title">invokeMethod</span><span class="params">(Method method, Object target)</span>  </span></span><br><span class="line"><span class="function"><span class="comment">// 同上，提供方法参数</span></span></span><br><span class="line"><span class="function">Object <span class="title">invokeMethod</span><span class="params">(Method method, Object target, Object... args)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 取消 Java 权限检查。以便后续执行该私有方法</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">makeAccessible</span><span class="params">(Method method)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 取消 Java 权限检查。以便后续执行私有构造方法</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">makeAccessible</span><span class="params">(Constructor&lt;?&gt; ctor)</span></span></span><br></pre></td></tr></table></figure></li>
+<li><p>获取字段</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在类中查找指定属性</span></span><br><span class="line"><span class="function">Field <span class="title">findField</span><span class="params">(Class&lt;?&gt; clazz, String name)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 同上，多提供了属性的类型</span></span></span><br><span class="line"><span class="function">Field <span class="title">findField</span><span class="params">(Class&lt;?&gt; clazz, String name, Class&lt;?&gt; type)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 是否为一个 &quot;public static final&quot; 属性</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isPublicStaticFinal</span><span class="params">(Field field)</span></span></span><br></pre></td></tr></table></figure></li>
+<li><p>设置字段</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取 target 对象的 field 属性值</span></span><br><span class="line"><span class="function">Object <span class="title">getField</span><span class="params">(Field field, Object target)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 设置 target 对象的 field 属性值，值为 value</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setField</span><span class="params">(Field field, Object target, Object value)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 同类对象属性对等赋值</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">shallowCopyFieldState</span><span class="params">(Object src, Object dest)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 取消 Java 的权限控制检查。以便后续读写该私有属性</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">makeAccessible</span><span class="params">(Field field)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 对类的每个属性执行 callback</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">doWithFields</span><span class="params">(Class&lt;?&gt; clazz, ReflectionUtils.FieldCallback fc)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 同上，多了个属性过滤功能。</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">doWithFields</span><span class="params">(Class&lt;?&gt; clazz, ReflectionUtils.FieldCallback fc, </span></span></span><br><span class="line"><span class="params"><span class="function">                  ReflectionUtils.FieldFilter ff)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 同上，但不包括继承而来的属性</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">doWithLocalFields</span><span class="params">(Class&lt;?&gt; clazz, ReflectionUtils.FieldCallback fc)</span></span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="AopUtils"><a href="#AopUtils" class="headerlink" title="AopUtils"></a>AopUtils</h4><ol>
+<li><p>判断代理类型</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断是不是 Spring 代理对象</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isAopProxy</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 判断是不是 jdk 动态代理对象</span></span></span><br><span class="line"><span class="function"><span class="title">isJdkDynamicProxy</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 判断是不是 CGLIB 代理对象</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isCglibProxy</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure></li>
+<li><p>获取被代理对象的 class</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取被代理的目标 class</span></span><br><span class="line">Class&lt;?&gt; getTargetClass()</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="AopContext"><a href="#AopContext" class="headerlink" title="AopContext"></a>AopContext</h4><ol>
+<li><p>获取当前对象的代理对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Object <span class="title">currentProxy</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure></li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://lizejiao.github.io">李苟蛋</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://lizejiao.github.io/2024/06/25/%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C/java%E5%BC%80%E5%8F%91%E4%B8%AD%E7%9A%84%E5%B7%A5%E5%85%B7%E7%B1%BB/">https://lizejiao.github.io/2024/06/25/开发工作/java开发中的工具类/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://lizejiao.github.io" target="_blank">老李家の苟蛋子</a> 许可协议。转载请注明来源 <a href="https://lizejiao.github.io" target="_blank">李苟蛋の家</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7/">开发技巧</a></div><div class="post-share"><div class="social-share" data-image="/images/cover/%E5%B7%A5%E5%85%B7%E7%B1%BB.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat_pay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat_pay.jpg" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2024/10/12/%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C/%E6%89%93%E9%80%A0%E5%B1%9E%E4%BA%8E%E8%87%AA%E5%B7%B1%E7%9A%84%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E5%99%A8/" title="打造属于自己的代码生成器"><img class="cover" src="/images/cover/mybatisplus.png" onerror="onerror=null;src='/img/error_404.png'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">打造属于自己的代码生成器</div></div><div class="info-2"><div class="info-item-1">花了十几天的时间调研市面上几乎所有的代码生成器，总有一些细节无法达到我们想要的完美，而我作为一个有代码洁癖的人，这些小瑕疵是我无法忍受的，今天我就带你们一起玩转的代码生成器，打造一款适合你的完美的代码生成器！！！</div></div></div></a><a class="pagination-related" href="/2024/02/19/%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C/%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83%E5%92%8C%E6%8A%80%E5%B7%A7/" title="企业开发规范和技巧"><img class="cover" src="/images/cover/%E7%BB%8F%E9%AA%8C%E5%88%86%E4%BA%AB.jpg" onerror="onerror=null;src='/img/error_404.png'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">企业开发规范和技巧</div></div><div class="info-2"><div class="info-item-1">java开发常用工具类记录</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2023/11/07/%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C/Linux%E6%93%8D%E4%BD%9C%E6%8A%80%E5%B7%A7/" title="Linux操作技巧"><img class="cover" src="/images/cover/linux.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-07</div><div class="info-item-2">Linux操作技巧</div></div><div class="info-2"><div class="info-item-1">Linux系统中查找文件，以及Vim相关技巧总结</div></div></div></a><a class="pagination-related" href="/2024/02/19/%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C/%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83%E5%92%8C%E6%8A%80%E5%B7%A7/" title="企业开发规范和技巧"><img class="cover" src="/images/cover/%E7%BB%8F%E9%AA%8C%E5%88%86%E4%BA%AB.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-02-19</div><div class="info-item-2">企业开发规范和技巧</div></div><div class="info-2"><div class="info-item-1">java开发常用工具类记录</div></div></div></a><a class="pagination-related" href="/2025/09/28/%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C/%E5%B7%A5%E4%BD%9C%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E7%97%9B%E7%82%B9%E6%80%BB%E7%BB%93/" title="工作中遇到的痛点解决"><img class="cover" src="/images/cover/%E5%BF%83%E7%97%9B.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-28</div><div class="info-item-2">工作中遇到的痛点解决</div></div><div class="info-2"><div class="info-item-1">本文整理了我在开发过程中遇到的问题及一些痛点以及我自己总结的解决方案，长期更新，总结经验</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="avatar"/></div><div class="author-info-name">李苟蛋</div><div class="author-info-description">欢迎来到李苟蛋的博客....</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">25</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lizejiao"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/lizejiao" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:xxxxxx@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content"><p>欢迎来到李苟蛋的个人博客，对本站的文章和技术问题有疑问或建议，欢迎留言，或者关注我的公众号：<strong>狗蛋的智栈</strong></p> <div style="text-align:center; margin-top:10px;">
+  <img src="/images/aboutme/wechat_mp.jpg" alt="公众号：狗蛋的智栈" style="width:170px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,.15);" />
+  <div style="font-size:12px; color:#999; margin-top:6px;">扫码关注「狗蛋的智栈」</div>
+</div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#SpringBoot%E5%86%85%E7%BD%AE%E5%B7%A5%E5%85%B7%E7%B1%BB"><span class="toc-number">1.</span> <span class="toc-text">SpringBoot内置工具类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%AD%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">断言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1-%E6%95%B0%E7%BB%84-%E9%9B%86%E5%90%88"><span class="toc-number">1.2.</span> <span class="toc-text">对象&#x2F;数组&#x2F;集合</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ObjectUtils"><span class="toc-number">1.2.1.</span> <span class="toc-text">ObjectUtils</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#StringUtils"><span class="toc-number">1.2.2.</span> <span class="toc-text">StringUtils</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#CollectionUtils"><span class="toc-number">1.2.3.</span> <span class="toc-text">CollectionUtils</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E3%80%81%E8%B5%84%E6%BA%90%E3%80%81IO-%E6%B5%81"><span class="toc-number">1.3.</span> <span class="toc-text">文件、资源、IO 流</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#FileCopyUtils"><span class="toc-number">1.3.1.</span> <span class="toc-text">FileCopyUtils</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ResourceUtils"><span class="toc-number">1.3.2.</span> <span class="toc-text">ResourceUtils</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#StreamUtils"><span class="toc-number">1.3.3.</span> <span class="toc-text">StreamUtils</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%B0%84%E3%80%81AOP"><span class="toc-number">1.4.</span> <span class="toc-text">反射、AOP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ReflectionUtils"><span class="toc-number">1.4.1.</span> <span class="toc-text">ReflectionUtils</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AopUtils"><span class="toc-number">1.4.2.</span> <span class="toc-text">AopUtils</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AopContext"><span class="toc-number">1.4.3.</span> <span class="toc-text">AopContext</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/09/30/AI%E6%8A%80%E6%9C%AF/%E6%80%BB%E6%8C%87%E6%8C%A5+%E8%B4%A8%E6%A3%80%E5%91%98-2026%E4%BC%A0%E7%BB%9F%E8%A1%8C%E4%B8%9A%E4%BC%81%E4%B8%9A%E7%BA%A7Agent%E7%9A%84%E4%B8%89%E5%B1%82%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E8%90%BD%E5%9C%B0%E6%96%B9%E6%B3%95%E8%AE%BA/" title="总指挥 + 质检员：2026 传统行业企业级 Agent 的三层多智能体落地方法论"><img src="/images/agent3/agent3_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="总指挥 + 质检员：2026 传统行业企业级 Agent 的三层多智能体落地方法论"/></a><div class="content"><a class="title" href="/2026/09/30/AI%E6%8A%80%E6%9C%AF/%E6%80%BB%E6%8C%87%E6%8C%A5+%E8%B4%A8%E6%A3%80%E5%91%98-2026%E4%BC%A0%E7%BB%9F%E8%A1%8C%E4%B8%9A%E4%BC%81%E4%B8%9A%E7%BA%A7Agent%E7%9A%84%E4%B8%89%E5%B1%82%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E8%90%BD%E5%9C%B0%E6%96%B9%E6%B3%95%E8%AE%BA/" title="总指挥 + 质检员：2026 传统行业企业级 Agent 的三层多智能体落地方法论">总指挥 + 质检员：2026 传统行业企业级 Agent 的三层多智能体落地方法论</a><time datetime="2026-09-30T01:15:00.000Z" title="发表于 2026-09-30 09:15:00">2026-09-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/25/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E5%88%B0%E7%BB%9F%E4%B8%80AI-Registry-Nacos3.1%E5%88%B03.3%E6%99%BA%E8%83%BD%E4%BD%93%E5%9F%BA%E5%BB%BA%E8%B1%AA%E8%B5%8C/" title="从微服务注册中心到统一AI Registry：Nacos 3.1→3.3的智能体基建豪赌"><img src="/images/nacos/nacos_ai_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="从微服务注册中心到统一AI Registry：Nacos 3.1→3.3的智能体基建豪赌"/></a><div class="content"><a class="title" href="/2026/06/25/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E5%88%B0%E7%BB%9F%E4%B8%80AI-Registry-Nacos3.1%E5%88%B03.3%E6%99%BA%E8%83%BD%E4%BD%93%E5%9F%BA%E5%BB%BA%E8%B1%AA%E8%B5%8C/" title="从微服务注册中心到统一AI Registry：Nacos 3.1→3.3的智能体基建豪赌">从微服务注册中心到统一AI Registry：Nacos 3.1→3.3的智能体基建豪赌</a><time datetime="2026-06-25T11:25:00.000Z" title="发表于 2026-06-25 19:25:00">2026-06-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/18/AI%E6%8A%80%E6%9C%AF/%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8BRAG%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97/" title="企业级智能助手 RAG 搭建指南：从原理到落地，一次讲透"><img src="/images/ai/rag_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="企业级智能助手 RAG 搭建指南：从原理到落地，一次讲透"/></a><div class="content"><a class="title" href="/2026/03/18/AI%E6%8A%80%E6%9C%AF/%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8BRAG%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97/" title="企业级智能助手 RAG 搭建指南：从原理到落地，一次讲透">企业级智能助手 RAG 搭建指南：从原理到落地，一次讲透</a><time datetime="2026-03-18T02:20:00.000Z" title="发表于 2026-03-18 10:20:00">2026-03-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/28/%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C/%E5%B7%A5%E4%BD%9C%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E7%97%9B%E7%82%B9%E6%80%BB%E7%BB%93/" title="工作中遇到的痛点解决"><img src="/images/cover/%E5%BF%83%E7%97%9B.jpg" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="工作中遇到的痛点解决"/></a><div class="content"><a class="title" href="/2025/09/28/%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C/%E5%B7%A5%E4%BD%9C%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E7%97%9B%E7%82%B9%E6%80%BB%E7%BB%93/" title="工作中遇到的痛点解决">工作中遇到的痛点解决</a><time datetime="2025-09-28T02:03:00.000Z" title="发表于 2025-09-28 10:03:00">2025-09-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/05/16/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E9%82%A3%E4%BA%9B%E5%B9%B4%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91%E4%B8%80%E8%B5%B7%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91/" title="那些年后端开发一起踩过的坑"><img src="/images/cover/bug.jpg" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="那些年后端开发一起踩过的坑"/></a><div class="content"><a class="title" href="/2025/05/16/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E9%82%A3%E4%BA%9B%E5%B9%B4%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91%E4%B8%80%E8%B5%B7%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91/" title="那些年后端开发一起踩过的坑">那些年后端开发一起踩过的坑</a><time datetime="2025-05-16T10:04:00.000Z" title="发表于 2025-05-16 18:04:00">2025-05-16</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2021 - 2026 By 李苟蛋</span></div><div class="footer_custom_text">_φ(❐_❐✧ 人丑就要多读书😂，睡觉没前途(￣o￣) . z Z　🤣</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.14/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const parseViewBox = viewBox => {
+    if (!viewBox) return null
+    const parts = viewBox.trim().split(/[\s,]+/).map(n => Number(n))
+    if (parts.length !== 4 || parts.some(n => Number.isNaN(n))) return null
+    return parts
+  }
+
+  const getSvgViewBox = svg => {
+    const attr = parseViewBox(svg.getAttribute('viewBox'))
+    if (attr) return attr
+
+    // Fallback: use bbox to build a viewBox
+    try {
+      const bbox = svg.getBBox()
+      if (bbox && bbox.width && bbox.height) return [bbox.x, bbox.y, bbox.width, bbox.height]
+    } catch (e) {
+      // getBBox may fail on some edge cases; ignore
+    }
+
+    const w = Number(svg.getAttribute('width')) || 0
+    const h = Number(svg.getAttribute('height')) || 0
+    if (w > 0 && h > 0) return [0, 0, w, h]
+    return [0, 0, 100, 100]
+  }
+
+  const setSvgViewBox = (svg, vb) => {
+    svg.setAttribute('viewBox', `${vb[0]} ${vb[1]} ${vb[2]} ${vb[3]}`)
+  }
+
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
+
+  const openSvgInNewTab = ({ source, initViewBox }) => {
+    const getClonedSvg = () => {
+      if (typeof source === 'string') {
+        const template = document.createElement('template')
+        template.innerHTML = source.trim()
+        const svg = template.content.querySelector('svg')
+        return svg ? svg.cloneNode(true) : null
+      }
+      if (source && typeof source.cloneNode === 'function') {
+        return source.cloneNode(true)
+      }
+      return null
+    }
+
+    const clone = getClonedSvg()
+    if (!clone) return
+    if (initViewBox && initViewBox.length === 4) {
+      clone.setAttribute('viewBox', initViewBox.join(' '))
+    }
+    if (!clone.getAttribute('xmlns')) clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+    if (!clone.getAttribute('xmlns:xlink') && clone.innerHTML.includes('xlink:')) {
+      clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink')
+    }
+    // inject background to match current theme
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+    const bg = getComputedStyle(document.body).backgroundColor || (isDark ? '#1e1e1e' : '#ffffff')
+    if (!clone.style.background) clone.style.background = bg
+
+    const serializer = new XMLSerializer()
+    const svgSource = serializer.serializeToString(clone)
+    const htmlSource = `<!doctype html><html><head><meta charset="utf-8" />
+      <style>
+        html, body { width: 100%; height: 100%; margin: 0; display: flex; align-items: center; justify-content: center; background: ${bg}; }
+        svg { max-width: 100%; max-height: 100%; height: auto; width: auto; }
+      </style>
+      </head><body>${svgSource}</body></html>`
+    const blob = new Blob([htmlSource], { type: 'text/html;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    window.open(url, '_blank', 'noopener')
+
+    setTimeout(() => URL.revokeObjectURL(url), 5000)
+  }
+
+  const attachMermaidViewerButton = wrap => {
+    let btn = wrap.querySelector('.mermaid-open-btn')
+    if (!btn) {
+      btn = document.createElement('button')
+      btn.type = 'button'
+      btn.className = 'mermaid-open-btn'
+      wrap.appendChild(btn)
+    }
+
+    btn.innerHTML = '<i class="fa fa-search fa-fw" aria-hidden="true"></i>'
+
+    if (!btn.__mermaidViewerBound) {
+      btn.addEventListener('click', e => {
+        e.preventDefault()
+        e.stopPropagation()
+        const svg = wrap.__mermaidOriginalSvg || wrap.querySelector('svg')
+        if (!svg) return
+        const initViewBox = wrap.__mermaidInitViewBox
+        openSvgInNewTab({ source: svg, initViewBox })
+      })
+      btn.__mermaidViewerBound = true
+    }
+  }
+
+  // Zoom around a point (px, py) in the SVG viewport (in viewBox coordinates)
+  const zoomAtPoint = (vb, factor, px, py) => {
+    const w = vb[2] * factor
+    const h = vb[3] * factor
+    const nx = px - (px - vb[0]) * factor
+    const ny = py - (py - vb[1]) * factor
+    return [nx, ny, w, h]
+  }
+
+  const initMermaidGestures = wrap => {
+    // Clean up previous event listeners and pending frames
+    if (wrap.__mermaidAbortController) {
+      wrap.__mermaidAbortController.abort()
+      if (wrap.__mermaidRafId) cancelAnimationFrame(wrap.__mermaidRafId)
+    }
+    const ac = new AbortController()
+    wrap.__mermaidAbortController = ac
+    const svg = wrap.querySelector('svg')
+    if (!svg) return
+
+    // Ensure viewBox exists so gestures always work
+    const initVb = getSvgViewBox(svg)
+    wrap.__mermaidInitViewBox = initVb
+    wrap.__mermaidCurViewBox = initVb.slice()
+    setSvgViewBox(svg, initVb)
+    // Disable default gestures to prevent scroll chaining and pinch-zoom penetration in Chrome
+    svg.style.touchAction = 'none'
+
+    // Cache BoundingClientRect, throttled on scroll to reduce reflow
+    let cachedRect = svg.getBoundingClientRect()
+    let rectDirty = false
+    const markRectDirty = () => { rectDirty = true }
+    window.addEventListener('resize', markRectDirty, { signal: ac.signal })
+    window.addEventListener('scroll', markRectDirty, { signal: ac.signal, capture: true })
+    const getRect = () => {
+      if (rectDirty) {
+        cachedRect = svg.getBoundingClientRect()
+        rectDirty = false
+      }
+      return cachedRect
+    }
+
+    // Precompute clamp bounds from initial viewBox
+    const minW = initVb[2] * 0.1
+    const maxW = initVb[2] * 10
+    const minH = initVb[3] * 0.1
+    const maxH = initVb[3] * 10
+    const clampVb = vb => {
+      const out = vb.slice()
+      out[2] = clamp(out[2], minW, maxW)
+      out[3] = clamp(out[3], minH, maxH)
+      return out
+    }
+
+    // Throttle DOM updates using requestAnimationFrame
+    let pendingVb = null
+    let rafId = null
+    const applyVb = () => {
+      if (pendingVb) {
+        wrap.__mermaidCurViewBox = pendingVb
+        setSvgViewBox(svg, pendingVb)
+        pendingVb = null
+      }
+      rafId = null
+      wrap.__mermaidRafId = null
+    }
+    const setCurVb = vb => {
+      pendingVb = clampVb(vb)
+      if (!rafId) {
+        rafId = requestAnimationFrame(applyVb)
+        wrap.__mermaidRafId = rafId
+      }
+    }
+
+    const state = {
+      pointers: new Map(),
+      startVb: null,
+      startDist: 0,
+      lastPointerX: 0,
+      lastPointerY: 0
+    }
+
+    const onPointerDown = e => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return
+      svg.setPointerCapture(e.pointerId)
+      const curVb = wrap.__mermaidCurViewBox
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+      if (state.pointers.size === 1) {
+        state.startVb = curVb.slice()
+        state.lastPointerX = e.clientX
+        state.lastPointerY = e.clientY
+      } else if (state.pointers.size === 2) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        state.startDist = Math.hypot(dx, dy)
+        state.startVb = curVb.slice()
+      }
+    }
+
+    const onPointerMove = e => {
+      if (!state.pointers.has(e.pointerId)) return
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+      const curVb = wrap.__mermaidCurViewBox
+      const rect = getRect()
+      if (state.pointers.size === 1 && state.startVb) {
+        const p = state.pointers.values().next().value
+        const dxClient = p.x - state.lastPointerX
+        const dyClient = p.y - state.lastPointerY
+        state.lastPointerX = p.x
+        state.lastPointerY = p.y
+        const dx = dxClient * (curVb[2] / rect.width)
+        const dy = dyClient * (curVb[3] / rect.height)
+        setCurVb([curVb[0] - dx, curVb[1] - dy, curVb[2], curVb[3]])
+        return
+      }
+      if (state.pointers.size === 2 && state.startVb && state.startDist > 0) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        const dist = Math.hypot(dx, dy)
+        if (!dist) return
+        const factor = state.startDist / dist
+        const cx = (pts[0].x + pts[1].x) / 2
+        const cy = (pts[0].y + pts[1].y) / 2
+        const px = curVb[0] + (cx - rect.left) * (curVb[2] / rect.width)
+        const py = curVb[1] + (cy - rect.top) * (curVb[3] / rect.height)
+        setCurVb(zoomAtPoint(state.startVb, factor, px, py))
+      }
+    }
+
+    const onPointerUpOrCancel = e => {
+      // Release PointerCapture to avoid event capture anomalies
+      if (svg.hasPointerCapture && svg.hasPointerCapture(e.pointerId)) {
+        svg.releasePointerCapture(e.pointerId)
+      }
+      state.pointers.delete(e.pointerId)
+      if (state.pointers.size === 0) {
+        state.startVb = null
+        state.startDist = 0
+      } else if (state.pointers.size === 1) {
+        const p = state.pointers.values().next().value
+        state.lastPointerX = p.x
+        state.lastPointerY = p.y
+      }
+    }
+
+    const onWheel = e => {
+      // Prevent event bubbling from triggering external scroll
+      e.preventDefault()
+      e.stopPropagation()
+      // Normalize deltaY across deltaMode (Chrome uses pixels, Safari uses lines)
+      let delta = e.deltaY
+      if (e.deltaMode === 1) delta *= 16
+      else if (e.deltaMode === 2) delta *= 400
+
+      // Continuous zoom factor: smoother than fixed 1.1/0.9 steps
+      const zoomFactor = Math.pow(1.001, delta)
+
+      const curVb = wrap.__mermaidCurViewBox
+      const rect = getRect()
+      const px = curVb[0] + (e.clientX - rect.left) * (curVb[2] / rect.width)
+      const py = curVb[1] + (e.clientY - rect.top) * (curVb[3] / rect.height)
+      setCurVb(zoomAtPoint(curVb, zoomFactor, px, py))
+    }
+
+    const onDblClick = () => {
+      const init = wrap.__mermaidInitViewBox
+      if (init) setCurVb(init)
+    }
+
+    svg.addEventListener('pointerdown', onPointerDown, { signal: ac.signal })
+    svg.addEventListener('pointermove', onPointerMove, { signal: ac.signal })
+    svg.addEventListener('pointerup', onPointerUpOrCancel, { signal: ac.signal })
+    svg.addEventListener('pointercancel', onPointerUpOrCancel, { signal: ac.signal })
+    svg.addEventListener('wheel', onWheel, { passive: false, signal: ac.signal })
+    svg.addEventListener('dblclick', onDblClick, { signal: ac.signal })
+  }
+
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      // Clean up event listeners before removing old SVG
+      if (item.__mermaidAbortController) {
+        item.__mermaidAbortController.abort()
+      }
+      const oldSvg = item.querySelector('svg')
+      if (oldSvg) oldSvg.remove()
+      let config = {}
+      try {
+        config = mermaidSrc.dataset.config ? JSON.parse(mermaidSrc.dataset.config) : {}
+      } catch (e) {
+        console.warn('[mermaid] failed to parse dataset.config:', e)
+      }
+      if (!config.theme) {
+        config.theme = theme
+      }
+      const mermaidThemeConfig = `%%{init: ${JSON.stringify(config)}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+        if (true) initMermaidGestures(item)
+        item.__mermaidOriginalSvg = svg
+        if (true) attachMermaidViewerButton(item)
+      }
+
+      const handleError = err => {
+        console.error(`[mermaid] render failed for block #${index}:`, err)
+        const errorEl = document.createElement('div')
+        errorEl.className = 'mermaid-error'
+        errorEl.textContent = `Mermaid render error: ${err.message || err}`
+        mermaidSrc.insertAdjacentElement('afterend', errorEl)
+      }
+
+      try {
+        const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+        // mermaid v9 and v10 compatibility
+        if (typeof renderFn === 'string') {
+          renderMermaid(renderFn)
+        } else {
+          renderFn.then(({ svg }) => renderMermaid(svg)).catch(handleError)
+        }
+      } catch (err) {
+        handleError(err)
+      }
+    })
+  }
+
+  const codeToMermaid = $article => {
+    const codeMermaidEle = $article.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    const $article = document.getElementById('article-container')
+    if (!$article) return
+
+    if (true) codeToMermaid($article)
+    const $mermaid = $article.querySelectorAll('.mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid@11.16.0/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script><script src="/js/chocolate.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-fluttering-ribbon.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-show-text.min.js" data-mobile="false" data-text="渴望,生锈,十七,黎明,火炉,苟蛋,善良,回家,货车,士兵" data-fontsize="15px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.7.0"></script></div></div></body></html>
