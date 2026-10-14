@@ -1,0 +1,899 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>AI 时代，用什么看代码：2026 主流代码编辑器全横评 | 李苟蛋の家</title><meta name="author" content="李苟蛋"><meta name="copyright" content="李苟蛋"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="当 AI 把「写代码」的成本打下来之后，「看代码」反而成了新的瓶颈。这篇文章横向对比 VS Code、Cursor、Zed、JetBrains 全家桶、Sublime Text、Neovim 六款主流编辑器的真实优缺点，摆出启动速度与内存占用的实测数据，回答那个最实际的问题——手里同时压着 Java、Python、PHP、JS 多个项目，能不能用一个编辑器全看完？以及 AI 编码 Agent 和编">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI 时代，用什么看代码：2026 主流代码编辑器全横评">
+<meta property="og:url" content="https://lizejiao.github.io/2026/10/14/AI%E6%8A%80%E6%9C%AF/AI%E6%97%B6%E4%BB%A3%E7%94%A8%E4%BB%80%E4%B9%88%E7%9C%8B%E4%BB%A3%E7%A0%81-2026%E4%B8%BB%E6%B5%81%E4%BB%A3%E7%A0%81%E7%BC%96%E8%BE%91%E5%99%A8%E5%85%A8%E6%A8%AA%E8%AF%84/index.html">
+<meta property="og:site_name" content="李苟蛋の家">
+<meta property="og:description" content="当 AI 把「写代码」的成本打下来之后，「看代码」反而成了新的瓶颈。这篇文章横向对比 VS Code、Cursor、Zed、JetBrains 全家桶、Sublime Text、Neovim 六款主流编辑器的真实优缺点，摆出启动速度与内存占用的实测数据，回答那个最实际的问题——手里同时压着 Java、Python、PHP、JS 多个项目，能不能用一个编辑器全看完？以及 AI 编码 Agent 和编">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lizejiao.github.io/images/editor/editor_cover.png">
+<meta property="article:published_time" content="2026-10-14T13:45:00.000Z">
+<meta property="article:modified_time" content="2026-10-14T13:45:00.000Z">
+<meta property="article:author" content="李苟蛋">
+<meta property="article:tag" content="AI技术">
+<meta property="article:tag" content="开发工具">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lizejiao.github.io/images/editor/editor_cover.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "AI 时代，用什么看代码：2026 主流代码编辑器全横评",
+  "url": "https://lizejiao.github.io/2026/10/14/AI%E6%8A%80%E6%9C%AF/AI%E6%97%B6%E4%BB%A3%E7%94%A8%E4%BB%80%E4%B9%88%E7%9C%8B%E4%BB%A3%E7%A0%81-2026%E4%B8%BB%E6%B5%81%E4%BB%A3%E7%A0%81%E7%BC%96%E8%BE%91%E5%99%A8%E5%85%A8%E6%A8%AA%E8%AF%84/",
+  "image": "https://lizejiao.github.io/images/editor/editor_cover.png",
+  "datePublished": "2026-10-14T13:45:00.000Z",
+  "dateModified": "2026-10-14T13:45:00.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "李苟蛋",
+      "url": "https://lizejiao.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="https://gitee.com/lizejiao/img-go/raw/master/images/favicon.jpg"><link rel="canonical" href="https://lizejiao.github.io/2026/10/14/AI%E6%8A%80%E6%9C%AF/AI%E6%97%B6%E4%BB%A3%E7%94%A8%E4%BB%80%E4%B9%88%E7%9C%8B%E4%BB%A3%E7%A0%81-2026%E4%B8%BB%E6%B5%81%E4%BB%A3%E7%A0%81%E7%BC%96%E8%BE%91%E5%99%A8%E5%85%A8%E6%A8%AA%E8%AF%84/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.14/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const start = 6
+          const end = 18
+          const isNight =
+            start < end
+                ? hour < start || hour >= end
+                : hour >= start || hour < end
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":800,"highlightFullpage":true,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'AI 时代，用什么看代码：2026 主流代码编辑器全横评',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 5.4.0"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/url(/img/index_img.jpg));"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/%E5%85%B3%E4%BA%8E%E6%88%91/"><i class="fa-fw fas fa-user"></i><span> 关于我</span></a></div><div class="menus_item"><a class="site-page" href="/message/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/images/editor/editor_cover.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">李苟蛋の家</span></a><a class="nav-page-title" href="/"><span class="site-name">AI 时代，用什么看代码：2026 主流代码编辑器全横评</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/%E5%85%B3%E4%BA%8E%E6%88%91/"><i class="fa-fw fas fa-user"></i><span> 关于我</span></a></div><div class="menus_item"><a class="site-page" href="/message/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">AI 时代，用什么看代码：2026 主流代码编辑器全横评</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-14T13:45:00.000Z" title="发表于 2026-10-14 21:45:00">2026-10-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-14T13:45:00.000Z" title="更新于 2026-10-14 21:45:00">2026-10-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%95%99%E7%A8%8B/">教程</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">5.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>18分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><div id="post-outdate-notice" data="{&quot;limitDay&quot;:365,&quot;messagePrev&quot;:&quot;本文最后更新于&quot;,&quot;messageNext&quot;:&quot;天前，其中的内容可能已经过时。&quot;,&quot;postUpdate&quot;:&quot;2026-10-14 21:45:00&quot;}" hidden></div><h2 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h2><p>有个变化正在悄悄发生，但很多人还没意识到。</p>
+<p>过去十年，开发者选编辑器的标准是<strong>「写起来爽不爽」</strong>——补全准不准、快捷键顺不顺手、插件好不好装。而到了 2026 年，AI 把写代码这件事的成本打下来之后，天平开始往另一边倾斜：<strong>写，已经不是瓶颈了；看，才是。</strong></p>
+<p>一组数据很说明问题：</p>
+<ul>
+<li>全球约 <strong>46%</strong> 的新代码由 AI 生成，但 <strong>63%</strong> 的开发者承认，他们在调试 AI 生成的代码上花的时间，比自己从头写还多；</li>
+<li>AI 重度参与的代码库里，代码重复率涨了 <strong>4 倍</strong>，而重构（refactoring）占变更行的比例从 25% 掉到了 <strong>10% 以下</strong>；</li>
+<li>开发者对 AI 生成代码的信任度从 2023 年的 77% 跌到 2026 年的 **60%**；</li>
+<li>与人类手写代码相比，AI 参与编写的代码中「严重问题」的数量是 <strong>1.7 倍</strong>。</li>
+</ul>
+<p>这些数字指向同一件事：<strong>代码的生产速度上去了，理解速度没跟上。</strong> 于是「看代码」——读结构、追调用链、对比 diff、判断这段逻辑到底对不对——重新变成了日常里最耗时间的那部分工作。</p>
+<p>编辑器的角色也就跟着变了：它正在从「你打字的地方」，变成「Agent 改完之后，你审阅的地方」。</p>
+<p>这篇文章想认真回答四个问题：</p>
+<ol>
+<li>AI 编码工具这么强了，为什么我们还需要一个专门的编辑器来看代码？</li>
+<li>2026 年主流编辑器的真实优缺点分别是什么？</li>
+<li>性能与内存到底差多少，值不值得为此换工具？</li>
+<li><strong>最实际的</strong>——手里同时压着 Java、Python、PHP、JS 好几个项目，能不能用一个编辑器全部看完？</li>
+</ol>
+<hr>
+<h2 id="一、先想清楚：你要的是「写」，还是「看」"><a href="#一、先想清楚：你要的是「写」，还是「看」" class="headerlink" title="一、先想清楚：你要的是「写」，还是「看」"></a>一、先想清楚：你要的是「写」，还是「看」</h2><p>在讨论编辑器之前，必须先分清两件事，因为它们经常被混为一谈。</p>
+<p><img src="/images/editor/editor_division.png" alt="Agent 负责写，编辑器负责看"></p>
+<p><strong>「写代码」这件事，终端型 AI Agent 已经做得很好。</strong> Claude Code、Codex CLI、OpenCode 这类工具，以及 WorkBuddy 这类通用 AI 助手，本质上都是「你描述需求，它改文件」——它们的天赋在于跨文件批量修改、按描述重构、生成脚手架、跑测试闭环。</p>
+<p>但它们的定位<strong>不是</strong>「给你一个能盯着看的窗口」。这里有个很容易被忽略的技术细节：</p>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>语义导航能力</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Codex CLI</td>
+<td>❌ 无内置 LSP</td>
+<td>靠 shell（<code>rg</code> / <code>find</code> / <code>git grep</code>）+ 全文读取探索代码，社区用 MCP 桥接补齐</td>
+</tr>
+<tr>
+<td>Claude Code</td>
+<td>✅ v2.0.74+ 原生支持</td>
+<td>支持跳转定义、查找引用、悬停文档、自动诊断</td>
+</tr>
+<tr>
+<td>OpenCode</td>
+<td>✅ 内置 24+ 语言服务器</td>
+<td>开箱即用，自动检测语言类型</td>
+</tr>
+<tr>
+<td>通用 AI 助手（WorkBuddy 等）</td>
+<td>—</td>
+<td>定位是任务执行，不提供 IDE 级符号导航界面</td>
+</tr>
+</tbody></table>
+<p>也就是说，<strong>AI 工具擅长「改」，不擅长「让你连续地看」</strong>。当你需要沿着调用链一层层往下点、需要在两个文件之间来回对照、需要确认「这个改动影响到哪些地方」的时候，你需要的仍然是编辑器。</p>
+<p>这不是谁替代谁的问题，而是分工问题：<strong>Agent 把代码改出来，编辑器让你确认它到底改了什么。</strong></p>
+<hr>
+<h2 id="二、多语言项目「看代码」，到底难在哪"><a href="#二、多语言项目「看代码」，到底难在哪" class="headerlink" title="二、多语言项目「看代码」，到底难在哪"></a>二、多语言项目「看代码」，到底难在哪</h2><p>如果你同时负责 Java 后端、Python 算法、PHP 老系统、JS 前端，下面这些场景大概都遇到过。</p>
+<p><img src="/images/editor/editor_pain.png" alt="多语言项目看代码的四个痛点"></p>
+<p><strong>① IDE 全家桶的隐性成本。</strong> Java 开 IDEA、Python 开 PyCharm、PHP 开 PhpStorm、前端开 WebStorm——四套 UI、四套快捷键、四份内存。切一下午项目，脑子先乱了。更麻烦的是心理成本：你只是想「随手看一眼那段逻辑」，却要等一个重型 IDE 把整个工程索引完。</p>
+<p><strong>② 内存与卡顿直接打断思路。</strong> JetBrains 单个实例常驻 1.5~4 GB，多开几个就接近 OOM。而读代码最怕的就是打断——思路一断，重新捡起来要花好几分钟。</p>
+<p><strong>③ AI 工具看不了代码的「结构」。</strong> 前面说过，没有 LSP 的 Agent 只能靠全文检索。搜一个函数名出来 47 个匹配，函数名、变量名、注释里的词全混在一起，还得人工判断。慢、贵，而且容易改错。</p>
+<p><strong>④ 插件越多越慢。</strong> VS Code 装到 30 个以上扩展，启动 3 秒起、输入延迟肉眼可见，插件之间还会互相打架。</p>
+<p>所以真正的问题可以收敛成一句话：<strong>能不能用一个编辑器，把 Java / Python / PHP / JS 都看清楚？</strong></p>
+<hr>
+<h2 id="三、评测框架：看代码该看这六件事"><a href="#三、评测框架：看代码该看这六件事" class="headerlink" title="三、评测框架：看代码该看这六件事"></a>三、评测框架：看代码该看这六件事</h2><p>既然场景是「看」，那评分标准就和「写」不太一样了：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>为什么重要</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>代码智能</strong></td>
+<td>跳转定义、查找引用、调用层级、实时诊断——这是「看代码」的核心生产力</td>
+</tr>
+<tr>
+<td><strong>多语言覆盖</strong></td>
+<td>一个工具能覆盖几种语言，直接决定你要安装几个软件</td>
+</tr>
+<tr>
+<td><strong>启动速度</strong></td>
+<td>决定了你「随手看一眼」的成本，是高频动作</td>
+</tr>
+<tr>
+<td><strong>内存占用</strong></td>
+<td>决定了你能不能同时开着数据库、浏览器、Docker 还有余量</td>
+</tr>
+<tr>
+<td><strong>生态与插件</strong></td>
+<td>决定了遇到长尾需求时有没有现成方案</td>
+</tr>
+<tr>
+<td><strong>价格与授权</strong></td>
+<td>决定了团队规模化推广的成本</td>
+</tr>
+</tbody></table>
+<p>后面所有讨论，都围绕这六条展开。</p>
+<hr>
+<h2 id="四、2026-年的编辑器生态：五个流派"><a href="#四、2026-年的编辑器生态：五个流派" class="headerlink" title="四、2026 年的编辑器生态：五个流派"></a>四、2026 年的编辑器生态：五个流派</h2><p>先建立一个全局地图，再谈细节。</p>
+<p><img src="/images/editor/editor_ecosystem.png" alt="2026 代码编辑器生态的五个流派"></p>
+<p><strong>生态之王</strong>（VS Code / Cursor / Trae）——插件生态最大（VS Code 已有 5 万+ 扩展），一套配置管全语言。代价是 Electron 底子，内存随插件数量一起涨。</p>
+<p><strong>性能原生</strong>（Zed / Helix / Lapce）——Rust + GPU 渲染，冷启动亚秒级、输入延迟个位数毫秒。插件生态还在追赶。</p>
+<p><strong>重型 IDE</strong>（IntelliJ 系）——按语言分家，静态分析与重构深度无人能及。代价是启动 5<del>15 秒、单实例 1.5</del>4 GB。</p>
+<p><strong>终端系</strong>（Neovim / Vim / Emacs）——资源占用最低，SSH、容器、服务器里的王者。上手周期 3~6 个月。</p>
+<p><strong>轻量老将</strong>（Sublime Text / Kate）——秒开、多光标最顺手、买断制，但 AI 与框架理解偏弱。</p>
+<p>关于 JetBrains，还有一个 2025 年发生的重要变化值得单独提一句：他们<strong>停更了 Fleet</strong>（那个本来对标 VS Code 的轻量多语言编辑器），把资源转投到 AI 原生产品线上。这意味着 JetBrains 目前仍然坚定走「按语言分家的重型 IDE」路线，短期内不会有轻量多语言方案。</p>
+<hr>
+<h2 id="五、逐个拆：六款主力的真实优缺点"><a href="#五、逐个拆：六款主力的真实优缺点" class="headerlink" title="五、逐个拆：六款主力的真实优缺点"></a>五、逐个拆：六款主力的真实优缺点</h2><h3 id="5-1-VS-Code：生态最厚的默认答案"><a href="#5-1-VS-Code：生态最厚的默认答案" class="headerlink" title="5.1 VS Code：生态最厚的默认答案"></a>5.1 VS Code：生态最厚的默认答案</h3><p><strong>定位</strong>：免费开源、插件生态最大、一套配置管所有语言。</p>
+<p><strong>强在哪</strong>：</p>
+<ul>
+<li>5 万+ 扩展，覆盖几乎所有语言、框架和长尾需求；</li>
+<li>语言支持通过 LSP 标准化，Java / Python / PHP / JS 全都能拿到跳转、引用、诊断；</li>
+<li>远程开发（Remote-SSH / Containers / WSL）与 Live Share 协作体系成熟；</li>
+<li>免费，团队推广零成本，遇到问题网上一搜就有答案。</li>
+</ul>
+<p><strong>短板</strong>：</p>
+<ul>
+<li>Electron 架构，内存 400~800 MB 是常态，重扩展场景能到 1.5 GB+；</li>
+<li>代码智能的<strong>深度</strong>依赖具体扩展和语言服务器，Java 的重构能力明显不如 IntelliJ；</li>
+<li>插件装多了会互相干扰，性能和稳定性都会退化。</li>
+</ul>
+<p><strong>适合</strong>：需要一套工具覆盖多语言、希望团队统一环境、追求「不折腾」的大多数人。</p>
+<h3 id="5-2-Cursor：VS-Code-加了一个「大脑」"><a href="#5-2-Cursor：VS-Code-加了一个「大脑」" class="headerlink" title="5.2 Cursor：VS Code 加了一个「大脑」"></a>5.2 Cursor：VS Code 加了一个「大脑」</h3><p><strong>定位</strong>：VS Code 基底 + 全仓库 AI 上下文。</p>
+<p><strong>强在哪</strong>：</p>
+<ul>
+<li>整仓索引，可以直接问「这个 token 到底在哪刷新的」，答案带出处；</li>
+<li>Agent 模式能做跨多文件的改动，改动以 diff 形式给你审；</li>
+<li>因为基于 VS Code，快捷键、扩展、配置几乎零迁移成本；</li>
+<li>Tab 补全会考虑你没打开过的文件。</li>
+</ul>
+<p><strong>短板</strong>：</p>
+<ul>
+<li>比原版 VS Code 更吃内存（常驻 500~920 MB，重度场景可到 2 GB）；</li>
+<li>核心能力需要订阅（Pro $20/月，团队 $40/席）；</li>
+<li>上下文理解虽强，但「审阅代码」这件事本身并没有变得更容易——它仍然是编辑器。</li>
+</ul>
+<p><strong>适合</strong>：已经习惯 VS Code、又想要 AI 深度参与工作流的开发者。</p>
+<h3 id="5-3-Zed：这个时代少见的「性能原教旨主义」"><a href="#5-3-Zed：这个时代少见的「性能原教旨主义」" class="headerlink" title="5.3 Zed：这个时代少见的「性能原教旨主义」"></a>5.3 Zed：这个时代少见的「性能原教旨主义」</h3><p><strong>定位</strong>：Rust + 自研 GPU 渲染框架（GPUI），主打极致性能。</p>
+<p><strong>强在哪</strong>：</p>
+<ul>
+<li>冷启动约 <strong>0.4 秒</strong>，空闲内存 <strong>180~220 MB</strong>，输入延迟约 <strong>2ms</strong>（VS Code 约 12ms）；</li>
+<li>有一组很有说服力的对比：冷启动快约 <strong>7.5 倍</strong>、内存低约 <strong>3.6 倍</strong>、输入延迟低 <strong>6~12 倍</strong>；</li>
+<li>50 MB 的大文件打开约 0.8 秒（VS Code 约 3.2 秒），滚动不掉帧；</li>
+<li>协作与 AI 是<strong>内核原生</strong>能力，不是外挂插件；开源、可审计、支持自带 API Key。</li>
+</ul>
+<p><strong>短板</strong>：</p>
+<ul>
+<li>扩展生态约 <strong>800 个</strong>，对比 VS Code 的 5 万+，这个差距不是一两年能追上的；</li>
+<li>明确缺失的类型：数据库浏览器、API 测试客户端（没有 REST Client 等价物）、云服务集成面板、长尾语言的专用 linter；</li>
+<li>Windows 版是后补的，成熟度不如 macOS / Linux（macOS 上基于 Metal，Linux 依赖 Vulkan）。</li>
+</ul>
+<p><strong>适合</strong>：macOS / Linux 用户、对编辑器「跟手程度」敏感、日常不依赖长尾插件的人。</p>
+<h3 id="5-4-JetBrains-全家桶：深度换来重量"><a href="#5-4-JetBrains-全家桶：深度换来重量" class="headerlink" title="5.4 JetBrains 全家桶：深度换来重量"></a>5.4 JetBrains 全家桶：深度换来重量</h3><p><strong>定位</strong>：IntelliJ IDEA / PyCharm / WebStorm / PhpStorm / GoLand / RustRover / Rider / CLion 一整套，每种语言一个专用 IDE。</p>
+<p><strong>强在哪</strong>：</p>
+<ul>
+<li>静态分析与重构深度是行业天花板。IntelliJ 里重命名一个类，能正确更新所有引用、XML 配置和注解；</li>
+<li>开箱即用：数据库工具、HTTP Client、Profiler、测试框架、Docker 集成全都在里面，不需要攒插件；</li>
+<li>调试器是各语言里最成熟的；对框架的语义理解（Spring、Django、Laravel 等）远超通用编辑器；</li>
+<li>用 All Products Pack 就能覆盖全部语言。</li>
+</ul>
+<p><strong>短板</strong>（这也基本是用户抱怨最集中的地方）：</p>
+<ul>
+<li><strong>每种语言一个 IDE</strong>：Java 一个、Python 一个、PHP 一个，多语言项目就意味着同时装三四个，甚至同时开三四个；</li>
+<li><strong>内存占用大</strong>：单实例常驻 1.5~4 GB，索引期更高。开两个就吃掉大半内存，开三个基本告别其他应用；</li>
+<li><strong>启动慢</strong>：冷启动通常 5~15 秒，第一次打开还要等索引，这与「随手看一眼」的场景天然冲突；</li>
+<li><strong>卡顿</strong>：在内存吃紧的机器上，GC 停顿会让输入出现肉眼可见的延迟；</li>
+<li><strong>价格</strong>：All Products Pack 个人订阅约 $289~779/年（视年限与折扣），团队采购成本更高。</li>
+</ul>
+<p><strong>适合</strong>：Java / Kotlin / PHP 为主力语言、重构频繁、且机器配置（16 GB+ 内存 + SSD）跟得上的团队。</p>
+<h3 id="5-5-Sublime-Text：还在的轻量老将"><a href="#5-5-Sublime-Text：还在的轻量老将" class="headerlink" title="5.5 Sublime Text：还在的轻量老将"></a>5.5 Sublime Text：还在的轻量老将</h3><p><strong>定位</strong>：秒开、极简、买断制。</p>
+<p><strong>强在哪</strong>：</p>
+<ul>
+<li>冷启动约 0.3 秒、内存 100~250 MB；</li>
+<li>多光标与文本操作体验依然是同类里的标杆；</li>
+<li>$99 一次性买断，没有订阅焦虑。</li>
+</ul>
+<p><strong>短板</strong>：AI 与插件生态弱，框架理解浅，做「项目级」代码阅读时需要额外配置 LSP 客户端。</p>
+<p><strong>适合</strong>：以文本操作和快速查看为主、不需要复杂项目理解的人。</p>
+<h3 id="5-6-Neovim：终端党与远程党的最优解"><a href="#5-6-Neovim：终端党与远程党的最优解" class="headerlink" title="5.6 Neovim：终端党与远程党的最优解"></a>5.6 Neovim：终端党与远程党的最优解</h3><p><strong>定位</strong>：模态编辑 + Lua 配置 + 完整 LSP 能力。</p>
+<p><strong>强在哪</strong>：</p>
+<ul>
+<li>内存 <strong>50~200 MB</strong>，冷启动约 0.2 秒，是六款里最省的；</li>
+<li>SSH、容器、服务器里零依赖——VS Code Remote 还需要在远端跑一个 server，Neovim 什么都不需要；</li>
+<li>配好 <code>nvim-lspconfig</code> 后，跳转、引用、悬停、重命名和 VS Code 是同一套语言服务器，能力并不缩水；</li>
+<li>Stack Overflow 2025 数据显示 Neovim 使用率约 14%，而 Vim 的操作理念（hjkl、text objects）已经被几乎所有编辑器吸收。</li>
+</ul>
+<p><strong>短板</strong>：达到「比原来更快」的水平通常需要 3~6 个月，第一个月反而更慢；配置需要自己长期维护。</p>
+<p><strong>适合</strong>：终端原生工作流、经常在远程服务器上读代码、愿意投入学习成本的人。</p>
+<h3 id="六款速查"><a href="#六款速查" class="headerlink" title="六款速查"></a>六款速查</h3><p><img src="/images/editor/editor_tradeoff.png" alt="六款主流编辑器优缺点速查"></p>
+<hr>
+<h2 id="六、性能与内存：把数据摆出来"><a href="#六、性能与内存：把数据摆出来" class="headerlink" title="六、性能与内存：把数据摆出来"></a>六、性能与内存：把数据摆出来</h2><p>「快」这件事不能只靠感觉。下面是同一台 M 系 Mac、同一份中型仓库下，社区实测的中值（会随机器和扩展数量浮动）。</p>
+<p><img src="/images/editor/editor_perf.png" alt="启动速度与内存占用对比"></p>
+<table>
+<thead>
+<tr>
+<th>编辑器</th>
+<th>冷启动</th>
+<th>内存占用</th>
+<th>关键提示</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Neovim</td>
+<td>~0.2s</td>
+<td>50~200 MB</td>
+<td>配置好插件后</td>
+</tr>
+<tr>
+<td>Sublime Text</td>
+<td>~0.3s</td>
+<td>100~250 MB</td>
+<td>轻量老将</td>
+</tr>
+<tr>
+<td><strong>Zed</strong></td>
+<td><strong>~0.4s</strong></td>
+<td><strong>~220 MB</strong></td>
+<td>Rust + GPU 渲染</td>
+</tr>
+<tr>
+<td>VS Code</td>
+<td>~2.0s</td>
+<td>~600 MB</td>
+<td>重扩展可到 1.5 GB+</td>
+</tr>
+<tr>
+<td>Cursor</td>
+<td>~2.5s</td>
+<td>~750 MB</td>
+<td>重度场景可达 2 GB</td>
+</tr>
+<tr>
+<td>JetBrains 系</td>
+<td>~10s</td>
+<td>~2500 MB</td>
+<td>索引期更高</td>
+</tr>
+</tbody></table>
+<p>如果这个差距看起来有点夸张，它其实有明确的架构原因：<strong>VS Code 打开一个文件夹会派生 23 个以上进程，而 Zed 大约只用 5 个。</strong></p>
+<p>不过更重要的是<strong>趋势</strong>，而不只是开机那一刻的数字。</p>
+<p><img src="/images/editor/editor_scale.png" alt="内存占用随项目规模的变化趋势"></p>
+<ul>
+<li><strong>VS Code / Cursor</strong>：内存随扩展数量和仓库规模一起涨。这就是「刚装完很流畅，用半年就卡」的根因——不是软件变差了，是你装的东西变多了。</li>
+<li><strong>JetBrains 系</strong>：起步就高，索引期还会冲到峰值，但<strong>索引完成之后趋于平稳</strong>。也就是说，那 2~4 GB 买的是更深的代码理解，不是纯粹的开销。如果你的机器够好，这笔交易是划算的。</li>
+<li><strong>Zed / Neovim / Sublime</strong>：曲线几乎是平的，基本不随项目规模膨胀。</li>
+</ul>
+<p><strong>怎么解读这组数据？</strong></p>
+<p>一句话：<strong>单看「打开就快」，原生编辑器领先一个数量级；但重型 IDE 是在用索引换更深的代码理解，两者不是同一类商品。</strong></p>
+<p>所以选型的关键不是「谁更快」，而是<strong>你的主要动作是什么</strong>：如果主要是「打开、看一眼、跳两下、关掉」，那启动速度和内存就是你最该付钱的指标；如果主要是「在大仓库里安全地改结构」，那索引深度才是。</p>
+<hr>
+<h2 id="七、一个编辑器能不能看所有语言？"><a href="#七、一个编辑器能不能看所有语言？" class="headerlink" title="七、一个编辑器能不能看所有语言？"></a>七、一个编辑器能不能看所有语言？</h2><p>回到最实际的问题。先说结论：<strong>技术上早就成立了，但有边界。</strong></p>
+<p>突破点在于 <strong>LSP（Language Server Protocol）</strong>。它把「语言智能」从编辑器里解耦出来，变成独立的服务进程——编辑器只负责发请求，语言服务器负责理解代码。这套协议最初就是微软为 VS Code 设计的，现在几乎成了行业标准。</p>
+<p>所以语言支持不再是编辑器的能力上限，而是「有没有对应的语言服务器」。而主流语言，全都有。</p>
+<p><img src="/images/editor/editor_lang_matrix.png" alt="六大编辑器流派对不同语言的代码智能覆盖"></p>
+<p>从矩阵可以看到：<strong>Java、Python、PHP、JavaScript / TS、Go、Rust 这几门主流语言，在六大流派里基本都能拿到 LSP 支持。</strong> 一个编辑器看所有语言，在语言覆盖层面没有障碍。</p>
+<p>但「有没有」和「有多深」是两回事。差异主要出在三个地方：</p>
+<ol>
+<li><strong>重构的安全性与深度</strong>：Java / Kotlin 这种强类型 + 复杂继承结构的语言，IntelliJ 的静态分析仍然明显领先；</li>
+<li><strong>框架语义理解</strong>：比如 Spring 的注解、Laravel 的约定、Django 的 ORM——专用 IDE 对这些的理解比通用 LSP 深；</li>
+<li><strong>调试与数据库等外围工具</strong>：这些 VS Code 要靠插件拼，JetBrains 是原生自带。</li>
+</ol>
+<p>那「看代码」这件事，为什么必须有语义能力？因为这个差别是量级上的。</p>
+<p><img src="/images/editor/editor_lsp.png" alt="文本检索与语义导航的能力对比"></p>
+<p>同样是找一处引用：</p>
+<ul>
+<li><strong>纯文本检索</strong>：全库搜 <code>verifyToken</code> 出来 47 个匹配，函数、变量、注释里的词混在一起，得人工逐个判断；一次引用查找约 <strong>45 秒</strong>，返回结果约 2000+ token；</li>
+<li><strong>语义导航</strong>：跳转定义、查找引用、悬停类型、重命名符号、实时诊断；一次引用查找约 <strong>50 毫秒</strong>，返回约 500 token。</li>
+</ul>
+<p>差了大约 <strong>900 倍</strong>，而且语义导航不会给你误报。</p>
+<p>这也就是为什么「看代码」这件事，至今仍然需要编辑器——<strong>它是目前唯一能把语义导航做成顺手交互界面的东西。</strong></p>
+<hr>
+<h2 id="八、手里有-Java-Python-PHP-JS-多个项目，怎么选？"><a href="#八、手里有-Java-Python-PHP-JS-多个项目，怎么选？" class="headerlink" title="八、手里有 Java / Python / PHP / JS 多个项目，怎么选？"></a>八、手里有 Java / Python / PHP / JS 多个项目，怎么选？</h2><p>把前面的结论收拢成可执行方案。</p>
+<p><img src="/images/editor/editor_decision.png" alt="多语言项目编辑器选型决策"></p>
+<h3 id="方案-A：VS-Code-单核（推荐给大多数人）"><a href="#方案-A：VS-Code-单核（推荐给大多数人）" class="headerlink" title="方案 A：VS Code 单核（推荐给大多数人）"></a>方案 A：VS Code 单核（推荐给大多数人）</h3><p><strong>配置</strong>：VS Code + 语言扩展包（Extension Pack for Java、Python + Pylance、Intelephense、ESLint + Prettier）。</p>
+<p><strong>为什么</strong>：免费、一套快捷键、一套设置、一套主题，所有语言在同一个窗口里跳转。多语言项目的最大痛点（多个 IDE、多份内存、多套操作习惯）一次解决。</p>
+<p><strong>注意</strong>：Java 的重构深度不如 IntelliJ；扩展要克制，尽量用官方扩展包，装完观察一下内存。</p>
+<h3 id="方案-B：Zed-打底-VS-Code-兜底（性能敏感型）"><a href="#方案-B：Zed-打底-VS-Code-兜底（性能敏感型）" class="headerlink" title="方案 B：Zed 打底 + VS Code 兜底（性能敏感型）"></a>方案 B：Zed 打底 + VS Code 兜底（性能敏感型）</h3><p><strong>配置</strong>：日常阅读、审 diff、快速跳转用 Zed；需要数据库浏览器、API 测试这类长尾插件时，切回 VS Code。</p>
+<p><strong>为什么</strong>：Zed 覆盖了主流语言的 LSP，日常读代码体验几乎没有妥协，而 0.4 秒启动让「随手看一眼」真正成立。VS Code 只在少数场景作为补充。</p>
+<p><strong>注意</strong>：Zed 插件生态约 800 个，遇到长尾需求要接受「换工具」这件事。</p>
+<h3 id="方案-C：IntelliJ-VS-Code-双轨（Java-重仓型）"><a href="#方案-C：IntelliJ-VS-Code-双轨（Java-重仓型）" class="headerlink" title="方案 C：IntelliJ + VS Code 双轨（Java 重仓型）"></a>方案 C：IntelliJ + VS Code 双轨（Java 重仓型）</h3><p><strong>配置</strong>：Java / Kotlin 主力开发用 IntelliJ IDEA；Python、PHP、JS 的阅读与轻量修改放 VS Code。</p>
+<p><strong>为什么</strong>：把重型 IDE 的「贵」（内存、启动）只花在真正需要深度重构的 Java 上，其余语言用轻量工具覆盖，避免同时开三个 JetBrains IDE。这是对「每种语言一个 IDE」最务实的修正。</p>
+<h3 id="附：多语言-VS-Code-配置清单"><a href="#附：多语言-VS-Code-配置清单" class="headerlink" title="附：多语言 VS Code 配置清单"></a>附：多语言 VS Code 配置清单</h3><p>如果你选了方案 A，<code>extensions.json</code> 可以直接抄这份：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;recommendations&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;vscjava.vscode-java-pack&quot;</span>,</span><br><span class="line">    <span class="string">&quot;ms-python.python&quot;</span>,</span><br><span class="line">    <span class="string">&quot;ms-python.vscode-pylance&quot;</span>,</span><br><span class="line">    <span class="string">&quot;bmewburn.vscode-intelephense-client&quot;</span>,</span><br><span class="line">    <span class="string">&quot;dbaeumer.vscode-eslint&quot;</span>,</span><br><span class="line">    <span class="string">&quot;esbenp.prettier-vscode&quot;</span>,</span><br><span class="line">    <span class="string">&quot;redhat.vscode-xml&quot;</span>,</span><br><span class="line">    <span class="string">&quot;redhat.vscode-yaml&quot;</span>,</span><br><span class="line">    <span class="string">&quot;mtxr.sqltools&quot;</span>,</span><br><span class="line">    <span class="string">&quot;eamodio.gitlens&quot;</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再补两个关键设置，让大仓库里的阅读体验好一些：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;files.watcherExclude&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;**/node_modules/**&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">&quot;**/target/**&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">&quot;**/vendor/**&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">&quot;**/.git/objects/**&quot;</span>: <span class="literal">true</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;search.exclude&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;**/node_modules&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">&quot;**/dist&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">&quot;**/vendor&quot;</span>: <span class="literal">true</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;editor.largeFileOptimizations&quot;</span>: <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>把 <code>node_modules</code>、<code>vendor</code>、<code>target</code> 这类目录排除掉，是缓解 VS Code 卡顿最有效的一招——很多「VS Code 变慢了」的问题，根源是它在监听几万个不需要关心的文件。</p>
+<hr>
+<h2 id="九、AI-时代的工作流：编辑器和-Agent-怎么配合"><a href="#九、AI-时代的工作流：编辑器和-Agent-怎么配合" class="headerlink" title="九、AI 时代的工作流：编辑器和 Agent 怎么配合"></a>九、AI 时代的工作流：编辑器和 Agent 怎么配合</h2><p>既然前面反复强调「Agent 写、编辑器看」，那就给一个具体的协作模式。</p>
+<p><strong>第一步：让 Agent 改。</strong> 把任务描述清楚（技术栈、约束、边界条件），让 Claude Code / Codex CLI 这类工具去改。这个阶段不要盯着屏幕。</p>
+<p><strong>第二步：用编辑器审。</strong> 用户只做一件事——<strong>看清楚改了什么</strong>。这时候你应该：</p>
+<ul>
+<li>打开 diff，逐块看改动；</li>
+<li>对不认识的符号按「跳转定义」（VS Code <code>F12</code> / JetBrains <code>Cmd+B</code> / Zed <code>Cmd+↓</code>）；</li>
+<li>对可疑的改动按「查找引用」，确认影响面；</li>
+<li>用调用层级面板看这条链的上游下游。</li>
+</ul>
+<p><strong>第三步：有疑问再让 Agent 解释。</strong> 但不建议让它代替你判断——它解释的是它自己的代码，天然有偏差。</p>
+<p>这里还有一个 2026 年很实用的补充工具：<strong>本地代码图索引</strong>。像 CodeGraph 这类工具，会在本地把仓库预索引成「符号 + 调用关系」的图，直接回答「谁调用了这个函数」而不是全文搜索。它的官方基准显示，在大型仓库上能让 Agent 的工具调用减少约 **71%**、token 省 **57%**、探索时间省 **46%**——对一个三五千文件的仓库，「这个功能是怎么串起来的」这类问题，从 50 多次工具调用降到个位数。</p>
+<p>对多语言项目来说，这类工具的价值尤其大：<strong>它不关心语言，只关心符号和调用关系</strong>，正好补上跨语言阅读时最缺的那张「全局地图」。</p>
+<hr>
+<h2 id="十、接下来会怎么走"><a href="#十、接下来会怎么走" class="headerlink" title="十、接下来会怎么走"></a>十、接下来会怎么走</h2><p><img src="/images/editor/editor_trend.png" alt="编辑器与代码阅读的五条趋势"></p>
+<ol>
+<li><strong>编辑器的角色重构</strong>：从「打字的地方」变成「Agent 改完、你来审的地方」。审阅、对照、diff 会成为编辑器的第一等公民。</li>
+<li><strong>语义索引下沉到本地</strong>：本地代码图（CodeGraph 等）让「理解仓库」的成本大幅下降，看代码不再靠盲搜。</li>
+<li><strong>原生性能路线复兴</strong>：Rust / Zig 写的编辑器继续吃份额；Electron 派则靠 AI 能力和插件生态守住阵地。两条路线会长期并存。</li>
+<li><strong>多语言统一入口成为常态</strong>：LSP 标准化 + 一个编辑器看所有项目，会成为默认选择；IDE 全家桶退守「重度语言 + 深度重构」这个细分场景。</li>
+<li><strong>审阅能力变成硬通货</strong>：当近半数代码由 AI 生成，「看得懂」这件事的价值只会继续上升。会用编辑器把代码读明白的人，和只会按 Tab 接受补全的人，差距会越来越大。</li>
+</ol>
+<hr>
+<h2 id="十一、总结"><a href="#十一、总结" class="headerlink" title="十一、总结"></a>十一、总结</h2><p>回到开头那个问题：<strong>AI 时代，用什么看代码？</strong></p>
+<p>三条经验，可以直接拿走：</p>
+<p><strong>第一，把「写」和「看」分开选工具。</strong> 不要指望一个终端 Agent 同时给你 IDE 级的阅读体验，也不要为了「能改代码」而忍受一个 2.5 GB 内存的重型 IDE 只用来读几行逻辑。Agent 负责写，编辑器负责看，各买各的。</p>
+<p><strong>第二，多语言项目优先解决「统一」而不是「深度」。</strong> 如果你同时维护 Java / Python / PHP / JS，最大的收益来自「所有语言在同一个窗口里跳转」——这能省掉大量上下文切换成本。方案 A（VS Code 单核）或者方案 B（Zed 打底）就能拿到这个收益；只有当某门语言的深度重构成为日常瓶颈时，才值得为它单独配一个重型 IDE。</p>
+<p><strong>第三，性能是「看代码」场景里的隐性刚需。</strong> 读代码是高频、短时、容易被打算的动作。一个要等 10 秒启动、吃 2 GB 内存的工具，会实实在在地劝退你「随手看一眼」的意愿——而恰恰是这些随手看的时刻，决定了你对整个代码库的理解密度。</p>
+<p>最后一句：工具会继续换代，今天的最优解明年可能就变了。但那个判断标准不会变——<strong>能让你更快读懂别人（或 AI）写的代码的工具，就是当下对你最好的工具。</strong></p>
+<hr>
+<blockquote>
+<p>数据口径说明：启动与内存数据来自社区实测与厂商公开基准（同一台 M 系 Mac / 中型仓库，取中值，会随机器配置与扩展数量浮动）；AI 代码占比、调试耗时、信任度等数据来自 2026 年多家机构的开发者调研与行业报告；LSP 性能对比（45s vs 50ms、2000+ vs 500 token）来自 Codex LSP 桥接项目的实测。以上均作量级参考，选型请以你自己的项目和机器复测为准。</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://lizejiao.github.io">李苟蛋</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://lizejiao.github.io/2026/10/14/AI%E6%8A%80%E6%9C%AF/AI%E6%97%B6%E4%BB%A3%E7%94%A8%E4%BB%80%E4%B9%88%E7%9C%8B%E4%BB%A3%E7%A0%81-2026%E4%B8%BB%E6%B5%81%E4%BB%A3%E7%A0%81%E7%BC%96%E8%BE%91%E5%99%A8%E5%85%A8%E6%A8%AA%E8%AF%84/">https://lizejiao.github.io/2026/10/14/AI技术/AI时代用什么看代码-2026主流代码编辑器全横评/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://lizejiao.github.io" target="_blank">老李家の苟蛋子</a> 许可协议。转载请注明来源 <a href="https://lizejiao.github.io" target="_blank">李苟蛋の家</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI%E6%8A%80%E6%9C%AF/">AI技术</a><a class="post-meta__tags" href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/">开发工具</a></div><div class="post-share"><div class="social-share" data-image="/images/editor/editor_cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat_pay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat_pay.jpg" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/10/14/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E8%83%BD%E8%B7%91%E5%88%B0%E8%83%BD%E7%AE%A1-%E4%BC%81%E4%B8%9A%E7%BA%A7Agent%E7%AE%A1%E7%90%86%E4%B8%8E%E6%B2%BB%E7%90%86%E5%B9%B3%E5%8F%B0%E6%9E%B6%E6%9E%84%E5%85%A8%E8%A7%A3/" title="从「能跑」到「能管」：企业级 Agent 管理与治理平台架构全解"><img class="cover" src="/images/agenthub/agenthub_cover.png" onerror="onerror=null;src='/img/error_404.png'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">从「能跑」到「能管」：企业级 Agent 管理与治理平台架构全解</div></div><div class="info-2"><div class="info-item-1">一篇写给工程师的企业级 Agent 治理指南：为什么「造得快」反而成了新问题、控制面与执行面如何分离、Agent/Version/Bundle 资产模型怎么设计、标准化交付与主动拉取、可观测与 Token 成本归因、Agent 身份与网关安全四道防线，附 150 行可运行的本地 Demo、开源与商业方案横向对比、四阶段落地路线，以及现存问题与趋势预测。</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/10/14/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E8%83%BD%E8%B7%91%E5%88%B0%E8%83%BD%E7%AE%A1-%E4%BC%81%E4%B8%9A%E7%BA%A7Agent%E7%AE%A1%E7%90%86%E4%B8%8E%E6%B2%BB%E7%90%86%E5%B9%B3%E5%8F%B0%E6%9E%B6%E6%9E%84%E5%85%A8%E8%A7%A3/" title="从「能跑」到「能管」：企业级 Agent 管理与治理平台架构全解"><img class="cover" src="/images/agenthub/agenthub_cover.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-14</div><div class="info-item-2">从「能跑」到「能管」：企业级 Agent 管理与治理平台架构全解</div></div><div class="info-2"><div class="info-item-1">一篇写给工程师的企业级 Agent 治理指南：为什么「造得快」反而成了新问题、控制面与执行面如何分离、Agent/Version/Bundle 资产模型怎么设计、标准化交付与主动拉取、可观测与 Token 成本归因、Agent 身份与网关安全四道防线，附 150 行可运行的本地 Demo、开源与商业方案横向对比、四阶段落地路线，以及现存问题与趋势预测。</div></div></div></a><a class="pagination-related" href="/2026/06/25/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E5%88%B0%E7%BB%9F%E4%B8%80AI-Registry-Nacos3.1%E5%88%B03.3%E6%99%BA%E8%83%BD%E4%BD%93%E5%9F%BA%E5%BB%BA%E8%B1%AA%E8%B5%8C/" title="从微服务注册中心到统一AI Registry：Nacos 3.1→3.3的智能体基建豪赌"><img class="cover" src="/images/nacos/nacos_ai_cover.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-25</div><div class="info-item-2">从微服务注册中心到统一AI Registry：Nacos 3.1→3.3的智能体基建豪赌</div></div><div class="info-2"><div class="info-item-1">Nacos 3.x 把「服务注册发现」这套微服务成熟范式平移到了 AI 智能体生态：MCP、Agent、Skill、Prompt 全部纳入统一 AI Registry。本文含版本速览、核心能力拆解、本地 Demo 超详细搭建、企业级落地方案、现存问题与趋势预测</div></div></div></a><a class="pagination-related" href="/2026/09/30/AI%E6%8A%80%E6%9C%AF/%E6%80%BB%E6%8C%87%E6%8C%A5+%E8%B4%A8%E6%A3%80%E5%91%98-2026%E4%BC%A0%E7%BB%9F%E8%A1%8C%E4%B8%9A%E4%BC%81%E4%B8%9A%E7%BA%A7Agent%E7%9A%84%E4%B8%89%E5%B1%82%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E8%90%BD%E5%9C%B0%E6%96%B9%E6%B3%95%E8%AE%BA/" title="总指挥 + 质检员：2026 传统行业企业级 Agent 的三层多智能体落地方法论"><img class="cover" src="/images/agent3/agent3_cover.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-30</div><div class="info-item-2">总指挥 + 质检员：2026 传统行业企业级 Agent 的三层多智能体落地方法论</div></div><div class="info-2"><div class="info-item-1">一篇写给工程师的企业级多智能体落地指南：为什么单智能体不够用、如何用 LangGraph 搭建「规划—执行—质检」三层架构、Skill 工具库与 MCP 工具调用层、质检员/风控官治理设计、可运行的代码示例、传统行业落地案例与趋势判断。</div></div></div></a><a class="pagination-related" href="/2026/03/18/AI%E6%8A%80%E6%9C%AF/%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8BRAG%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97/" title="企业级智能助手 RAG 搭建指南：从原理到落地，一次讲透"><img class="cover" src="/images/ai/rag_cover.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-18</div><div class="info-item-2">企业级智能助手 RAG 搭建指南：从原理到落地，一次讲透</div></div><div class="info-2"><div class="info-item-1">一份写给工程师的企业级 RAG 全栈指南：优势与企业用途、双链路原理与六大组件拆解、向量库与 Embedding 模型对比、GitHub 开源知识库选型、本地 Demo 搭建、智能客服生产落地数据、现存缺陷与未来趋势预测</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="avatar"/></div><div class="author-info-name">李苟蛋</div><div class="author-info-description">欢迎来到李苟蛋的博客....</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lizejiao"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/lizejiao" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:xxxxxx@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content"><p>欢迎来到李苟蛋的个人博客，对本站的文章和技术问题有疑问或建议，欢迎留言，或者关注我的公众号：<strong>狗蛋的智栈</strong></p> <div style="text-align:center; margin-top:10px;">
+  <img src="/images/aboutme/wechat_mp.jpg" alt="公众号：狗蛋的智栈" style="width:170px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,.15);" />
+  <div style="font-size:12px; color:#999; margin-top:6px;">扫码关注「狗蛋的智栈」</div>
+</div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F%E8%A8%80"><span class="toc-text">序言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%85%88%E6%83%B3%E6%B8%85%E6%A5%9A%EF%BC%9A%E4%BD%A0%E8%A6%81%E7%9A%84%E6%98%AF%E3%80%8C%E5%86%99%E3%80%8D%EF%BC%8C%E8%BF%98%E6%98%AF%E3%80%8C%E7%9C%8B%E3%80%8D"><span class="toc-text">一、先想清楚：你要的是「写」，还是「看」</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%A4%9A%E8%AF%AD%E8%A8%80%E9%A1%B9%E7%9B%AE%E3%80%8C%E7%9C%8B%E4%BB%A3%E7%A0%81%E3%80%8D%EF%BC%8C%E5%88%B0%E5%BA%95%E9%9A%BE%E5%9C%A8%E5%93%AA"><span class="toc-text">二、多语言项目「看代码」，到底难在哪</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E8%AF%84%E6%B5%8B%E6%A1%86%E6%9E%B6%EF%BC%9A%E7%9C%8B%E4%BB%A3%E7%A0%81%E8%AF%A5%E7%9C%8B%E8%BF%99%E5%85%AD%E4%BB%B6%E4%BA%8B"><span class="toc-text">三、评测框架：看代码该看这六件事</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%812026-%E5%B9%B4%E7%9A%84%E7%BC%96%E8%BE%91%E5%99%A8%E7%94%9F%E6%80%81%EF%BC%9A%E4%BA%94%E4%B8%AA%E6%B5%81%E6%B4%BE"><span class="toc-text">四、2026 年的编辑器生态：五个流派</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E9%80%90%E4%B8%AA%E6%8B%86%EF%BC%9A%E5%85%AD%E6%AC%BE%E4%B8%BB%E5%8A%9B%E7%9A%84%E7%9C%9F%E5%AE%9E%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-text">五、逐个拆：六款主力的真实优缺点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-VS-Code%EF%BC%9A%E7%94%9F%E6%80%81%E6%9C%80%E5%8E%9A%E7%9A%84%E9%BB%98%E8%AE%A4%E7%AD%94%E6%A1%88"><span class="toc-text">5.1 VS Code：生态最厚的默认答案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-Cursor%EF%BC%9AVS-Code-%E5%8A%A0%E4%BA%86%E4%B8%80%E4%B8%AA%E3%80%8C%E5%A4%A7%E8%84%91%E3%80%8D"><span class="toc-text">5.2 Cursor：VS Code 加了一个「大脑」</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-Zed%EF%BC%9A%E8%BF%99%E4%B8%AA%E6%97%B6%E4%BB%A3%E5%B0%91%E8%A7%81%E7%9A%84%E3%80%8C%E6%80%A7%E8%83%BD%E5%8E%9F%E6%95%99%E6%97%A8%E4%B8%BB%E4%B9%89%E3%80%8D"><span class="toc-text">5.3 Zed：这个时代少见的「性能原教旨主义」</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-JetBrains-%E5%85%A8%E5%AE%B6%E6%A1%B6%EF%BC%9A%E6%B7%B1%E5%BA%A6%E6%8D%A2%E6%9D%A5%E9%87%8D%E9%87%8F"><span class="toc-text">5.4 JetBrains 全家桶：深度换来重量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-5-Sublime-Text%EF%BC%9A%E8%BF%98%E5%9C%A8%E7%9A%84%E8%BD%BB%E9%87%8F%E8%80%81%E5%B0%86"><span class="toc-text">5.5 Sublime Text：还在的轻量老将</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-6-Neovim%EF%BC%9A%E7%BB%88%E7%AB%AF%E5%85%9A%E4%B8%8E%E8%BF%9C%E7%A8%8B%E5%85%9A%E7%9A%84%E6%9C%80%E4%BC%98%E8%A7%A3"><span class="toc-text">5.6 Neovim：终端党与远程党的最优解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AD%E6%AC%BE%E9%80%9F%E6%9F%A5"><span class="toc-text">六款速查</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E6%80%A7%E8%83%BD%E4%B8%8E%E5%86%85%E5%AD%98%EF%BC%9A%E6%8A%8A%E6%95%B0%E6%8D%AE%E6%91%86%E5%87%BA%E6%9D%A5"><span class="toc-text">六、性能与内存：把数据摆出来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E4%B8%80%E4%B8%AA%E7%BC%96%E8%BE%91%E5%99%A8%E8%83%BD%E4%B8%8D%E8%83%BD%E7%9C%8B%E6%89%80%E6%9C%89%E8%AF%AD%E8%A8%80%EF%BC%9F"><span class="toc-text">七、一个编辑器能不能看所有语言？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E6%89%8B%E9%87%8C%E6%9C%89-Java-Python-PHP-JS-%E5%A4%9A%E4%B8%AA%E9%A1%B9%E7%9B%AE%EF%BC%8C%E6%80%8E%E4%B9%88%E9%80%89%EF%BC%9F"><span class="toc-text">八、手里有 Java &#x2F; Python &#x2F; PHP &#x2F; JS 多个项目，怎么选？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%A1%88-A%EF%BC%9AVS-Code-%E5%8D%95%E6%A0%B8%EF%BC%88%E6%8E%A8%E8%8D%90%E7%BB%99%E5%A4%A7%E5%A4%9A%E6%95%B0%E4%BA%BA%EF%BC%89"><span class="toc-text">方案 A：VS Code 单核（推荐给大多数人）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%A1%88-B%EF%BC%9AZed-%E6%89%93%E5%BA%95-VS-Code-%E5%85%9C%E5%BA%95%EF%BC%88%E6%80%A7%E8%83%BD%E6%95%8F%E6%84%9F%E5%9E%8B%EF%BC%89"><span class="toc-text">方案 B：Zed 打底 + VS Code 兜底（性能敏感型）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%A1%88-C%EF%BC%9AIntelliJ-VS-Code-%E5%8F%8C%E8%BD%A8%EF%BC%88Java-%E9%87%8D%E4%BB%93%E5%9E%8B%EF%BC%89"><span class="toc-text">方案 C：IntelliJ + VS Code 双轨（Java 重仓型）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%EF%BC%9A%E5%A4%9A%E8%AF%AD%E8%A8%80-VS-Code-%E9%85%8D%E7%BD%AE%E6%B8%85%E5%8D%95"><span class="toc-text">附：多语言 VS Code 配置清单</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D%E3%80%81AI-%E6%97%B6%E4%BB%A3%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%EF%BC%9A%E7%BC%96%E8%BE%91%E5%99%A8%E5%92%8C-Agent-%E6%80%8E%E4%B9%88%E9%85%8D%E5%90%88"><span class="toc-text">九、AI 时代的工作流：编辑器和 Agent 怎么配合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E3%80%81%E6%8E%A5%E4%B8%8B%E6%9D%A5%E4%BC%9A%E6%80%8E%E4%B9%88%E8%B5%B0"><span class="toc-text">十、接下来会怎么走</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%B8%80%E3%80%81%E6%80%BB%E7%BB%93"><span class="toc-text">十一、总结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/10/14/AI%E6%8A%80%E6%9C%AF/AI%E6%97%B6%E4%BB%A3%E7%94%A8%E4%BB%80%E4%B9%88%E7%9C%8B%E4%BB%A3%E7%A0%81-2026%E4%B8%BB%E6%B5%81%E4%BB%A3%E7%A0%81%E7%BC%96%E8%BE%91%E5%99%A8%E5%85%A8%E6%A8%AA%E8%AF%84/" title="AI 时代，用什么看代码：2026 主流代码编辑器全横评"><img src="/images/editor/editor_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="AI 时代，用什么看代码：2026 主流代码编辑器全横评"/></a><div class="content"><a class="title" href="/2026/10/14/AI%E6%8A%80%E6%9C%AF/AI%E6%97%B6%E4%BB%A3%E7%94%A8%E4%BB%80%E4%B9%88%E7%9C%8B%E4%BB%A3%E7%A0%81-2026%E4%B8%BB%E6%B5%81%E4%BB%A3%E7%A0%81%E7%BC%96%E8%BE%91%E5%99%A8%E5%85%A8%E6%A8%AA%E8%AF%84/" title="AI 时代，用什么看代码：2026 主流代码编辑器全横评">AI 时代，用什么看代码：2026 主流代码编辑器全横评</a><time datetime="2026-10-14T13:45:00.000Z" title="发表于 2026-10-14 21:45:00">2026-10-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/14/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E8%83%BD%E8%B7%91%E5%88%B0%E8%83%BD%E7%AE%A1-%E4%BC%81%E4%B8%9A%E7%BA%A7Agent%E7%AE%A1%E7%90%86%E4%B8%8E%E6%B2%BB%E7%90%86%E5%B9%B3%E5%8F%B0%E6%9E%B6%E6%9E%84%E5%85%A8%E8%A7%A3/" title="从「能跑」到「能管」：企业级 Agent 管理与治理平台架构全解"><img src="/images/agenthub/agenthub_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="从「能跑」到「能管」：企业级 Agent 管理与治理平台架构全解"/></a><div class="content"><a class="title" href="/2026/10/14/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E8%83%BD%E8%B7%91%E5%88%B0%E8%83%BD%E7%AE%A1-%E4%BC%81%E4%B8%9A%E7%BA%A7Agent%E7%AE%A1%E7%90%86%E4%B8%8E%E6%B2%BB%E7%90%86%E5%B9%B3%E5%8F%B0%E6%9E%B6%E6%9E%84%E5%85%A8%E8%A7%A3/" title="从「能跑」到「能管」：企业级 Agent 管理与治理平台架构全解">从「能跑」到「能管」：企业级 Agent 管理与治理平台架构全解</a><time datetime="2026-10-14T09:40:00.000Z" title="发表于 2026-10-14 17:40:00">2026-10-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/30/AI%E6%8A%80%E6%9C%AF/%E6%80%BB%E6%8C%87%E6%8C%A5+%E8%B4%A8%E6%A3%80%E5%91%98-2026%E4%BC%A0%E7%BB%9F%E8%A1%8C%E4%B8%9A%E4%BC%81%E4%B8%9A%E7%BA%A7Agent%E7%9A%84%E4%B8%89%E5%B1%82%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E8%90%BD%E5%9C%B0%E6%96%B9%E6%B3%95%E8%AE%BA/" title="总指挥 + 质检员：2026 传统行业企业级 Agent 的三层多智能体落地方法论"><img src="/images/agent3/agent3_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="总指挥 + 质检员：2026 传统行业企业级 Agent 的三层多智能体落地方法论"/></a><div class="content"><a class="title" href="/2026/09/30/AI%E6%8A%80%E6%9C%AF/%E6%80%BB%E6%8C%87%E6%8C%A5+%E8%B4%A8%E6%A3%80%E5%91%98-2026%E4%BC%A0%E7%BB%9F%E8%A1%8C%E4%B8%9A%E4%BC%81%E4%B8%9A%E7%BA%A7Agent%E7%9A%84%E4%B8%89%E5%B1%82%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E8%90%BD%E5%9C%B0%E6%96%B9%E6%B3%95%E8%AE%BA/" title="总指挥 + 质检员：2026 传统行业企业级 Agent 的三层多智能体落地方法论">总指挥 + 质检员：2026 传统行业企业级 Agent 的三层多智能体落地方法论</a><time datetime="2026-09-30T01:15:00.000Z" title="发表于 2026-09-30 09:15:00">2026-09-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/25/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E5%88%B0%E7%BB%9F%E4%B8%80AI-Registry-Nacos3.1%E5%88%B03.3%E6%99%BA%E8%83%BD%E4%BD%93%E5%9F%BA%E5%BB%BA%E8%B1%AA%E8%B5%8C/" title="从微服务注册中心到统一AI Registry：Nacos 3.1→3.3的智能体基建豪赌"><img src="/images/nacos/nacos_ai_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="从微服务注册中心到统一AI Registry：Nacos 3.1→3.3的智能体基建豪赌"/></a><div class="content"><a class="title" href="/2026/06/25/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E5%88%B0%E7%BB%9F%E4%B8%80AI-Registry-Nacos3.1%E5%88%B03.3%E6%99%BA%E8%83%BD%E4%BD%93%E5%9F%BA%E5%BB%BA%E8%B1%AA%E8%B5%8C/" title="从微服务注册中心到统一AI Registry：Nacos 3.1→3.3的智能体基建豪赌">从微服务注册中心到统一AI Registry：Nacos 3.1→3.3的智能体基建豪赌</a><time datetime="2026-06-25T11:25:00.000Z" title="发表于 2026-06-25 19:25:00">2026-06-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/18/AI%E6%8A%80%E6%9C%AF/%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8BRAG%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97/" title="企业级智能助手 RAG 搭建指南：从原理到落地，一次讲透"><img src="/images/ai/rag_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="企业级智能助手 RAG 搭建指南：从原理到落地，一次讲透"/></a><div class="content"><a class="title" href="/2026/03/18/AI%E6%8A%80%E6%9C%AF/%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8BRAG%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97/" title="企业级智能助手 RAG 搭建指南：从原理到落地，一次讲透">企业级智能助手 RAG 搭建指南：从原理到落地，一次讲透</a><time datetime="2026-03-18T02:20:00.000Z" title="发表于 2026-03-18 10:20:00">2026-03-18</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2021 - 2026 By 李苟蛋</span></div><div class="footer_custom_text">_φ(❐_❐✧ 人丑就要多读书😂，睡觉没前途(￣o￣) . z Z　🤣</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.14/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const parseViewBox = viewBox => {
+    if (!viewBox) return null
+    const parts = viewBox.trim().split(/[\s,]+/).map(n => Number(n))
+    if (parts.length !== 4 || parts.some(n => Number.isNaN(n))) return null
+    return parts
+  }
+
+  const getSvgViewBox = svg => {
+    const attr = parseViewBox(svg.getAttribute('viewBox'))
+    if (attr) return attr
+
+    // Fallback: use bbox to build a viewBox
+    try {
+      const bbox = svg.getBBox()
+      if (bbox && bbox.width && bbox.height) return [bbox.x, bbox.y, bbox.width, bbox.height]
+    } catch (e) {
+      // getBBox may fail on some edge cases; ignore
+    }
+
+    const w = Number(svg.getAttribute('width')) || 0
+    const h = Number(svg.getAttribute('height')) || 0
+    if (w > 0 && h > 0) return [0, 0, w, h]
+    return [0, 0, 100, 100]
+  }
+
+  const setSvgViewBox = (svg, vb) => {
+    svg.setAttribute('viewBox', `${vb[0]} ${vb[1]} ${vb[2]} ${vb[3]}`)
+  }
+
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
+
+  const openSvgInNewTab = ({ source, initViewBox }) => {
+    const getClonedSvg = () => {
+      if (typeof source === 'string') {
+        const template = document.createElement('template')
+        template.innerHTML = source.trim()
+        const svg = template.content.querySelector('svg')
+        return svg ? svg.cloneNode(true) : null
+      }
+      if (source && typeof source.cloneNode === 'function') {
+        return source.cloneNode(true)
+      }
+      return null
+    }
+
+    const clone = getClonedSvg()
+    if (!clone) return
+    if (initViewBox && initViewBox.length === 4) {
+      clone.setAttribute('viewBox', initViewBox.join(' '))
+    }
+    if (!clone.getAttribute('xmlns')) clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+    if (!clone.getAttribute('xmlns:xlink') && clone.innerHTML.includes('xlink:')) {
+      clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink')
+    }
+    // inject background to match current theme
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+    const bg = getComputedStyle(document.body).backgroundColor || (isDark ? '#1e1e1e' : '#ffffff')
+    if (!clone.style.background) clone.style.background = bg
+
+    const serializer = new XMLSerializer()
+    const svgSource = serializer.serializeToString(clone)
+    const htmlSource = `<!doctype html><html><head><meta charset="utf-8" />
+      <style>
+        html, body { width: 100%; height: 100%; margin: 0; display: flex; align-items: center; justify-content: center; background: ${bg}; }
+        svg { max-width: 100%; max-height: 100%; height: auto; width: auto; }
+      </style>
+      </head><body>${svgSource}</body></html>`
+    const blob = new Blob([htmlSource], { type: 'text/html;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    window.open(url, '_blank', 'noopener')
+
+    setTimeout(() => URL.revokeObjectURL(url), 5000)
+  }
+
+  const attachMermaidViewerButton = wrap => {
+    let btn = wrap.querySelector('.mermaid-open-btn')
+    if (!btn) {
+      btn = document.createElement('button')
+      btn.type = 'button'
+      btn.className = 'mermaid-open-btn'
+      wrap.appendChild(btn)
+    }
+
+    btn.innerHTML = '<i class="fa fa-search fa-fw" aria-hidden="true"></i>'
+
+    if (!btn.__mermaidViewerBound) {
+      btn.addEventListener('click', e => {
+        e.preventDefault()
+        e.stopPropagation()
+        const svg = wrap.__mermaidOriginalSvg || wrap.querySelector('svg')
+        if (!svg) return
+        const initViewBox = wrap.__mermaidInitViewBox
+        openSvgInNewTab({ source: svg, initViewBox })
+      })
+      btn.__mermaidViewerBound = true
+    }
+  }
+
+  // Zoom around a point (px, py) in the SVG viewport (in viewBox coordinates)
+  const zoomAtPoint = (vb, factor, px, py) => {
+    const w = vb[2] * factor
+    const h = vb[3] * factor
+    const nx = px - (px - vb[0]) * factor
+    const ny = py - (py - vb[1]) * factor
+    return [nx, ny, w, h]
+  }
+
+  const initMermaidGestures = wrap => {
+    // Clean up previous event listeners and pending frames
+    if (wrap.__mermaidAbortController) {
+      wrap.__mermaidAbortController.abort()
+      if (wrap.__mermaidRafId) cancelAnimationFrame(wrap.__mermaidRafId)
+    }
+    const ac = new AbortController()
+    wrap.__mermaidAbortController = ac
+    const svg = wrap.querySelector('svg')
+    if (!svg) return
+
+    // Ensure viewBox exists so gestures always work
+    const initVb = getSvgViewBox(svg)
+    wrap.__mermaidInitViewBox = initVb
+    wrap.__mermaidCurViewBox = initVb.slice()
+    setSvgViewBox(svg, initVb)
+    // Disable default gestures to prevent scroll chaining and pinch-zoom penetration in Chrome
+    svg.style.touchAction = 'none'
+
+    // Cache BoundingClientRect, throttled on scroll to reduce reflow
+    let cachedRect = svg.getBoundingClientRect()
+    let rectDirty = false
+    const markRectDirty = () => { rectDirty = true }
+    window.addEventListener('resize', markRectDirty, { signal: ac.signal })
+    window.addEventListener('scroll', markRectDirty, { signal: ac.signal, capture: true })
+    const getRect = () => {
+      if (rectDirty) {
+        cachedRect = svg.getBoundingClientRect()
+        rectDirty = false
+      }
+      return cachedRect
+    }
+
+    // Precompute clamp bounds from initial viewBox
+    const minW = initVb[2] * 0.1
+    const maxW = initVb[2] * 10
+    const minH = initVb[3] * 0.1
+    const maxH = initVb[3] * 10
+    const clampVb = vb => {
+      const out = vb.slice()
+      out[2] = clamp(out[2], minW, maxW)
+      out[3] = clamp(out[3], minH, maxH)
+      return out
+    }
+
+    // Throttle DOM updates using requestAnimationFrame
+    let pendingVb = null
+    let rafId = null
+    const applyVb = () => {
+      if (pendingVb) {
+        wrap.__mermaidCurViewBox = pendingVb
+        setSvgViewBox(svg, pendingVb)
+        pendingVb = null
+      }
+      rafId = null
+      wrap.__mermaidRafId = null
+    }
+    const setCurVb = vb => {
+      pendingVb = clampVb(vb)
+      if (!rafId) {
+        rafId = requestAnimationFrame(applyVb)
+        wrap.__mermaidRafId = rafId
+      }
+    }
+
+    const state = {
+      pointers: new Map(),
+      startVb: null,
+      startDist: 0,
+      lastPointerX: 0,
+      lastPointerY: 0
+    }
+
+    const onPointerDown = e => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return
+      svg.setPointerCapture(e.pointerId)
+      const curVb = wrap.__mermaidCurViewBox
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+      if (state.pointers.size === 1) {
+        state.startVb = curVb.slice()
+        state.lastPointerX = e.clientX
+        state.lastPointerY = e.clientY
+      } else if (state.pointers.size === 2) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        state.startDist = Math.hypot(dx, dy)
+        state.startVb = curVb.slice()
+      }
+    }
+
+    const onPointerMove = e => {
+      if (!state.pointers.has(e.pointerId)) return
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+      const curVb = wrap.__mermaidCurViewBox
+      const rect = getRect()
+      if (state.pointers.size === 1 && state.startVb) {
+        const p = state.pointers.values().next().value
+        const dxClient = p.x - state.lastPointerX
+        const dyClient = p.y - state.lastPointerY
+        state.lastPointerX = p.x
+        state.lastPointerY = p.y
+        const dx = dxClient * (curVb[2] / rect.width)
+        const dy = dyClient * (curVb[3] / rect.height)
+        setCurVb([curVb[0] - dx, curVb[1] - dy, curVb[2], curVb[3]])
+        return
+      }
+      if (state.pointers.size === 2 && state.startVb && state.startDist > 0) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        const dist = Math.hypot(dx, dy)
+        if (!dist) return
+        const factor = state.startDist / dist
+        const cx = (pts[0].x + pts[1].x) / 2
+        const cy = (pts[0].y + pts[1].y) / 2
+        const px = curVb[0] + (cx - rect.left) * (curVb[2] / rect.width)
+        const py = curVb[1] + (cy - rect.top) * (curVb[3] / rect.height)
+        setCurVb(zoomAtPoint(state.startVb, factor, px, py))
+      }
+    }
+
+    const onPointerUpOrCancel = e => {
+      // Release PointerCapture to avoid event capture anomalies
+      if (svg.hasPointerCapture && svg.hasPointerCapture(e.pointerId)) {
+        svg.releasePointerCapture(e.pointerId)
+      }
+      state.pointers.delete(e.pointerId)
+      if (state.pointers.size === 0) {
+        state.startVb = null
+        state.startDist = 0
+      } else if (state.pointers.size === 1) {
+        const p = state.pointers.values().next().value
+        state.lastPointerX = p.x
+        state.lastPointerY = p.y
+      }
+    }
+
+    const onWheel = e => {
+      // Prevent event bubbling from triggering external scroll
+      e.preventDefault()
+      e.stopPropagation()
+      // Normalize deltaY across deltaMode (Chrome uses pixels, Safari uses lines)
+      let delta = e.deltaY
+      if (e.deltaMode === 1) delta *= 16
+      else if (e.deltaMode === 2) delta *= 400
+
+      // Continuous zoom factor: smoother than fixed 1.1/0.9 steps
+      const zoomFactor = Math.pow(1.001, delta)
+
+      const curVb = wrap.__mermaidCurViewBox
+      const rect = getRect()
+      const px = curVb[0] + (e.clientX - rect.left) * (curVb[2] / rect.width)
+      const py = curVb[1] + (e.clientY - rect.top) * (curVb[3] / rect.height)
+      setCurVb(zoomAtPoint(curVb, zoomFactor, px, py))
+    }
+
+    const onDblClick = () => {
+      const init = wrap.__mermaidInitViewBox
+      if (init) setCurVb(init)
+    }
+
+    svg.addEventListener('pointerdown', onPointerDown, { signal: ac.signal })
+    svg.addEventListener('pointermove', onPointerMove, { signal: ac.signal })
+    svg.addEventListener('pointerup', onPointerUpOrCancel, { signal: ac.signal })
+    svg.addEventListener('pointercancel', onPointerUpOrCancel, { signal: ac.signal })
+    svg.addEventListener('wheel', onWheel, { passive: false, signal: ac.signal })
+    svg.addEventListener('dblclick', onDblClick, { signal: ac.signal })
+  }
+
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      // Clean up event listeners before removing old SVG
+      if (item.__mermaidAbortController) {
+        item.__mermaidAbortController.abort()
+      }
+      const oldSvg = item.querySelector('svg')
+      if (oldSvg) oldSvg.remove()
+      let config = {}
+      try {
+        config = mermaidSrc.dataset.config ? JSON.parse(mermaidSrc.dataset.config) : {}
+      } catch (e) {
+        console.warn('[mermaid] failed to parse dataset.config:', e)
+      }
+      if (!config.theme) {
+        config.theme = theme
+      }
+      const mermaidThemeConfig = `%%{init: ${JSON.stringify(config)}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+        if (true) initMermaidGestures(item)
+        item.__mermaidOriginalSvg = svg
+        if (true) attachMermaidViewerButton(item)
+      }
+
+      const handleError = err => {
+        console.error(`[mermaid] render failed for block #${index}:`, err)
+        const errorEl = document.createElement('div')
+        errorEl.className = 'mermaid-error'
+        errorEl.textContent = `Mermaid render error: ${err.message || err}`
+        mermaidSrc.insertAdjacentElement('afterend', errorEl)
+      }
+
+      try {
+        const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+        // mermaid v9 and v10 compatibility
+        if (typeof renderFn === 'string') {
+          renderMermaid(renderFn)
+        } else {
+          renderFn.then(({ svg }) => renderMermaid(svg)).catch(handleError)
+        }
+      } catch (err) {
+        handleError(err)
+      }
+    })
+  }
+
+  const codeToMermaid = $article => {
+    const codeMermaidEle = $article.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    const $article = document.getElementById('article-container')
+    if (!$article) return
+
+    if (true) codeToMermaid($article)
+    const $mermaid = $article.querySelectorAll('.mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid@11.16.0/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script><script src="/js/chocolate.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-fluttering-ribbon.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-show-text.min.js" data-mobile="false" data-text="渴望,生锈,十七,黎明,火炉,苟蛋,善良,回家,货车,士兵" data-fontsize="15px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.7.0"></script></div></div></body></html>
