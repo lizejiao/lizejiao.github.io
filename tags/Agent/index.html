@@ -1,0 +1,645 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>标签: Agent | 李苟蛋の家</title><meta name="author" content="李苟蛋"><meta name="copyright" content="李苟蛋"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="欢迎来到苟蛋博客の家">
+<meta property="og:type" content="website">
+<meta property="og:title" content="李苟蛋の家">
+<meta property="og:url" content="https://lizejiao.github.io/tags/Agent/index.html">
+<meta property="og:site_name" content="李苟蛋の家">
+<meta property="og:description" content="欢迎来到苟蛋博客の家">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lizejiao.github.io/img/head.jpg">
+<meta property="article:author" content="李苟蛋">
+<meta property="article:tag" content="李泽蛟,李泽蛟de技术博客,苟蛋のhome,李苟蛋の家">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lizejiao.github.io/img/head.jpg"><script type="application/ld+json"></script><link rel="shortcut icon" href="https://gitee.com/lizejiao/img-go/raw/master/images/favicon.jpg"><link rel="canonical" href="https://lizejiao.github.io/tags/Agent/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.14/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const start = 6
+          const end = 18
+          const isNight =
+            start < end
+                ? hour < start || hour >= end
+                : hour >= start || hour < end
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":800,"highlightFullpage":true,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '标签: Agent',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'tag'
+}</script><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 5.4.0"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/url(/img/index_img.jpg));"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/%E5%85%B3%E4%BA%8E%E6%88%91/"><i class="fa-fw fas fa-user"></i><span> 关于我</span></a></div><div class="menus_item"><a class="site-page" href="/message/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="not-home-page fixed" id="page-header" style="background-image: url(/img/default_top_img.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">李苟蛋の家</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/%E5%85%B3%E4%BA%8E%E6%88%91/"><i class="fa-fw fas fa-user"></i><span> 关于我</span></a></div><div class="menus_item"><a class="site-page" href="/message/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="page-site-info"><h1 id="site-title">Agent</h1></div></header><main class="layout" id="content-inner"><div id="tag"><div class="article-sort-title">标签 - Agent</div><div class="article-sort"><div class="article-sort-item year">2026</div><div class="article-sort-item"><a class="article-sort-item-img" href="/2026/10/20/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E5%86%99%E4%BB%A3%E7%A0%81%E5%88%B0%E9%80%A0%E7%8E%AF%E5%A2%83-Harness-Engineering%E8%AF%9E%E7%94%9F%E6%80%9D%E8%80%83%E4%B8%8E%E5%9B%BD%E5%86%85%E5%A4%96%E5%AE%9E%E6%88%98/" title="Harness Engineering：当工程师的核心工作从写代码变成造环境"><img src="/images/harness/he_cover.png" alt="Harness Engineering：当工程师的核心工作从写代码变成造环境" onerror="this.onerror=null;this.src='/img/error_404.png'"></a><div class="article-sort-item-info"><div class="article-sort-item-time"><i class="far fa-calendar-alt"></i><time class="post-meta-date-created" datetime="2026-10-20T13:30:00.000Z" title="发表于 2026-10-20 21:30:00">2026-10-20</time></div><a class="article-sort-item-title" href="/2026/10/20/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E5%86%99%E4%BB%A3%E7%A0%81%E5%88%B0%E9%80%A0%E7%8E%AF%E5%A2%83-Harness-Engineering%E8%AF%9E%E7%94%9F%E6%80%9D%E8%80%83%E4%B8%8E%E5%9B%BD%E5%86%85%E5%A4%96%E5%AE%9E%E6%88%98/" title="Harness Engineering：当工程师的核心工作从写代码变成造环境">Harness Engineering：当工程师的核心工作从写代码变成造环境</a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="avatar"/></div><div class="author-info-name">李苟蛋</div><div class="author-info-description">欢迎来到李苟蛋的博客....</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lizejiao"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/lizejiao" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:xxxxxx@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content"><p>欢迎来到李苟蛋的个人博客，对本站的文章和技术问题有疑问或建议，欢迎留言，或者关注我的公众号：<strong>狗蛋的智栈</strong></p> <div style="text-align:center; margin-top:10px;">
+  <img src="/images/aboutme/wechat_mp.jpg" alt="公众号：狗蛋的智栈" style="width:170px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,.15);" />
+  <div style="font-size:12px; color:#999; margin-top:6px;">扫码关注「狗蛋的智栈」</div>
+</div></div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/10/20/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E5%86%99%E4%BB%A3%E7%A0%81%E5%88%B0%E9%80%A0%E7%8E%AF%E5%A2%83-Harness-Engineering%E8%AF%9E%E7%94%9F%E6%80%9D%E8%80%83%E4%B8%8E%E5%9B%BD%E5%86%85%E5%A4%96%E5%AE%9E%E6%88%98/" title="Harness Engineering：当工程师的核心工作从写代码变成造环境"><img src="/images/harness/he_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="Harness Engineering：当工程师的核心工作从写代码变成造环境"/></a><div class="content"><a class="title" href="/2026/10/20/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E5%86%99%E4%BB%A3%E7%A0%81%E5%88%B0%E9%80%A0%E7%8E%AF%E5%A2%83-Harness-Engineering%E8%AF%9E%E7%94%9F%E6%80%9D%E8%80%83%E4%B8%8E%E5%9B%BD%E5%86%85%E5%A4%96%E5%AE%9E%E6%88%98/" title="Harness Engineering：当工程师的核心工作从写代码变成造环境">Harness Engineering：当工程师的核心工作从写代码变成造环境</a><time datetime="2026-10-20T13:30:00.000Z" title="发表于 2026-10-20 21:30:00">2026-10-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/19/%E4%BA%91%E5%8E%9F%E7%94%9F/%E4%BB%8Enamespace%E5%88%B0%E4%B8%87%E8%8A%82%E7%82%B9%E8%B0%83%E5%BA%A6-2026%E5%B9%B4Docker%E4%B8%8EKubernetes%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%A8%E8%A7%A3/" title="从 namespace 到万节点调度：2026 年 Docker 与 Kubernetes 企业级落地全解"><img src="/images/k8s/k8s_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="从 namespace 到万节点调度：2026 年 Docker 与 Kubernetes 企业级落地全解"/></a><div class="content"><a class="title" href="/2026/10/19/%E4%BA%91%E5%8E%9F%E7%94%9F/%E4%BB%8Enamespace%E5%88%B0%E4%B8%87%E8%8A%82%E7%82%B9%E8%B0%83%E5%BA%A6-2026%E5%B9%B4Docker%E4%B8%8EKubernetes%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%A8%E8%A7%A3/" title="从 namespace 到万节点调度：2026 年 Docker 与 Kubernetes 企业级落地全解">从 namespace 到万节点调度：2026 年 Docker 与 Kubernetes 企业级落地全解</a><time datetime="2026-10-19T02:30:00.000Z" title="发表于 2026-10-19 10:30:00">2026-10-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/18/Java/2026-Java%E9%9D%A2%E8%AF%95%E9%A2%98%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C-25%E4%B8%AA%E5%88%86%E7%B1%BB358%E9%81%93%E9%A2%98/" title="2026 Java 面试题速查手册：25 个分类、358 道题、98 道高频题详解"><img src="/images/java-interview/java_interview_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="2026 Java 面试题速查手册：25 个分类、358 道题、98 道高频题详解"/></a><div class="content"><a class="title" href="/2026/10/18/Java/2026-Java%E9%9D%A2%E8%AF%95%E9%A2%98%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C-25%E4%B8%AA%E5%88%86%E7%B1%BB358%E9%81%93%E9%A2%98/" title="2026 Java 面试题速查手册：25 个分类、358 道题、98 道高频题详解">2026 Java 面试题速查手册：25 个分类、358 道题、98 道高频题详解</a><time datetime="2026-10-18T02:00:00.000Z" title="发表于 2026-10-18 10:00:00">2026-10-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/17/AI%E6%8A%80%E6%9C%AF/%E4%BB%8EAI%E4%B8%96%E7%95%8C%E7%9A%84USB-C%E5%88%B0%E8%A2%AB%E5%85%AC%E5%BC%80%E5%BC%83%E7%94%A8-2026%E6%98%AFMCP%E7%9A%84%E9%BB%84%E6%98%8F%E8%BF%98%E6%98%AF%E9%87%8D%E7%94%9F/" title="从「AI 世界的 USB-C」到被公开弃用？2026 是 MCP 的黄昏还是重生？"><img src="/images/mcp/mcp_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="从「AI 世界的 USB-C」到被公开弃用？2026 是 MCP 的黄昏还是重生？"/></a><div class="content"><a class="title" href="/2026/10/17/AI%E6%8A%80%E6%9C%AF/%E4%BB%8EAI%E4%B8%96%E7%95%8C%E7%9A%84USB-C%E5%88%B0%E8%A2%AB%E5%85%AC%E5%BC%80%E5%BC%83%E7%94%A8-2026%E6%98%AFMCP%E7%9A%84%E9%BB%84%E6%98%8F%E8%BF%98%E6%98%AF%E9%87%8D%E7%94%9F/" title="从「AI 世界的 USB-C」到被公开弃用？2026 是 MCP 的黄昏还是重生？">从「AI 世界的 USB-C」到被公开弃用？2026 是 MCP 的黄昏还是重生？</a><time datetime="2026-10-17T13:30:00.000Z" title="发表于 2026-10-17 21:30:00">2026-10-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/15/AI%E6%8A%80%E6%9C%AF/%E4%BA%91%E5%8E%9F%E7%94%9FAI%E7%BD%91%E5%85%B3%E9%80%89%E5%9E%8B%E4%B8%8E%E8%90%BD%E5%9C%B0-Higress-APISIX-Kong-Envoy-AI-Gateway%E6%A8%AA%E8%AF%84/" title="云原生 AI 网关选型与落地：Higress、APISIX、Kong、Envoy AI Gateway 横评"><img src="/images/aigw/aigw_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="云原生 AI 网关选型与落地：Higress、APISIX、Kong、Envoy AI Gateway 横评"/></a><div class="content"><a class="title" href="/2026/10/15/AI%E6%8A%80%E6%9C%AF/%E4%BA%91%E5%8E%9F%E7%94%9FAI%E7%BD%91%E5%85%B3%E9%80%89%E5%9E%8B%E4%B8%8E%E8%90%BD%E5%9C%B0-Higress-APISIX-Kong-Envoy-AI-Gateway%E6%A8%AA%E8%AF%84/" title="云原生 AI 网关选型与落地：Higress、APISIX、Kong、Envoy AI Gateway 横评">云原生 AI 网关选型与落地：Higress、APISIX、Kong、Envoy AI Gateway 横评</a><time datetime="2026-10-15T12:30:00.000Z" title="发表于 2026-10-15 20:30:00">2026-10-15</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline"><i class="fas fa-folder-open"></i><span>分类</span><a class="card-more-btn" href="/categories/" title="查看更多">
+      <i class="fas fa-angle-right"></i></a></div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/java%E5%BC%80%E5%8F%91/"><span class="card-category-list-name">java开发</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/"><span class="card-category-list-name">中间件</span><span class="card-category-list-count">3</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%BC%80%E5%8F%91%E8%AF%AD%E8%A8%80/"><span class="card-category-list-name">开发语言</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E6%8A%80%E5%B7%A7%E6%94%B6%E8%97%8F/"><span class="card-category-list-name">技巧收藏</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E6%95%99%E7%A8%8B/"><span class="card-category-list-name">教程</span><span class="card-category-list-count">15</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E6%A1%86%E6%9E%B6/"><span class="card-category-list-name">框架</span><span class="card-category-list-count">3</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E7%AC%94%E8%AE%B0/"><span class="card-category-list-name">笔记</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/"><span class="card-category-list-name">计算机基础</span><span class="card-category-list-count">1</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/AI%E6%8A%80%E6%9C%AF/" style="font-size: 1.38em; color: rgb(166, 64, 157);">AI技术</a><a href="/tags/Agent/" style="font-size: 1.15em; color: rgb(123, 55, 50);">Agent</a><a href="/tags/Docker/" style="font-size: 1.15em; color: rgb(50, 50, 99);">Docker</a><a href="/tags/Java%E9%9D%A2%E8%AF%95/" style="font-size: 1.15em; color: rgb(190, 109, 50);">Java面试</a><a href="/tags/Kubernetes/" style="font-size: 1.15em; color: rgb(50, 50, 194);">Kubernetes</a><a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" style="font-size: 1.15em; color: rgb(93, 50, 193);">云原生</a><a href="/tags/%E5%90%8E%E7%AB%AF%E6%8A%80%E6%9C%AF/" style="font-size: 1.45em; color: rgb(50, 107, 109);">后端技术</a><a href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" style="font-size: 1.15em; color: rgb(50, 157, 127);">工程实践</a><a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 1.15em; color: rgb(128, 182, 179);">开发工具</a><a href="/tags/%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7/" style="font-size: 1.22em; color: rgb(58, 50, 150);">开发技巧</a><a href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E5%85%B7/" style="font-size: 1.3em; color: rgb(137, 68, 50);">软件工具</a><a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 1.15em; color: rgb(163, 82, 171);">面试</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline"><i class="fas fa-archive"></i><span>归档</span><a class="card-more-btn" href="/archives/"
+            title="查看更多">
+            <i class="fas fa-angle-right"></i>
+          </a></div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/10/">
+            <span class="card-archive-list-date">
+              十月 2026
+            </span>
+            <span class="card-archive-list-count">7</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/09/">
+            <span class="card-archive-list-date">
+              九月 2026
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/06/">
+            <span class="card-archive-list-date">
+              六月 2026
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/03/">
+            <span class="card-archive-list-date">
+              三月 2026
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/09/">
+            <span class="card-archive-list-date">
+              九月 2025
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/05/">
+            <span class="card-archive-list-date">
+              五月 2025
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/01/">
+            <span class="card-archive-list-date">
+              一月 2025
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/10/">
+            <span class="card-archive-list-date">
+              十月 2024
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">32</div></div><div class="webinfo-item"><div class="item-name">本站总字数 :</div><div class="item-count">258.3k</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-10-20T03:22:02.711Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2021 - 2026 By 李苟蛋</span></div><div class="footer_custom_text">_φ(❐_❐✧ 人丑就要多读书😂，睡觉没前途(￣o￣) . z Z　🤣</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.14/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const parseViewBox = viewBox => {
+    if (!viewBox) return null
+    const parts = viewBox.trim().split(/[\s,]+/).map(n => Number(n))
+    if (parts.length !== 4 || parts.some(n => Number.isNaN(n))) return null
+    return parts
+  }
+
+  const getSvgViewBox = svg => {
+    const attr = parseViewBox(svg.getAttribute('viewBox'))
+    if (attr) return attr
+
+    // Fallback: use bbox to build a viewBox
+    try {
+      const bbox = svg.getBBox()
+      if (bbox && bbox.width && bbox.height) return [bbox.x, bbox.y, bbox.width, bbox.height]
+    } catch (e) {
+      // getBBox may fail on some edge cases; ignore
+    }
+
+    const w = Number(svg.getAttribute('width')) || 0
+    const h = Number(svg.getAttribute('height')) || 0
+    if (w > 0 && h > 0) return [0, 0, w, h]
+    return [0, 0, 100, 100]
+  }
+
+  const setSvgViewBox = (svg, vb) => {
+    svg.setAttribute('viewBox', `${vb[0]} ${vb[1]} ${vb[2]} ${vb[3]}`)
+  }
+
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
+
+  const openSvgInNewTab = ({ source, initViewBox }) => {
+    const getClonedSvg = () => {
+      if (typeof source === 'string') {
+        const template = document.createElement('template')
+        template.innerHTML = source.trim()
+        const svg = template.content.querySelector('svg')
+        return svg ? svg.cloneNode(true) : null
+      }
+      if (source && typeof source.cloneNode === 'function') {
+        return source.cloneNode(true)
+      }
+      return null
+    }
+
+    const clone = getClonedSvg()
+    if (!clone) return
+    if (initViewBox && initViewBox.length === 4) {
+      clone.setAttribute('viewBox', initViewBox.join(' '))
+    }
+    if (!clone.getAttribute('xmlns')) clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+    if (!clone.getAttribute('xmlns:xlink') && clone.innerHTML.includes('xlink:')) {
+      clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink')
+    }
+    // inject background to match current theme
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+    const bg = getComputedStyle(document.body).backgroundColor || (isDark ? '#1e1e1e' : '#ffffff')
+    if (!clone.style.background) clone.style.background = bg
+
+    const serializer = new XMLSerializer()
+    const svgSource = serializer.serializeToString(clone)
+    const htmlSource = `<!doctype html><html><head><meta charset="utf-8" />
+      <style>
+        html, body { width: 100%; height: 100%; margin: 0; display: flex; align-items: center; justify-content: center; background: ${bg}; }
+        svg { max-width: 100%; max-height: 100%; height: auto; width: auto; }
+      </style>
+      </head><body>${svgSource}</body></html>`
+    const blob = new Blob([htmlSource], { type: 'text/html;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    window.open(url, '_blank', 'noopener')
+
+    setTimeout(() => URL.revokeObjectURL(url), 5000)
+  }
+
+  const attachMermaidViewerButton = wrap => {
+    let btn = wrap.querySelector('.mermaid-open-btn')
+    if (!btn) {
+      btn = document.createElement('button')
+      btn.type = 'button'
+      btn.className = 'mermaid-open-btn'
+      wrap.appendChild(btn)
+    }
+
+    btn.innerHTML = '<i class="fa fa-search fa-fw" aria-hidden="true"></i>'
+
+    if (!btn.__mermaidViewerBound) {
+      btn.addEventListener('click', e => {
+        e.preventDefault()
+        e.stopPropagation()
+        const svg = wrap.__mermaidOriginalSvg || wrap.querySelector('svg')
+        if (!svg) return
+        const initViewBox = wrap.__mermaidInitViewBox
+        openSvgInNewTab({ source: svg, initViewBox })
+      })
+      btn.__mermaidViewerBound = true
+    }
+  }
+
+  // Zoom around a point (px, py) in the SVG viewport (in viewBox coordinates)
+  const zoomAtPoint = (vb, factor, px, py) => {
+    const w = vb[2] * factor
+    const h = vb[3] * factor
+    const nx = px - (px - vb[0]) * factor
+    const ny = py - (py - vb[1]) * factor
+    return [nx, ny, w, h]
+  }
+
+  const initMermaidGestures = wrap => {
+    // Clean up previous event listeners and pending frames
+    if (wrap.__mermaidAbortController) {
+      wrap.__mermaidAbortController.abort()
+      if (wrap.__mermaidRafId) cancelAnimationFrame(wrap.__mermaidRafId)
+    }
+    const ac = new AbortController()
+    wrap.__mermaidAbortController = ac
+    const svg = wrap.querySelector('svg')
+    if (!svg) return
+
+    // Ensure viewBox exists so gestures always work
+    const initVb = getSvgViewBox(svg)
+    wrap.__mermaidInitViewBox = initVb
+    wrap.__mermaidCurViewBox = initVb.slice()
+    setSvgViewBox(svg, initVb)
+    // Disable default gestures to prevent scroll chaining and pinch-zoom penetration in Chrome
+    svg.style.touchAction = 'none'
+
+    // Cache BoundingClientRect, throttled on scroll to reduce reflow
+    let cachedRect = svg.getBoundingClientRect()
+    let rectDirty = false
+    const markRectDirty = () => { rectDirty = true }
+    window.addEventListener('resize', markRectDirty, { signal: ac.signal })
+    window.addEventListener('scroll', markRectDirty, { signal: ac.signal, capture: true })
+    const getRect = () => {
+      if (rectDirty) {
+        cachedRect = svg.getBoundingClientRect()
+        rectDirty = false
+      }
+      return cachedRect
+    }
+
+    // Precompute clamp bounds from initial viewBox
+    const minW = initVb[2] * 0.1
+    const maxW = initVb[2] * 10
+    const minH = initVb[3] * 0.1
+    const maxH = initVb[3] * 10
+    const clampVb = vb => {
+      const out = vb.slice()
+      out[2] = clamp(out[2], minW, maxW)
+      out[3] = clamp(out[3], minH, maxH)
+      return out
+    }
+
+    // Throttle DOM updates using requestAnimationFrame
+    let pendingVb = null
+    let rafId = null
+    const applyVb = () => {
+      if (pendingVb) {
+        wrap.__mermaidCurViewBox = pendingVb
+        setSvgViewBox(svg, pendingVb)
+        pendingVb = null
+      }
+      rafId = null
+      wrap.__mermaidRafId = null
+    }
+    const setCurVb = vb => {
+      pendingVb = clampVb(vb)
+      if (!rafId) {
+        rafId = requestAnimationFrame(applyVb)
+        wrap.__mermaidRafId = rafId
+      }
+    }
+
+    const state = {
+      pointers: new Map(),
+      startVb: null,
+      startDist: 0,
+      lastPointerX: 0,
+      lastPointerY: 0
+    }
+
+    const onPointerDown = e => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return
+      svg.setPointerCapture(e.pointerId)
+      const curVb = wrap.__mermaidCurViewBox
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+      if (state.pointers.size === 1) {
+        state.startVb = curVb.slice()
+        state.lastPointerX = e.clientX
+        state.lastPointerY = e.clientY
+      } else if (state.pointers.size === 2) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        state.startDist = Math.hypot(dx, dy)
+        state.startVb = curVb.slice()
+      }
+    }
+
+    const onPointerMove = e => {
+      if (!state.pointers.has(e.pointerId)) return
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+      const curVb = wrap.__mermaidCurViewBox
+      const rect = getRect()
+      if (state.pointers.size === 1 && state.startVb) {
+        const p = state.pointers.values().next().value
+        const dxClient = p.x - state.lastPointerX
+        const dyClient = p.y - state.lastPointerY
+        state.lastPointerX = p.x
+        state.lastPointerY = p.y
+        const dx = dxClient * (curVb[2] / rect.width)
+        const dy = dyClient * (curVb[3] / rect.height)
+        setCurVb([curVb[0] - dx, curVb[1] - dy, curVb[2], curVb[3]])
+        return
+      }
+      if (state.pointers.size === 2 && state.startVb && state.startDist > 0) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        const dist = Math.hypot(dx, dy)
+        if (!dist) return
+        const factor = state.startDist / dist
+        const cx = (pts[0].x + pts[1].x) / 2
+        const cy = (pts[0].y + pts[1].y) / 2
+        const px = curVb[0] + (cx - rect.left) * (curVb[2] / rect.width)
+        const py = curVb[1] + (cy - rect.top) * (curVb[3] / rect.height)
+        setCurVb(zoomAtPoint(state.startVb, factor, px, py))
+      }
+    }
+
+    const onPointerUpOrCancel = e => {
+      // Release PointerCapture to avoid event capture anomalies
+      if (svg.hasPointerCapture && svg.hasPointerCapture(e.pointerId)) {
+        svg.releasePointerCapture(e.pointerId)
+      }
+      state.pointers.delete(e.pointerId)
+      if (state.pointers.size === 0) {
+        state.startVb = null
+        state.startDist = 0
+      } else if (state.pointers.size === 1) {
+        const p = state.pointers.values().next().value
+        state.lastPointerX = p.x
+        state.lastPointerY = p.y
+      }
+    }
+
+    const onWheel = e => {
+      // Prevent event bubbling from triggering external scroll
+      e.preventDefault()
+      e.stopPropagation()
+      // Normalize deltaY across deltaMode (Chrome uses pixels, Safari uses lines)
+      let delta = e.deltaY
+      if (e.deltaMode === 1) delta *= 16
+      else if (e.deltaMode === 2) delta *= 400
+
+      // Continuous zoom factor: smoother than fixed 1.1/0.9 steps
+      const zoomFactor = Math.pow(1.001, delta)
+
+      const curVb = wrap.__mermaidCurViewBox
+      const rect = getRect()
+      const px = curVb[0] + (e.clientX - rect.left) * (curVb[2] / rect.width)
+      const py = curVb[1] + (e.clientY - rect.top) * (curVb[3] / rect.height)
+      setCurVb(zoomAtPoint(curVb, zoomFactor, px, py))
+    }
+
+    const onDblClick = () => {
+      const init = wrap.__mermaidInitViewBox
+      if (init) setCurVb(init)
+    }
+
+    svg.addEventListener('pointerdown', onPointerDown, { signal: ac.signal })
+    svg.addEventListener('pointermove', onPointerMove, { signal: ac.signal })
+    svg.addEventListener('pointerup', onPointerUpOrCancel, { signal: ac.signal })
+    svg.addEventListener('pointercancel', onPointerUpOrCancel, { signal: ac.signal })
+    svg.addEventListener('wheel', onWheel, { passive: false, signal: ac.signal })
+    svg.addEventListener('dblclick', onDblClick, { signal: ac.signal })
+  }
+
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      // Clean up event listeners before removing old SVG
+      if (item.__mermaidAbortController) {
+        item.__mermaidAbortController.abort()
+      }
+      const oldSvg = item.querySelector('svg')
+      if (oldSvg) oldSvg.remove()
+      let config = {}
+      try {
+        config = mermaidSrc.dataset.config ? JSON.parse(mermaidSrc.dataset.config) : {}
+      } catch (e) {
+        console.warn('[mermaid] failed to parse dataset.config:', e)
+      }
+      if (!config.theme) {
+        config.theme = theme
+      }
+      const mermaidThemeConfig = `%%{init: ${JSON.stringify(config)}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+        if (true) initMermaidGestures(item)
+        item.__mermaidOriginalSvg = svg
+        if (true) attachMermaidViewerButton(item)
+      }
+
+      const handleError = err => {
+        console.error(`[mermaid] render failed for block #${index}:`, err)
+        const errorEl = document.createElement('div')
+        errorEl.className = 'mermaid-error'
+        errorEl.textContent = `Mermaid render error: ${err.message || err}`
+        mermaidSrc.insertAdjacentElement('afterend', errorEl)
+      }
+
+      try {
+        const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+        // mermaid v9 and v10 compatibility
+        if (typeof renderFn === 'string') {
+          renderMermaid(renderFn)
+        } else {
+          renderFn.then(({ svg }) => renderMermaid(svg)).catch(handleError)
+        }
+      } catch (err) {
+        handleError(err)
+      }
+    })
+  }
+
+  const codeToMermaid = $article => {
+    const codeMermaidEle = $article.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    const $article = document.getElementById('article-container')
+    if (!$article) return
+
+    if (true) codeToMermaid($article)
+    const $mermaid = $article.querySelectorAll('.mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid@11.16.0/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script><script src="/js/chocolate.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-fluttering-ribbon.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-show-text.min.js" data-mobile="false" data-text="渴望,生锈,十七,黎明,火炉,苟蛋,善良,回家,货车,士兵" data-fontsize="15px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.7.0"></script></div></div></body></html>
