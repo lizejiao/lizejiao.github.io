@@ -1,0 +1,802 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>AI 技术问答汇总：20 个高频问题，一次讲清 | 李苟蛋の家</title><meta name="author" content="李苟蛋"><meta name="copyright" content="李苟蛋"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="把 AI 技术分类下十篇文章里被反复问到的问题收成一份问答集：RAG 和微调怎么分工、MCP 到底死没死、CLI 为什么更便宜、单智能体什么时候不够用、三层多智能体怎么搭、Agent 怎么从「能跑」到「能管」、Nacos 该选哪个版本、多语言项目用什么编辑器看代码。每个问题给一段能直接用的答案，并标明深挖该看哪一篇。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI 技术问答汇总：20 个高频问题，一次讲清">
+<meta property="og:url" content="https://lizejiao.github.io/2026/10/26/AI%E6%8A%80%E6%9C%AF/AI%E6%8A%80%E6%9C%AF%E9%97%AE%E7%AD%94%E6%B1%87%E6%80%BB/index.html">
+<meta property="og:site_name" content="李苟蛋の家">
+<meta property="og:description" content="把 AI 技术分类下十篇文章里被反复问到的问题收成一份问答集：RAG 和微调怎么分工、MCP 到底死没死、CLI 为什么更便宜、单智能体什么时候不够用、三层多智能体怎么搭、Agent 怎么从「能跑」到「能管」、Nacos 该选哪个版本、多语言项目用什么编辑器看代码。每个问题给一段能直接用的答案，并标明深挖该看哪一篇。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lizejiao.github.io/images/aiqa/aiqa_cover.png">
+<meta property="article:published_time" content="2026-10-26T13:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-26T13:00:00.000Z">
+<meta property="article:author" content="李苟蛋">
+<meta property="article:tag" content="AI技术">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="RAG">
+<meta property="article:tag" content="问答汇总">
+<meta property="article:tag" content="选型">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lizejiao.github.io/images/aiqa/aiqa_cover.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "AI 技术问答汇总：20 个高频问题，一次讲清",
+  "url": "https://lizejiao.github.io/2026/10/26/AI%E6%8A%80%E6%9C%AF/AI%E6%8A%80%E6%9C%AF%E9%97%AE%E7%AD%94%E6%B1%87%E6%80%BB/",
+  "image": "https://lizejiao.github.io/images/aiqa/aiqa_cover.png",
+  "datePublished": "2026-10-26T13:00:00.000Z",
+  "dateModified": "2026-10-26T13:00:00.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "李苟蛋",
+      "url": "https://lizejiao.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="https://gitee.com/lizejiao/img-go/raw/master/images/favicon.jpg"><link rel="canonical" href="https://lizejiao.github.io/2026/10/26/AI%E6%8A%80%E6%9C%AF/AI%E6%8A%80%E6%9C%AF%E9%97%AE%E7%AD%94%E6%B1%87%E6%80%BB/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.14/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const start = 6
+          const end = 18
+          const isNight =
+            start < end
+                ? hour < start || hour >= end
+                : hour >= start || hour < end
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":800,"highlightFullpage":true,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'AI 技术问答汇总：20 个高频问题，一次讲清',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 5.4.0"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/url(/img/index_img.jpg));"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">35</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/%E5%85%B3%E4%BA%8E%E6%88%91/"><i class="fa-fw fas fa-user"></i><span> 关于我</span></a></div><div class="menus_item"><a class="site-page" href="/message/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/images/aiqa/aiqa_cover.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">李苟蛋の家</span></a><a class="nav-page-title" href="/"><span class="site-name">AI 技术问答汇总：20 个高频问题，一次讲清</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/%E5%85%B3%E4%BA%8E%E6%88%91/"><i class="fa-fw fas fa-user"></i><span> 关于我</span></a></div><div class="menus_item"><a class="site-page" href="/message/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">AI 技术问答汇总：20 个高频问题，一次讲清</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-26T13:00:00.000Z" title="发表于 2026-10-26 21:00:00">2026-10-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-26T13:00:00.000Z" title="更新于 2026-10-26 21:00:00">2026-10-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%95%99%E7%A8%8B/">教程</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">4.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>12分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><div id="post-outdate-notice" data="{&quot;limitDay&quot;:365,&quot;messagePrev&quot;:&quot;本文最后更新于&quot;,&quot;messageNext&quot;:&quot;天前，其中的内容可能已经过时。&quot;,&quot;postUpdate&quot;:&quot;2026-10-26 21:00:00&quot;}" hidden></div><h2 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h2><p>这半年在「AI技术」这个分类下写了十篇长文，从 RAG 讲到 MCP，从 Harness Engineering 讲到 Agent 治理平台。有意思的是，读者在评论区、私信、以及线下的技术交流里问的问题，重复率非常高——<strong>翻来覆去就那么二十来个</strong>。</p>
+<p>长文的好处是讲得透，坏处是想查一个具体结论要翻五千字。所以这篇做一次汇总：把散在十篇里的判断收成一份问答集，按「基础概念 → 协议接口 → Agent 架构 → 工程治理 → 工具选型」五层排下来，每个问题给一段能直接拿去用的答案，末尾标明深挖该看哪一篇。</p>
+<p>一个说明：这份汇总里的数字都来自原文引用的公开资料和实测，凡是口径不确定的地方我都写了「量级」而不是精确值。<strong>结论会过时，判断标准不会</strong>，所以我在每个答案里尽量把「为什么这么判断」也留下。</p>
+<hr>
+<h2 id="1、先给一张地图"><a href="#1、先给一张地图" class="headerlink" title="1、先给一张地图"></a>1、先给一张地图</h2><table>
+<thead>
+<tr>
+<th>层次</th>
+<th>回答的问题</th>
+<th>涉及篇目</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>基础概念层</strong></td>
+<td>RAG、Context、Harness 这些词到底指什么</td>
+<td>RAG 搭建指南、Context Engineering、Harness Engineering</td>
+</tr>
+<tr>
+<td><strong>协议接口层</strong></td>
+<td>模型怎么接工具、请求怎么接模型</td>
+<td>MCP 黄昏还是重生、云原生 AI 网关横评</td>
+</tr>
+<tr>
+<td><strong>Agent 架构层</strong></td>
+<td>一个 Agent 不够时怎么拆、拆完怎么组装</td>
+<td>三层多智能体方法论、框架选型</td>
+</tr>
+<tr>
+<td><strong>工程治理层</strong></td>
+<td>跑起来之后怎么管、怎么省钱、怎么不越权</td>
+<td>Agent 治理平台、Nacos AI Registry</td>
+</tr>
+<tr>
+<td><strong>工具选型层</strong></td>
+<td>人怎么和这套东西协作</td>
+<td>代码编辑器全横评</td>
+</tr>
+</tbody></table>
+<p>这张图最有用的一句提醒是：<strong>大部分人卡住，不是因为某一层没学好，而是拿错了层的答案。</strong> 比如「模型答不准」，可能根本不是模型问题，是上下文喂错了；「成本失控」，可能不是模型贵，是工具 schema 常驻吃掉了 72% 的窗口。</p>
+<hr>
+<h2 id="2、基础概念层"><a href="#2、基础概念层" class="headerlink" title="2、基础概念层"></a>2、基础概念层</h2><h3 id="Q1：RAG-到底是什么？它和微调是替代关系吗？"><a href="#Q1：RAG-到底是什么？它和微调是替代关系吗？" class="headerlink" title="Q1：RAG 到底是什么？它和微调是替代关系吗？"></a>Q1：RAG 到底是什么？它和微调是替代关系吗？</h3><p>不是替代，是分工。RAG 解决的是「模型不知道你的私有知识」，微调解决的是「模型不会按你的方式说话办事」。前者管<strong>知识</strong>，后者管<strong>行为</strong>。</p>
+<p>工程上的直接后果是：知识天天变、还要能溯源、要能按权限过滤，这三件事微调一件都做不到，所以企业内部知识问答的默认解永远是 RAG。反过来，如果知识是稳定的、你要的是固定的输出格式和语气，微调更划算——因为 RAG 每次都要把检索结果塞进上下文，那是持续付费。</p>
+<p>延伸：<a href="/2026/03/18/%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8BRAG%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97/">企业级智能助手 RAG 搭建指南</a></p>
+<h3 id="Q2：什么情况下反而不该用-RAG？"><a href="#Q2：什么情况下反而不该用-RAG？" class="headerlink" title="Q2：什么情况下反而不该用 RAG？"></a>Q2：什么情况下反而不该用 RAG？</h3><p>三种情况，用了就是给自己找麻烦：</p>
+<ol>
+<li><strong>知识量很小</strong>——几页 FAQ 直接塞进系统提示词比搭一套向量库便宜得多，检索反而引入了召回失败这个新的故障点；</li>
+<li><strong>问题需要全局推理</strong>——「总结这份合同里的三个风险点」这类任务，检索回来的碎片会切断上下文，长上下文直接读全文更准；</li>
+<li><strong>答案必须绝对精确且可计算</strong>——金额、库存、账期这类，该查数据库就查数据库，让模型做 SQL 生成而不是语义检索。</li>
+</ol>
+<p>判断标准可以简化成一句：<strong>RAG 擅长「找到那一段」，不擅长「算出那个数」。</strong></p>
+<h3 id="Q3：Context、Context-Window、Token-到底什么关系？"><a href="#Q3：Context、Context-Window、Token-到底什么关系？" class="headerlink" title="Q3：Context、Context Window、Token 到底什么关系？"></a>Q3：Context、Context Window、Token 到底什么关系？</h3><p>Token 是计量单位（一个 token 大约 1.5 个汉字或 0.75 个单词）；Context 是模型这一次看到的全部输入，包括你的问题、工具列表、检索结果、历史对话，全都算；Context Window 是这个输入最多能装多少 token，也就是那个硬上限。</p>
+<p>三者串起来就是所有上下文工程的起点：<strong>Context 的构成可以设计，Context Window 的上限不能谈判。</strong> 一旦你把 Context 当成「能塞多少塞多少」的容器，问题就从「贵」变成「不准」。</p>
+<h3 id="Q4：Context-Engineering-和-Prompt-Engineering-差在哪？"><a href="#Q4：Context-Engineering-和-Prompt-Engineering-差在哪？" class="headerlink" title="Q4：Context Engineering 和 Prompt Engineering 差在哪？"></a>Q4：Context Engineering 和 Prompt Engineering 差在哪？</h3><p>Prompt Engineering 优化的是「那一段话怎么写」，Context Engineering 优化的是「窗口里到底该出现哪些东西」。</p>
+<p>层级也不一样：Prompt 是最小单位，Context 是中间层，Harness 是最大的一层。LangChain 给的四策略可以直接背下来——<strong>Write（写到窗口外）、Select（按需拉进来）、Compress（只留必需的）、Isolate（切开，别互相污染）</strong>。</p>
+<p>一句话区分：Prompt Engineering 是修辞学，Context Engineering 是内存调度。</p>
+<h3 id="Q5：Harness-Engineering-又是什么？是不是新瓶装旧酒？"><a href="#Q5：Harness-Engineering-又是什么？是不是新瓶装旧酒？" class="headerlink" title="Q5：Harness Engineering 又是什么？是不是新瓶装旧酒？"></a>Q5：Harness Engineering 又是什么？是不是新瓶装旧酒？</h3><p>Harness 的本义是马具——缰绳、马鞍、挽具。放到 Agent 语境里，它是<strong>模型之外那一整套让模型能稳定把事做完的工程装置</strong>：工具、沙箱、验证器、重试机制、交接班协议、成本闸门。</p>
+<p>它和 Context Engineering 的关系是包含而非并列：Context 管「模型每一步看到什么」，Harness 管「整个循环怎么转、什么时候停、错了怎么回」。Karpathy 把 LLM 比作 CPU、把上下文窗口比作 RAM 之后，Harness 大概相当于主板和散热——不决定算力上限，但决定你能不能长时间跑满。</p>
+<p>至于「新瓶装旧酒」的质疑，我的看法是：概念可能是新的，但每个组件都编码了一条「模型当前做不到 X」的假设，而模型每次升级都会作废其中一部分。所以 harness 是易耗品，不是固定资产——要建的不是完美 harness，而是<strong>持续做减法的机制</strong>。</p>
+<p>延伸：<a href="/2026/10/20/%E4%BB%8E%E5%86%99%E4%BB%A3%E7%A0%81%E5%88%B0%E9%80%A0%E7%8E%AF%E5%A2%83-Harness-Engineering%E8%AF%9E%E7%94%9F%E6%80%9D%E8%80%83%E4%B8%8E%E5%9B%BD%E5%86%85%E5%A4%96%E5%AE%9E%E6%88%98/">Harness Engineering：当工程师的核心工作从写代码变成造环境</a></p>
+<hr>
+<h2 id="3、RAG相关"><a href="#3、RAG相关" class="headerlink" title="3、RAG相关"></a>3、RAG相关</h2><h3 id="Q1：RAG系统是如何进行Query改写？"><a href="#Q1：RAG系统是如何进行Query改写？" class="headerlink" title="Q1：RAG系统是如何进行Query改写？"></a>Q1：RAG系统是如何进行Query改写？</h3><p>检索结果不好，不一定是库不好，很有可能是大模型没听懂用户在问什么。<strong>Query 改写就是在检索之前，先把「用户说的话」翻译成「知识库里写的话」</strong>——聚焦于怎么把话说明白，属于 <strong>Prompt Engineering</strong>。</p>
+<h4 id="①-明动机：为什么要改写？"><a href="#①-明动机：为什么要改写？" class="headerlink" title="① 明动机：为什么要改写？"></a>① 明动机：为什么要改写？</h4><p>三个绕不开的动机，回答时先摆出来，面试官就知道你不是在背名词：</p>
+<ol>
+<li><strong>语义鸿沟</strong>：用户问「报销超了咋整」，知识库写的是「差旅费用超标审批流程」，两句没有一个词重合。短 query 信息量本来就少，向量能抓的语义信号有限，直接检索很容易漏掉正确答案。</li>
+<li><strong>意图模糊</strong>：「那个政策怎么说」——可能是报销、也可能是请假，一句话里藏着多种理解，而单个查询只能覆盖其中一种角度。</li>
+<li><strong>历史关联</strong>：多轮对话里「那它的保修呢」，这个「它」根本不在当前这句话里，脱离上下文去检索必然检索错。</li>
+</ol>
+<p>一句话收口：<strong>改写要消灭的是「问法」和「写法」之间的失配。</strong></p>
+<h4 id="②-分维度：怎么改写？"><a href="#②-分维度：怎么改写？" class="headerlink" title="② 分维度：怎么改写？"></a>② 分维度：怎么改写？</h4><p>按由浅入深，三条技术路径：</p>
+<p><strong>第一，语义增强——补信息、换说法。</strong></p>
+<ul>
+<li><strong>指代消解与省略补全</strong>：把「那它的保修呢」补成「XX 型号手机的保修期是多久」，多轮场景必做；</li>
+<li><strong>同义扩展与术语规范化</strong>：「咋退钱」→「退款流程」，解决词汇失配，可以用领域词表也可以用小模型；</li>
+<li><strong>关键词抽取与去噪</strong>：剥掉寒暄和情绪，只留检索真正需要的词。这一招对 <strong>BM25 分支的收益比对向量检索还大</strong>，因为 BM25 对噪声词极其敏感；</li>
+<li><strong>HyDE</strong>：反直觉但有效——不让模型改问题，先让它编一段「假答案」，拿假答案去检索真文档。因为<strong>答案和答案在向量空间里更近</strong>，这招绕开了「用问题向量找答案向量」天然不同构的问题；</li>
+<li><strong>多查询改写 + RRF</strong>：一次生成 3–5 个不同角度的变体并行检索，再用倒数排名融合（RRF）按排名投票合并。对表述模糊的 query 收益最大，也是生产环境性价比最高的一招。</li>
+</ul>
+<p><strong>第二，任务分解——拆问题。</strong></p>
+<p>这里其实藏着<strong>两种方向完全相反</strong>的拆法，很多资料把它们混着讲，所以看着乱。分开讲就清楚了：一种是「横向拆开」，一种是「纵向抬高」。</p>
+<p><img src="/images/aiqa/aiqa_decompose.png" alt="Query 改写中任务分解的两种方向：横向拆与纵向升"></p>
+<h5 id="1️⃣横向拆：子查询分解（Sub-query-Decomposition）"><a href="#1️⃣横向拆：子查询分解（Sub-query-Decomposition）" class="headerlink" title="1️⃣横向拆：子查询分解（Sub-query Decomposition）"></a>1️⃣横向拆：子查询分解（Sub-query Decomposition）</h5><p><strong>适用场景</strong>：一句话里并列了多个对象，或者包含多个独立子问题。</p>
+<p>举个例子，用户问：</p>
+<blockquote>
+<p>「iPhone 17 Pro 和华为 Mate 80 的保修期差多少？」</p>
+</blockquote>
+<p><strong>为什么直接检索不行？</strong> 因为这句话要的是「差多少」，但你的知识库里<strong>根本不会有任何一篇文档写着两者的差值</strong>——文档只会各自写各自的保修政策。拿这一整句去检索，向量会同时被「iPhone」和「华为」两个方向拉扯，结果两边都排不进 top-K，最后两边都召回不全。</p>
+<p><strong>拆开之后</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>检索的查询</th>
+<th>拿到的证据</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>子查询 1</td>
+<td>iPhone 17 Pro 整机保修期限</td>
+<td>「自购买日起 12 个月」</td>
+</tr>
+<tr>
+<td>子查询 2</td>
+<td>华为 Mate 80 整机保修期限</td>
+<td>「自激活日起 12 个月，电池 6 个月」</td>
+</tr>
+<tr>
+<td>子查询 3</td>
+<td>两家保修是否包含电池与屏幕</td>
+<td>各自的除外条款</td>
+</tr>
+</tbody></table>
+<p>三个子查询互不相干，<strong>可以并行检索</strong>；各自拿到证据后，再由 LLM 汇总成答案。</p>
+<p>这一招的关键认知是：<strong>「差多少」不是检索出来的，是汇总时算出来的。</strong> 检索只负责把两边的原始证据各自捞全，比较和计算交给生成阶段。想明白这一点，就知道什么时候该拆了。</p>
+<p>还要区分两种子查询：</p>
+<ul>
+<li><strong>独立型</strong>（上例）：子问题之间没有依赖，可以并行，只是多花几次检索；</li>
+<li><strong>依赖型（多跳）</strong>：后一跳要查什么，取决于前一跳的答案。比如「我们公司现任 CTO 入职前在哪家公司」——第一跳先查「现任 CTO 是谁」，拿到名字后第二跳才能查「张三的履历」。<strong>依赖型必须串行</strong>，这也是它延迟最高的原因。</li>
+</ul>
+<h5 id="2️⃣纵向升：Step-back（退一步提问）"><a href="#2️⃣纵向升：Step-back（退一步提问）" class="headerlink" title="2️⃣纵向升：Step-back（退一步提问）"></a>2️⃣纵向升：Step-back（退一步提问）</h5><p><strong>适用场景</strong>：问题太具体、太长尾，知识库里大概率没有精确匹配。</p>
+<p>它的方向和横向拆<strong>正好相反</strong>——不是把问题拆细，而是<strong>把问题往上抽象一层</strong>。</p>
+<p>举个例子，用户问：</p>
+<blockquote>
+<p>「Mate 80 在 -20℃ 环境下电池续航会衰减多少？」</p>
+</blockquote>
+<p><strong>为什么直接检索不行？</strong> 这是个「型号 × 温度 × 衰减率」的三元组合，属于典型的长尾问题。知识库里几乎不可能有一篇文档专门写「Mate 80 在 -20℃ 的衰减数据」，直接检索的结果要么是召回 0，要么是捞回一堆无关的环境测试报告。</p>
+<p><strong>退一步之后，分两步走</strong>：</p>
+<ol>
+<li><strong>第一步，问一个更泛的问题</strong>：「Mate 80 系列的电池规格与工作温度范围」——这一问命中率很高，能稳定拿到「电池容量 5000 mAh」「标称工作温度 0℃–35℃」「低温下锂电池放电能力下降」这类背景知识；</li>
+<li><strong>第二步，把背景知识和原问题一起交给模型</strong>：「已知该机型电池为 5000 mAh、标称工作温度 0–35℃，请回答 -20℃ 下的续航衰减情况」——模型基于原理做推断，并明确标注这是推算值而非官方数据。</li>
+</ol>
+<p>这一招的关键认知是：<strong>具体答案不在库里，但能推导出答案的那层原理在库里。</strong> Step-back 检索的不是答案本身，而是「能支撑答案的那个更上位的知识」。</p>
+<h5 id="3️⃣两种拆法怎么选"><a href="#3️⃣两种拆法怎么选" class="headerlink" title="3️⃣两种拆法怎么选"></a>3️⃣两种拆法怎么选</h5><table>
+<thead>
+<tr>
+<th></th>
+<th>横向拆（子查询分解）</th>
+<th>纵向升（Step-back）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>问题长什么样</strong></td>
+<td>一句话含多个并列对象/子问题</td>
+<td>一句话过于具体、长尾、组合条件多</td>
+</tr>
+<tr>
+<td><strong>动作</strong></td>
+<td>拆成 N 个平级查询</td>
+<td>抽象成 1 个更上位的问题</td>
+</tr>
+<tr>
+<td><strong>检索次数</strong></td>
+<td>N 次（独立型可并行）</td>
+<td>2 次（先背景，再作答），串行</td>
+</tr>
+<tr>
+<td><strong>答案从哪来</strong></td>
+<td>各子查询的证据汇总后计算</td>
+<td>用上位知识 + 原问题推断</td>
+</tr>
+<tr>
+<td><strong>典型例子</strong></td>
+<td>「A 和 B 的保修期差多少」</td>
+<td>「Mate 80 在 -20℃ 衰减多少」</td>
+</tr>
+</tbody></table>
+<p>两者的<strong>共同代价</strong>是：都要多轮 LLM 调用加多轮检索，延迟和成本成倍上升。所以工程上一定要配意图路由——<strong>只有判定为复杂问题才走分解，简单问题单次检索就够了</strong>，否则就是在给 80% 的简单问题付复杂问题的钱。</p>
+<p><strong>第三，上下文压缩——压历史。</strong></p>
+<p>多轮场景下把最近几轮对话压成一句可以脱离上下文独立理解的完整 query。经验值是<strong>只带最近 2–3 轮</strong>，全量历史塞进去又贵又容易跑偏。这一层同时也是省钱的关键——先做意图路由，判断「要不要检索」，闲聊直接答、简单问题单次检索、复杂问题才走多步。</p>
+<h4 id="③-论权衡：改一次就多一次代价"><a href="#③-论权衡：改一次就多一次代价" class="headerlink" title="③ 论权衡：改一次就多一次代价"></a>③ 论权衡：改一次就多一次代价</h4><p>这一层是加分项，主动说出来比等面试官追问好：</p>
+<ul>
+<li><strong>延迟</strong>：多一次模型调用就多一份耗时；多查询改写会把检索量放大 N 倍，必须并行，串行就是 N 倍延迟。</li>
+<li><strong>漂移</strong>：最危险的坑。改写可能把约束条件泛化掉——「2024 年 Q3 华东区销售额」被改成「某时间段某区域的销售业绩」，检索精度直接崩。<strong>数字、型号、法条编号、地名、人名一旦被翻译掉就是线上事故</strong>，必须在 prompt 里明确要求保留所有限定词。</li>
+<li><strong>成本</strong>：常规打法是<strong>便宜的小模型做改写和路由，贵模型做最终生成</strong>。另外短 query（订单号、SKU、错误码）本来就靠关键词精确命中，改写反而引入噪声，该跳过就跳过。</li>
+</ul>
+<p>还有两条工程红线：<strong>改写失败或超时要能降级到原句直接检索</strong>，改写永远是增强项不是必经项；<strong>原句必须和改写句一起检索</strong>，只信改写句，一旦跑偏就全盘皆输。</p>
+<h4 id="④-说闭环：怎么证明改写真的有用"><a href="#④-说闭环：怎么证明改写真的有用" class="headerlink" title="④ 说闭环：怎么证明改写真的有用"></a>④ 说闭环：怎么证明改写真的有用</h4><p>别凭感觉。建一个 50–200 条真实 query 的小评测集，标注好每条对应的正确文档，改前改后各跑一遍：</p>
+<ul>
+<li>检索侧看 <strong>Recall@K</strong>（该捞的捞进来没有）和 <strong>MRR / NDCG@10</strong>（捞进来的排得够不够前）——改写主要提升的就是 Recall@K；</li>
+<li>端到端用 <strong>RAGAS</strong> 这类框架量化 Faithfulness（忠实度）、Answer Relevancy、Context Precision。</li>
+</ul>
+<p>这里有个必须警惕的点：<strong>只看召回率涨了不够</strong>。改写把候选集撑大的同时会混进噪声，稀释上下文、拉低生成质量——所以<strong>改写必须和 Rerank 配套上</strong>：改写负责捞得多，Rerank 负责排得准，两次校正缺一不可。</p>
+<p>总结：先理解意图，再对齐向量最后生成完美答案。</p>
+<p>延伸：<a href="/2026/03/18/%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8BRAG%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97/">企业级智能助手 RAG 搭建指南</a></p>
+<h2 id="4、AI技术架构选型对比"><a href="#4、AI技术架构选型对比" class="headerlink" title="4、AI技术架构选型对比"></a>4、AI技术架构选型对比</h2><h3 id="Q1：LangChain和LangGraph的区别是什么？"><a href="#Q1：LangChain和LangGraph的区别是什么？" class="headerlink" title="Q1：LangChain和LangGraph的区别是什么？"></a>Q1：LangChain和LangGraph的区别是什么？</h3><ol>
+<li><p>LangChain： 流水线法则 （DAG）</p>
+<ol>
+<li><p>做 RAG 流程就像工厂零件加工：接收-&gt;检索-&gt;生成-＞解析。数据像离弦之箭，单向流动。架构重心：DAG（有向无环图）</p>
+</li>
+<li><p>最优场景</p>
+<p>单次问答、企业 RAG、文本翻译</p>
+<p>框架优势</p>
+<p>响应敏捷、开发流程精简</p>
+</li>
+</ol>
+</li>
+<li><p>LangGraph：循环状态机 （Graph）</p>
+<ol>
+<li><p>LangGraph：循环状态机：LangGraph 引入了循环图计算模型（Cyclic Graph）与全局持久化状态机制。其核心优势在于支持复杂任务的原子化管理，通过Checkpointer 机制实现任务的随时暂停、恢复与状态回溯。</p>
+</li>
+<li><p>Checkpointer：支持任务中断与状态续行</p>
+</li>
+<li><p>时间旅行：节点级的历史追溯与重跑</p>
+</li>
+<li><p>人机协同：严谨业务流程的审核点植入，关键决策由人把控</p>
+</li>
+<li><p>多智能体协同：多虎、多鹿跨部门审批，不再是简单的问答。</p>
+</li>
+<li><p>长流程容错：中间报错能重试而非車跑，解决成本瓶领。</p>
+</li>
+<li><p>录优场景</p>
+<p>代码修复、自动化工单、复杂中台</p>
+<p>框架优獎</p>
+<p>强容错性、逻辑高度灵活</p>
+</li>
+</ol>
+</li>
+</ol>
+<p>总结：技术选型没有最好，只有最合适</p>
+<ol>
+<li>2026 工业级落地现状</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://lizejiao.github.io">李苟蛋</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://lizejiao.github.io/2026/10/26/AI%E6%8A%80%E6%9C%AF/AI%E6%8A%80%E6%9C%AF%E9%97%AE%E7%AD%94%E6%B1%87%E6%80%BB/">https://lizejiao.github.io/2026/10/26/AI技术/AI技术问答汇总/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://lizejiao.github.io" target="_blank">老李家の苟蛋子</a> 许可协议。转载请注明来源 <a href="https://lizejiao.github.io" target="_blank">李苟蛋の家</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI%E6%8A%80%E6%9C%AF/">AI技术</a><a class="post-meta__tags" href="/tags/Agent/">Agent</a><a class="post-meta__tags" href="/tags/RAG/">RAG</a><a class="post-meta__tags" href="/tags/%E9%97%AE%E7%AD%94%E6%B1%87%E6%80%BB/">问答汇总</a><a class="post-meta__tags" href="/tags/%E9%80%89%E5%9E%8B/">选型</a></div><div class="post-share"><div class="social-share" data-image="/images/aiqa/aiqa_cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat_pay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat_pay.jpg" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/10/23/AI%E6%8A%80%E6%9C%AF/%E4%BC%81%E4%B8%9AAgent%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B-%E4%BB%8E%E8%A6%81%E4%B8%8D%E8%A6%81%E5%81%9A%E5%88%B0%E5%85%AD%E5%91%A8%E8%B7%91%E9%80%9A%E4%B8%80%E6%96%87%E8%AE%B2%E6%B8%85/" title="企业 Agent 开发框架选型：从「要不要做」到「六周跑通」，一文讲清"><img class="cover" src="/images/agentfw/af_cover.png" onerror="onerror=null;src='/img/error_404.png'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">企业 Agent 开发框架选型：从「要不要做」到「六周跑通」，一文讲清</div></div><div class="info-2"><div class="info-item-1">企业做 Agent 的第一个难题不是技术，是判断——哪些业务值得做、框架怎么选、多久能跑通。本文梳理 2026 年开源 Agent 框架的五派格局与完整选型打分方法，并用 30 行代码跑通一个真实可用的服务台 Agent，最后给出六周落地路线与未来趋势判断。</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/10/23/AI%E6%8A%80%E6%9C%AF/%E4%BC%81%E4%B8%9AAgent%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B-%E4%BB%8E%E8%A6%81%E4%B8%8D%E8%A6%81%E5%81%9A%E5%88%B0%E5%85%AD%E5%91%A8%E8%B7%91%E9%80%9A%E4%B8%80%E6%96%87%E8%AE%B2%E6%B8%85/" title="企业 Agent 开发框架选型：从「要不要做」到「六周跑通」，一文讲清"><img class="cover" src="/images/agentfw/af_cover.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-23</div><div class="info-item-2">企业 Agent 开发框架选型：从「要不要做」到「六周跑通」，一文讲清</div></div><div class="info-2"><div class="info-item-1">企业做 Agent 的第一个难题不是技术，是判断——哪些业务值得做、框架怎么选、多久能跑通。本文梳理 2026 年开源 Agent 框架的五派格局与完整选型打分方法，并用 30 行代码跑通一个真实可用的服务台 Agent，最后给出六周落地路线与未来趋势判断。</div></div></div></a><a class="pagination-related" href="/2026/10/22/AI%E6%8A%80%E6%9C%AF/Agent%E8%B6%8A%E8%B7%91%E8%B6%8A%E7%AC%A8-%E9%97%AE%E9%A2%98%E4%B8%8D%E5%9C%A8%E6%A8%A1%E5%9E%8B-Context-Engineering%E7%AD%96%E7%95%A5%E8%A7%A3%E6%9E%90/" title="Agent 越跑越笨，问题不在模型：Context Engineering 策略解析"><img class="cover" src="/images/context/ce_cover.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-22</div><div class="info-item-2">Agent 越跑越笨，问题不在模型：Context Engineering 策略解析</div></div><div class="info-2"><div class="info-item-1">Agent 跑得越久，上下文堆得越多，模型就越不听话。本文从 Context 与 Context Window 的基础概念讲起，拆解长上下文的四种失效模式，系统梳理 LangChain 的 Write / Select / Compress / Isolate 四策略框架，再正面回应 Cognition「别建多 Agent」的当头棒喝，最后给出可以按步执行的五步落地顺序。</div></div></div></a><a class="pagination-related" href="/2026/10/20/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E5%86%99%E4%BB%A3%E7%A0%81%E5%88%B0%E9%80%A0%E7%8E%AF%E5%A2%83-Harness-Engineering%E8%AF%9E%E7%94%9F%E6%80%9D%E8%80%83%E4%B8%8E%E5%9B%BD%E5%86%85%E5%A4%96%E5%AE%9E%E6%88%98/" title="Harness Engineering：当工程师的核心工作从写代码变成造环境"><img class="cover" src="/images/harness/he_cover.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-20</div><div class="info-item-2">Harness Engineering：当工程师的核心工作从写代码变成造环境</div></div><div class="info-2"><div class="info-item-1">2026 年春天，Harness Engineering（驾驭工程）从一个个人习惯变成了一门正式的工程学科。本文梳理这个词的诞生时间线，拆解 OpenAI「0 行手写代码、5 个月 100 万行」的百万行实验和 Anthropic 的交接班、GAN 式评估两场实战，回应「新瓶装旧酒」「迟早被模型吃掉」两大争议，再看腾讯、阿里、字节在国内的落地打法，最后给出中小团队从一条 linter 到一套模板的渐进路线。</div></div></div></a><a class="pagination-related" href="/2026/10/15/AI%E6%8A%80%E6%9C%AF/%E4%BA%91%E5%8E%9F%E7%94%9FAI%E7%BD%91%E5%85%B3%E9%80%89%E5%9E%8B%E4%B8%8E%E8%90%BD%E5%9C%B0-Higress-APISIX-Kong-Envoy-AI-Gateway%E6%A8%AA%E8%AF%84/" title="云原生 AI 网关选型与落地：Higress、APISIX、Kong、Envoy AI Gateway 横评"><img class="cover" src="/images/aigw/aigw_cover.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-15</div><div class="info-item-2">云原生 AI 网关选型与落地：Higress、APISIX、Kong、Envoy AI Gateway 横评</div></div><div class="info-2"><div class="info-item-1">一篇写给平台与架构团队的 AI 网关实战指南：为什么通用 API 网关长不出 AI 治理能力、开源 AI 网关的四条路线长什么样、Higress / APISIX / Kong / Envoy AI Gateway 四套架构逐层拆解与能力对比、13 个开源项目的地图（研发方 / 语言 / 底层架构 / 起步时间 / 许可 / 适合谁）、一个 AI 请求穿过网关的八步全链路、Higress 本地 5 分钟搭建 Demo、企业落地五阶段路线、最容易踩的八个坑，以及一棵选型决策树。</div></div></div></a><a class="pagination-related" href="/2026/06/25/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E5%88%B0%E7%BB%9F%E4%B8%80AI-Registry-Nacos3.1%E5%88%B03.3%E6%99%BA%E8%83%BD%E4%BD%93%E5%9F%BA%E5%BB%BA%E8%B1%AA%E8%B5%8C/" title="从微服务注册中心到统一AI Registry：Nacos 3.1→3.3的智能体基建豪赌"><img class="cover" src="/images/nacos/nacos_ai_cover.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-25</div><div class="info-item-2">从微服务注册中心到统一AI Registry：Nacos 3.1→3.3的智能体基建豪赌</div></div><div class="info-2"><div class="info-item-1">Nacos 3.x 把「服务注册发现」这套微服务成熟范式平移到了 AI 智能体生态：MCP、Agent、Skill、Prompt 全部纳入统一 AI Registry。本文含版本速览、核心能力拆解、本地 Demo 超详细搭建、企业级落地方案、现存问题与趋势预测</div></div></div></a><a class="pagination-related" href="/2026/09/30/AI%E6%8A%80%E6%9C%AF/%E6%80%BB%E6%8C%87%E6%8C%A5+%E8%B4%A8%E6%A3%80%E5%91%98-2026%E4%BC%A0%E7%BB%9F%E8%A1%8C%E4%B8%9A%E4%BC%81%E4%B8%9A%E7%BA%A7Agent%E7%9A%84%E4%B8%89%E5%B1%82%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E8%90%BD%E5%9C%B0%E6%96%B9%E6%B3%95%E8%AE%BA/" title="总指挥 + 质检员：2026 传统行业企业级 Agent 的三层多智能体落地方法论"><img class="cover" src="/images/agent3/agent3_cover.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-30</div><div class="info-item-2">总指挥 + 质检员：2026 传统行业企业级 Agent 的三层多智能体落地方法论</div></div><div class="info-2"><div class="info-item-1">一篇写给工程师的企业级多智能体落地指南：为什么单智能体不够用、如何用 LangGraph 搭建「规划—执行—质检」三层架构、Skill 工具库与 MCP 工具调用层、质检员/风控官治理设计、可运行的代码示例、传统行业落地案例与趋势判断。</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="avatar"/></div><div class="author-info-name">李苟蛋</div><div class="author-info-description">欢迎来到李苟蛋的博客....</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">35</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lizejiao"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/lizejiao" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:xxxxxx@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content"><p>欢迎来到李苟蛋的个人博客，对本站的文章和技术问题有疑问或建议，欢迎留言，或者关注我的公众号：<strong>狗蛋的智栈</strong></p> <div style="text-align:center; margin-top:10px;">
+  <img src="/images/aboutme/wechat_mp.jpg" alt="公众号：狗蛋的智栈" style="width:170px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,.15);" />
+  <div style="font-size:12px; color:#999; margin-top:6px;">扫码关注「狗蛋的智栈」</div>
+</div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F%E8%A8%80"><span class="toc-text">序言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E5%85%88%E7%BB%99%E4%B8%80%E5%BC%A0%E5%9C%B0%E5%9B%BE"><span class="toc-text">1、先给一张地图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%B1%82"><span class="toc-text">2、基础概念层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Q1%EF%BC%9ARAG-%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F%E5%AE%83%E5%92%8C%E5%BE%AE%E8%B0%83%E6%98%AF%E6%9B%BF%E4%BB%A3%E5%85%B3%E7%B3%BB%E5%90%97%EF%BC%9F"><span class="toc-text">Q1：RAG 到底是什么？它和微调是替代关系吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Q2%EF%BC%9A%E4%BB%80%E4%B9%88%E6%83%85%E5%86%B5%E4%B8%8B%E5%8F%8D%E8%80%8C%E4%B8%8D%E8%AF%A5%E7%94%A8-RAG%EF%BC%9F"><span class="toc-text">Q2：什么情况下反而不该用 RAG？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Q3%EF%BC%9AContext%E3%80%81Context-Window%E3%80%81Token-%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%85%B3%E7%B3%BB%EF%BC%9F"><span class="toc-text">Q3：Context、Context Window、Token 到底什么关系？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Q4%EF%BC%9AContext-Engineering-%E5%92%8C-Prompt-Engineering-%E5%B7%AE%E5%9C%A8%E5%93%AA%EF%BC%9F"><span class="toc-text">Q4：Context Engineering 和 Prompt Engineering 差在哪？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Q5%EF%BC%9AHarness-Engineering-%E5%8F%88%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F%E6%98%AF%E4%B8%8D%E6%98%AF%E6%96%B0%E7%93%B6%E8%A3%85%E6%97%A7%E9%85%92%EF%BC%9F"><span class="toc-text">Q5：Harness Engineering 又是什么？是不是新瓶装旧酒？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81RAG%E7%9B%B8%E5%85%B3"><span class="toc-text">3、RAG相关</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Q1%EF%BC%9ARAG%E7%B3%BB%E7%BB%9F%E6%98%AF%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8CQuery%E6%94%B9%E5%86%99%EF%BC%9F"><span class="toc-text">Q1：RAG系统是如何进行Query改写？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A0-%E6%98%8E%E5%8A%A8%E6%9C%BA%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%94%B9%E5%86%99%EF%BC%9F"><span class="toc-text">① 明动机：为什么要改写？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A1-%E5%88%86%E7%BB%B4%E5%BA%A6%EF%BC%9A%E6%80%8E%E4%B9%88%E6%94%B9%E5%86%99%EF%BC%9F"><span class="toc-text">② 分维度：怎么改写？</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1%EF%B8%8F%E2%83%A3%E6%A8%AA%E5%90%91%E6%8B%86%EF%BC%9A%E5%AD%90%E6%9F%A5%E8%AF%A2%E5%88%86%E8%A7%A3%EF%BC%88Sub-query-Decomposition%EF%BC%89"><span class="toc-text">1️⃣横向拆：子查询分解（Sub-query Decomposition）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2%EF%B8%8F%E2%83%A3%E7%BA%B5%E5%90%91%E5%8D%87%EF%BC%9AStep-back%EF%BC%88%E9%80%80%E4%B8%80%E6%AD%A5%E6%8F%90%E9%97%AE%EF%BC%89"><span class="toc-text">2️⃣纵向升：Step-back（退一步提问）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3%EF%B8%8F%E2%83%A3%E4%B8%A4%E7%A7%8D%E6%8B%86%E6%B3%95%E6%80%8E%E4%B9%88%E9%80%89"><span class="toc-text">3️⃣两种拆法怎么选</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A2-%E8%AE%BA%E6%9D%83%E8%A1%A1%EF%BC%9A%E6%94%B9%E4%B8%80%E6%AC%A1%E5%B0%B1%E5%A4%9A%E4%B8%80%E6%AC%A1%E4%BB%A3%E4%BB%B7"><span class="toc-text">③ 论权衡：改一次就多一次代价</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A3-%E8%AF%B4%E9%97%AD%E7%8E%AF%EF%BC%9A%E6%80%8E%E4%B9%88%E8%AF%81%E6%98%8E%E6%94%B9%E5%86%99%E7%9C%9F%E7%9A%84%E6%9C%89%E7%94%A8"><span class="toc-text">④ 说闭环：怎么证明改写真的有用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81AI%E6%8A%80%E6%9C%AF%E6%9E%B6%E6%9E%84%E9%80%89%E5%9E%8B%E5%AF%B9%E6%AF%94"><span class="toc-text">4、AI技术架构选型对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Q1%EF%BC%9ALangChain%E5%92%8CLangGraph%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">Q1：LangChain和LangGraph的区别是什么？</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/10/26/AI%E6%8A%80%E6%9C%AF/AI%E6%8A%80%E6%9C%AF%E9%97%AE%E7%AD%94%E6%B1%87%E6%80%BB/" title="AI 技术问答汇总：20 个高频问题，一次讲清"><img src="/images/aiqa/aiqa_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="AI 技术问答汇总：20 个高频问题，一次讲清"/></a><div class="content"><a class="title" href="/2026/10/26/AI%E6%8A%80%E6%9C%AF/AI%E6%8A%80%E6%9C%AF%E9%97%AE%E7%AD%94%E6%B1%87%E6%80%BB/" title="AI 技术问答汇总：20 个高频问题，一次讲清">AI 技术问答汇总：20 个高频问题，一次讲清</a><time datetime="2026-10-26T13:00:00.000Z" title="发表于 2026-10-26 21:00:00">2026-10-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/23/AI%E6%8A%80%E6%9C%AF/%E4%BC%81%E4%B8%9AAgent%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B-%E4%BB%8E%E8%A6%81%E4%B8%8D%E8%A6%81%E5%81%9A%E5%88%B0%E5%85%AD%E5%91%A8%E8%B7%91%E9%80%9A%E4%B8%80%E6%96%87%E8%AE%B2%E6%B8%85/" title="企业 Agent 开发框架选型：从「要不要做」到「六周跑通」，一文讲清"><img src="/images/agentfw/af_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="企业 Agent 开发框架选型：从「要不要做」到「六周跑通」，一文讲清"/></a><div class="content"><a class="title" href="/2026/10/23/AI%E6%8A%80%E6%9C%AF/%E4%BC%81%E4%B8%9AAgent%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B-%E4%BB%8E%E8%A6%81%E4%B8%8D%E8%A6%81%E5%81%9A%E5%88%B0%E5%85%AD%E5%91%A8%E8%B7%91%E9%80%9A%E4%B8%80%E6%96%87%E8%AE%B2%E6%B8%85/" title="企业 Agent 开发框架选型：从「要不要做」到「六周跑通」，一文讲清">企业 Agent 开发框架选型：从「要不要做」到「六周跑通」，一文讲清</a><time datetime="2026-10-23T12:00:00.000Z" title="发表于 2026-10-23 20:00:00">2026-10-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/22/AI%E6%8A%80%E6%9C%AF/Agent%E8%B6%8A%E8%B7%91%E8%B6%8A%E7%AC%A8-%E9%97%AE%E9%A2%98%E4%B8%8D%E5%9C%A8%E6%A8%A1%E5%9E%8B-Context-Engineering%E7%AD%96%E7%95%A5%E8%A7%A3%E6%9E%90/" title="Agent 越跑越笨，问题不在模型：Context Engineering 策略解析"><img src="/images/context/ce_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="Agent 越跑越笨，问题不在模型：Context Engineering 策略解析"/></a><div class="content"><a class="title" href="/2026/10/22/AI%E6%8A%80%E6%9C%AF/Agent%E8%B6%8A%E8%B7%91%E8%B6%8A%E7%AC%A8-%E9%97%AE%E9%A2%98%E4%B8%8D%E5%9C%A8%E6%A8%A1%E5%9E%8B-Context-Engineering%E7%AD%96%E7%95%A5%E8%A7%A3%E6%9E%90/" title="Agent 越跑越笨，问题不在模型：Context Engineering 策略解析">Agent 越跑越笨，问题不在模型：Context Engineering 策略解析</a><time datetime="2026-10-22T13:00:00.000Z" title="发表于 2026-10-22 21:00:00">2026-10-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/20/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E5%86%99%E4%BB%A3%E7%A0%81%E5%88%B0%E9%80%A0%E7%8E%AF%E5%A2%83-Harness-Engineering%E8%AF%9E%E7%94%9F%E6%80%9D%E8%80%83%E4%B8%8E%E5%9B%BD%E5%86%85%E5%A4%96%E5%AE%9E%E6%88%98/" title="Harness Engineering：当工程师的核心工作从写代码变成造环境"><img src="/images/harness/he_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="Harness Engineering：当工程师的核心工作从写代码变成造环境"/></a><div class="content"><a class="title" href="/2026/10/20/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E5%86%99%E4%BB%A3%E7%A0%81%E5%88%B0%E9%80%A0%E7%8E%AF%E5%A2%83-Harness-Engineering%E8%AF%9E%E7%94%9F%E6%80%9D%E8%80%83%E4%B8%8E%E5%9B%BD%E5%86%85%E5%A4%96%E5%AE%9E%E6%88%98/" title="Harness Engineering：当工程师的核心工作从写代码变成造环境">Harness Engineering：当工程师的核心工作从写代码变成造环境</a><time datetime="2026-10-20T13:30:00.000Z" title="发表于 2026-10-20 21:30:00">2026-10-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/19/%E4%BA%91%E5%8E%9F%E7%94%9F/%E4%BB%8Enamespace%E5%88%B0%E4%B8%87%E8%8A%82%E7%82%B9%E8%B0%83%E5%BA%A6-2026%E5%B9%B4Docker%E4%B8%8EKubernetes%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%A8%E8%A7%A3/" title="从 namespace 到万节点调度：2026 年 Docker 与 Kubernetes 企业级落地全解"><img src="/images/k8s/k8s_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="从 namespace 到万节点调度：2026 年 Docker 与 Kubernetes 企业级落地全解"/></a><div class="content"><a class="title" href="/2026/10/19/%E4%BA%91%E5%8E%9F%E7%94%9F/%E4%BB%8Enamespace%E5%88%B0%E4%B8%87%E8%8A%82%E7%82%B9%E8%B0%83%E5%BA%A6-2026%E5%B9%B4Docker%E4%B8%8EKubernetes%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%A8%E8%A7%A3/" title="从 namespace 到万节点调度：2026 年 Docker 与 Kubernetes 企业级落地全解">从 namespace 到万节点调度：2026 年 Docker 与 Kubernetes 企业级落地全解</a><time datetime="2026-10-19T02:30:00.000Z" title="发表于 2026-10-19 10:30:00">2026-10-19</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2021 - 2026 By 李苟蛋</span></div><div class="footer_custom_text">_φ(❐_❐✧ 人丑就要多读书😂，睡觉没前途(￣o￣) . z Z　🤣</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.14/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const parseViewBox = viewBox => {
+    if (!viewBox) return null
+    const parts = viewBox.trim().split(/[\s,]+/).map(n => Number(n))
+    if (parts.length !== 4 || parts.some(n => Number.isNaN(n))) return null
+    return parts
+  }
+
+  const getSvgViewBox = svg => {
+    const attr = parseViewBox(svg.getAttribute('viewBox'))
+    if (attr) return attr
+
+    // Fallback: use bbox to build a viewBox
+    try {
+      const bbox = svg.getBBox()
+      if (bbox && bbox.width && bbox.height) return [bbox.x, bbox.y, bbox.width, bbox.height]
+    } catch (e) {
+      // getBBox may fail on some edge cases; ignore
+    }
+
+    const w = Number(svg.getAttribute('width')) || 0
+    const h = Number(svg.getAttribute('height')) || 0
+    if (w > 0 && h > 0) return [0, 0, w, h]
+    return [0, 0, 100, 100]
+  }
+
+  const setSvgViewBox = (svg, vb) => {
+    svg.setAttribute('viewBox', `${vb[0]} ${vb[1]} ${vb[2]} ${vb[3]}`)
+  }
+
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
+
+  const openSvgInNewTab = ({ source, initViewBox }) => {
+    const getClonedSvg = () => {
+      if (typeof source === 'string') {
+        const template = document.createElement('template')
+        template.innerHTML = source.trim()
+        const svg = template.content.querySelector('svg')
+        return svg ? svg.cloneNode(true) : null
+      }
+      if (source && typeof source.cloneNode === 'function') {
+        return source.cloneNode(true)
+      }
+      return null
+    }
+
+    const clone = getClonedSvg()
+    if (!clone) return
+    if (initViewBox && initViewBox.length === 4) {
+      clone.setAttribute('viewBox', initViewBox.join(' '))
+    }
+    if (!clone.getAttribute('xmlns')) clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+    if (!clone.getAttribute('xmlns:xlink') && clone.innerHTML.includes('xlink:')) {
+      clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink')
+    }
+    // inject background to match current theme
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+    const bg = getComputedStyle(document.body).backgroundColor || (isDark ? '#1e1e1e' : '#ffffff')
+    if (!clone.style.background) clone.style.background = bg
+
+    const serializer = new XMLSerializer()
+    const svgSource = serializer.serializeToString(clone)
+    const htmlSource = `<!doctype html><html><head><meta charset="utf-8" />
+      <style>
+        html, body { width: 100%; height: 100%; margin: 0; display: flex; align-items: center; justify-content: center; background: ${bg}; }
+        svg { max-width: 100%; max-height: 100%; height: auto; width: auto; }
+      </style>
+      </head><body>${svgSource}</body></html>`
+    const blob = new Blob([htmlSource], { type: 'text/html;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    window.open(url, '_blank', 'noopener')
+
+    setTimeout(() => URL.revokeObjectURL(url), 5000)
+  }
+
+  const attachMermaidViewerButton = wrap => {
+    let btn = wrap.querySelector('.mermaid-open-btn')
+    if (!btn) {
+      btn = document.createElement('button')
+      btn.type = 'button'
+      btn.className = 'mermaid-open-btn'
+      wrap.appendChild(btn)
+    }
+
+    btn.innerHTML = '<i class="fa fa-search fa-fw" aria-hidden="true"></i>'
+
+    if (!btn.__mermaidViewerBound) {
+      btn.addEventListener('click', e => {
+        e.preventDefault()
+        e.stopPropagation()
+        const svg = wrap.__mermaidOriginalSvg || wrap.querySelector('svg')
+        if (!svg) return
+        const initViewBox = wrap.__mermaidInitViewBox
+        openSvgInNewTab({ source: svg, initViewBox })
+      })
+      btn.__mermaidViewerBound = true
+    }
+  }
+
+  // Zoom around a point (px, py) in the SVG viewport (in viewBox coordinates)
+  const zoomAtPoint = (vb, factor, px, py) => {
+    const w = vb[2] * factor
+    const h = vb[3] * factor
+    const nx = px - (px - vb[0]) * factor
+    const ny = py - (py - vb[1]) * factor
+    return [nx, ny, w, h]
+  }
+
+  const initMermaidGestures = wrap => {
+    // Clean up previous event listeners and pending frames
+    if (wrap.__mermaidAbortController) {
+      wrap.__mermaidAbortController.abort()
+      if (wrap.__mermaidRafId) cancelAnimationFrame(wrap.__mermaidRafId)
+    }
+    const ac = new AbortController()
+    wrap.__mermaidAbortController = ac
+    const svg = wrap.querySelector('svg')
+    if (!svg) return
+
+    // Ensure viewBox exists so gestures always work
+    const initVb = getSvgViewBox(svg)
+    wrap.__mermaidInitViewBox = initVb
+    wrap.__mermaidCurViewBox = initVb.slice()
+    setSvgViewBox(svg, initVb)
+    // Disable default gestures to prevent scroll chaining and pinch-zoom penetration in Chrome
+    svg.style.touchAction = 'none'
+
+    // Cache BoundingClientRect, throttled on scroll to reduce reflow
+    let cachedRect = svg.getBoundingClientRect()
+    let rectDirty = false
+    const markRectDirty = () => { rectDirty = true }
+    window.addEventListener('resize', markRectDirty, { signal: ac.signal })
+    window.addEventListener('scroll', markRectDirty, { signal: ac.signal, capture: true })
+    const getRect = () => {
+      if (rectDirty) {
+        cachedRect = svg.getBoundingClientRect()
+        rectDirty = false
+      }
+      return cachedRect
+    }
+
+    // Precompute clamp bounds from initial viewBox
+    const minW = initVb[2] * 0.1
+    const maxW = initVb[2] * 10
+    const minH = initVb[3] * 0.1
+    const maxH = initVb[3] * 10
+    const clampVb = vb => {
+      const out = vb.slice()
+      out[2] = clamp(out[2], minW, maxW)
+      out[3] = clamp(out[3], minH, maxH)
+      return out
+    }
+
+    // Throttle DOM updates using requestAnimationFrame
+    let pendingVb = null
+    let rafId = null
+    const applyVb = () => {
+      if (pendingVb) {
+        wrap.__mermaidCurViewBox = pendingVb
+        setSvgViewBox(svg, pendingVb)
+        pendingVb = null
+      }
+      rafId = null
+      wrap.__mermaidRafId = null
+    }
+    const setCurVb = vb => {
+      pendingVb = clampVb(vb)
+      if (!rafId) {
+        rafId = requestAnimationFrame(applyVb)
+        wrap.__mermaidRafId = rafId
+      }
+    }
+
+    const state = {
+      pointers: new Map(),
+      startVb: null,
+      startDist: 0,
+      lastPointerX: 0,
+      lastPointerY: 0
+    }
+
+    const onPointerDown = e => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return
+      svg.setPointerCapture(e.pointerId)
+      const curVb = wrap.__mermaidCurViewBox
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+      if (state.pointers.size === 1) {
+        state.startVb = curVb.slice()
+        state.lastPointerX = e.clientX
+        state.lastPointerY = e.clientY
+      } else if (state.pointers.size === 2) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        state.startDist = Math.hypot(dx, dy)
+        state.startVb = curVb.slice()
+      }
+    }
+
+    const onPointerMove = e => {
+      if (!state.pointers.has(e.pointerId)) return
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+      const curVb = wrap.__mermaidCurViewBox
+      const rect = getRect()
+      if (state.pointers.size === 1 && state.startVb) {
+        const p = state.pointers.values().next().value
+        const dxClient = p.x - state.lastPointerX
+        const dyClient = p.y - state.lastPointerY
+        state.lastPointerX = p.x
+        state.lastPointerY = p.y
+        const dx = dxClient * (curVb[2] / rect.width)
+        const dy = dyClient * (curVb[3] / rect.height)
+        setCurVb([curVb[0] - dx, curVb[1] - dy, curVb[2], curVb[3]])
+        return
+      }
+      if (state.pointers.size === 2 && state.startVb && state.startDist > 0) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        const dist = Math.hypot(dx, dy)
+        if (!dist) return
+        const factor = state.startDist / dist
+        const cx = (pts[0].x + pts[1].x) / 2
+        const cy = (pts[0].y + pts[1].y) / 2
+        const px = curVb[0] + (cx - rect.left) * (curVb[2] / rect.width)
+        const py = curVb[1] + (cy - rect.top) * (curVb[3] / rect.height)
+        setCurVb(zoomAtPoint(state.startVb, factor, px, py))
+      }
+    }
+
+    const onPointerUpOrCancel = e => {
+      // Release PointerCapture to avoid event capture anomalies
+      if (svg.hasPointerCapture && svg.hasPointerCapture(e.pointerId)) {
+        svg.releasePointerCapture(e.pointerId)
+      }
+      state.pointers.delete(e.pointerId)
+      if (state.pointers.size === 0) {
+        state.startVb = null
+        state.startDist = 0
+      } else if (state.pointers.size === 1) {
+        const p = state.pointers.values().next().value
+        state.lastPointerX = p.x
+        state.lastPointerY = p.y
+      }
+    }
+
+    const onWheel = e => {
+      // Prevent event bubbling from triggering external scroll
+      e.preventDefault()
+      e.stopPropagation()
+      // Normalize deltaY across deltaMode (Chrome uses pixels, Safari uses lines)
+      let delta = e.deltaY
+      if (e.deltaMode === 1) delta *= 16
+      else if (e.deltaMode === 2) delta *= 400
+
+      // Continuous zoom factor: smoother than fixed 1.1/0.9 steps
+      const zoomFactor = Math.pow(1.001, delta)
+
+      const curVb = wrap.__mermaidCurViewBox
+      const rect = getRect()
+      const px = curVb[0] + (e.clientX - rect.left) * (curVb[2] / rect.width)
+      const py = curVb[1] + (e.clientY - rect.top) * (curVb[3] / rect.height)
+      setCurVb(zoomAtPoint(curVb, zoomFactor, px, py))
+    }
+
+    const onDblClick = () => {
+      const init = wrap.__mermaidInitViewBox
+      if (init) setCurVb(init)
+    }
+
+    svg.addEventListener('pointerdown', onPointerDown, { signal: ac.signal })
+    svg.addEventListener('pointermove', onPointerMove, { signal: ac.signal })
+    svg.addEventListener('pointerup', onPointerUpOrCancel, { signal: ac.signal })
+    svg.addEventListener('pointercancel', onPointerUpOrCancel, { signal: ac.signal })
+    svg.addEventListener('wheel', onWheel, { passive: false, signal: ac.signal })
+    svg.addEventListener('dblclick', onDblClick, { signal: ac.signal })
+  }
+
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      // Clean up event listeners before removing old SVG
+      if (item.__mermaidAbortController) {
+        item.__mermaidAbortController.abort()
+      }
+      const oldSvg = item.querySelector('svg')
+      if (oldSvg) oldSvg.remove()
+      let config = {}
+      try {
+        config = mermaidSrc.dataset.config ? JSON.parse(mermaidSrc.dataset.config) : {}
+      } catch (e) {
+        console.warn('[mermaid] failed to parse dataset.config:', e)
+      }
+      if (!config.theme) {
+        config.theme = theme
+      }
+      const mermaidThemeConfig = `%%{init: ${JSON.stringify(config)}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+        if (true) initMermaidGestures(item)
+        item.__mermaidOriginalSvg = svg
+        if (true) attachMermaidViewerButton(item)
+      }
+
+      const handleError = err => {
+        console.error(`[mermaid] render failed for block #${index}:`, err)
+        const errorEl = document.createElement('div')
+        errorEl.className = 'mermaid-error'
+        errorEl.textContent = `Mermaid render error: ${err.message || err}`
+        mermaidSrc.insertAdjacentElement('afterend', errorEl)
+      }
+
+      try {
+        const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+        // mermaid v9 and v10 compatibility
+        if (typeof renderFn === 'string') {
+          renderMermaid(renderFn)
+        } else {
+          renderFn.then(({ svg }) => renderMermaid(svg)).catch(handleError)
+        }
+      } catch (err) {
+        handleError(err)
+      }
+    })
+  }
+
+  const codeToMermaid = $article => {
+    const codeMermaidEle = $article.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    const $article = document.getElementById('article-container')
+    if (!$article) return
+
+    if (true) codeToMermaid($article)
+    const $mermaid = $article.querySelectorAll('.mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid@11.16.0/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script><script src="/js/chocolate.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-fluttering-ribbon.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-show-text.min.js" data-mobile="false" data-text="渴望,生锈,十七,黎明,火炉,苟蛋,善良,回家,货车,士兵" data-fontsize="15px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.7.0"></script></div></div></body></html>
