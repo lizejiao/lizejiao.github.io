@@ -1,0 +1,996 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>LangChain 与 LangGraph 全景解析：一个让你跑得快，一个让你跑得稳 | 李苟蛋の家</title><meta name="author" content="李苟蛋"><meta name="copyright" content="李苟蛋"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="LangChain 和 LangGraph 到底是不是竞品？本文从 2022 年的第一行代码讲到 2025 年 10 月的双 1.0，把两个框架的定位、要解决的问题、适用场景讲清楚，再给出两套可运行的 Demo：一个用 create_agent 十几行搭出带记忆的客服 Agent，一个用 StateGraph 搭出能暂停等人审批的报销流程，最后对比 DAG 与循环图的根本差别。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LangChain 与 LangGraph 全景解析：一个让你跑得快，一个让你跑得稳">
+<meta property="og:url" content="https://lizejiao.github.io/2026/10/26/AI%E6%8A%80%E6%9C%AF/LangChain%E4%B8%8ELangGraph%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90-%E4%BB%8E%E6%98%AF%E4%BB%80%E4%B9%88%E5%88%B0%E4%B8%A4%E4%B8%AA%E5%8F%AF%E8%BF%90%E8%A1%8CDemo/index.html">
+<meta property="og:site_name" content="李苟蛋の家">
+<meta property="og:description" content="LangChain 和 LangGraph 到底是不是竞品？本文从 2022 年的第一行代码讲到 2025 年 10 月的双 1.0，把两个框架的定位、要解决的问题、适用场景讲清楚，再给出两套可运行的 Demo：一个用 create_agent 十几行搭出带记忆的客服 Agent，一个用 StateGraph 搭出能暂停等人审批的报销流程，最后对比 DAG 与循环图的根本差别。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lizejiao.github.io/images/langchain/lc_cover.png">
+<meta property="article:published_time" content="2026-10-26T14:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-26T14:00:00.000Z">
+<meta property="article:author" content="李苟蛋">
+<meta property="article:tag" content="AI技术">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="框架选型">
+<meta property="article:tag" content="LangChain">
+<meta property="article:tag" content="LangGraph">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lizejiao.github.io/images/langchain/lc_cover.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "LangChain 与 LangGraph 全景解析：一个让你跑得快，一个让你跑得稳",
+  "url": "https://lizejiao.github.io/2026/10/26/AI%E6%8A%80%E6%9C%AF/LangChain%E4%B8%8ELangGraph%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90-%E4%BB%8E%E6%98%AF%E4%BB%80%E4%B9%88%E5%88%B0%E4%B8%A4%E4%B8%AA%E5%8F%AF%E8%BF%90%E8%A1%8CDemo/",
+  "image": "https://lizejiao.github.io/images/langchain/lc_cover.png",
+  "datePublished": "2026-10-26T14:00:00.000Z",
+  "dateModified": "2026-10-26T14:00:00.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "李苟蛋",
+      "url": "https://lizejiao.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="https://gitee.com/lizejiao/img-go/raw/master/images/favicon.jpg"><link rel="canonical" href="https://lizejiao.github.io/2026/10/26/AI%E6%8A%80%E6%9C%AF/LangChain%E4%B8%8ELangGraph%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90-%E4%BB%8E%E6%98%AF%E4%BB%80%E4%B9%88%E5%88%B0%E4%B8%A4%E4%B8%AA%E5%8F%AF%E8%BF%90%E8%A1%8CDemo/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.14/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const start = 6
+          const end = 18
+          const isNight =
+            start < end
+                ? hour < start || hour >= end
+                : hour >= start || hour < end
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":800,"highlightFullpage":true,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'LangChain 与 LangGraph 全景解析：一个让你跑得快，一个让你跑得稳',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 5.4.0"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/url(/img/index_img.jpg));"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">20</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/%E5%85%B3%E4%BA%8E%E6%88%91/"><i class="fa-fw fas fa-user"></i><span> 关于我</span></a></div><div class="menus_item"><a class="site-page" href="/message/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/images/langchain/lc_cover.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">李苟蛋の家</span></a><a class="nav-page-title" href="/"><span class="site-name">LangChain 与 LangGraph 全景解析：一个让你跑得快，一个让你跑得稳</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/%E5%85%B3%E4%BA%8E%E6%88%91/"><i class="fa-fw fas fa-user"></i><span> 关于我</span></a></div><div class="menus_item"><a class="site-page" href="/message/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">LangChain 与 LangGraph 全景解析：一个让你跑得快，一个让你跑得稳</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-26T14:00:00.000Z" title="发表于 2026-10-26 22:00:00">2026-10-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-26T14:00:00.000Z" title="更新于 2026-10-26 22:00:00">2026-10-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%95%99%E7%A8%8B/">教程</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">5.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>20分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><div id="post-outdate-notice" data="{&quot;limitDay&quot;:365,&quot;messagePrev&quot;:&quot;本文最后更新于&quot;,&quot;messageNext&quot;:&quot;天前，其中的内容可能已经过时。&quot;,&quot;postUpdate&quot;:&quot;2026-10-26 22:00:00&quot;}" hidden></div><h2 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h2><p>先说一个我见过最多的误解：<strong>很多人把 LangChain 和 LangGraph 当成两个竞品，在两者之间做选择。</strong></p>
+<p>这是一个方向性的错误。官方自己的定位写得很清楚——LangChain 是<strong>框架</strong>（framework），LangGraph 是<strong>运行时</strong>（runtime）。它们不是同一层的两个选项，而是同一条抽象阶梯上的两层：一个负责「怎么把零件拼起来」，一个负责「拼起来之后怎么跑、跑崩了怎么续」。</p>
+<p>更要命的是，从 2025 年 10 月的 1.0 版本开始，<strong>LangChain 的 agent 本身就跑在 LangGraph 的运行时之上</strong>。所以「选 LangChain 还是 LangGraph」这个问法，本身就像在问「选方向盘还是选发动机」。</p>
+<p>这篇文章想讲清楚四件事：</p>
+<ol>
+<li>它们分别是什么、<strong>什么时候</strong>出现的；</li>
+<li>各自<strong>真正解决</strong>的是什么问题（不是功能列表，是它们在工程上填补了哪个坑）；</li>
+<li>什么场景该用哪个——判断标准其实只有一条；</li>
+<li><strong>两个能跑起来的 Demo</strong>，一个走 LangChain 的捷径，一个走 LangGraph 的显式路线，放在一起对比着看。</li>
+</ol>
+<p>文中代码基于 <code>langchain 1.4.x</code> 与 <code>langgraph 1.2.x</code>（2026 年 10 月），接口跟 0.x 时代差别很大，如果你搜到的是老教程，别照抄。</p>
+<hr>
+<h2 id="一、先把时间线钉住"><a href="#一、先把时间线钉住" class="headerlink" title="一、先把时间线钉住"></a>一、先把时间线钉住</h2><p>讨论这两个框架，时间点错位是最常见的混乱来源。很多人印象里的 LangChain 还停留在 2023 年那个「抽象过重、包体臃肿」的版本，而 LangGraph 则被当成「后来才出的新东西」。</p>
+<p>实际上两家是同一个团队、同一个仓库体系，前后脚长出来的。</p>
+<p><img src="/images/langchain/lc_timeline.png" alt="LangChain 与 LangGraph 的四年"></p>
+<table>
+<thead>
+<tr>
+<th>时间</th>
+<th>事件</th>
+<th>为什么重要</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2022.10</td>
+<td>LangChain 开源（Harrison Chase）</td>
+<td>把「LLM + 外部数据 + 工具」的胶水代码标准化</td>
+</tr>
+<tr>
+<td>2023.04</td>
+<td>LangChain Inc. 成立</td>
+<td>从个人项目变成公司</td>
+</tr>
+<tr>
+<td>2023.Q3</td>
+<td>LCEL（LangChain 表达式语言）</td>
+<td>声明式地定义链，<code>prompt | model | parser</code> 的写法就是这时候定的</td>
+</tr>
+<tr>
+<td>2023.10</td>
+<td>LangServe</td>
+<td>把 LCEL 链一键发布成 API</td>
+</tr>
+<tr>
+<td>2023 夏</td>
+<td>内部启动 LangGraph</td>
+<td>起因很直接：用户抱怨「高层抽象挡路了」</td>
+</tr>
+<tr>
+<td>2024.01</td>
+<td>LangGraph 发布</td>
+<td>循环图 + 持久化状态，把控制权还给开发者</td>
+</tr>
+<tr>
+<td>2024.02</td>
+<td>LangSmith 发布</td>
+<td>可观测与评估，Agent 调试的刚需</td>
+</tr>
+<tr>
+<td>2025.05</td>
+<td>LangGraph Platform GA</td>
+<td>托管部署，长期运行的有状态 Agent 有了基建</td>
+</tr>
+<tr>
+<td><strong>2025.10</strong></td>
+<td><strong>LangChain 1.0 与 LangGraph 1.0</strong></td>
+<td>分水岭：LangChain 推倒重写为 agent 优先，LangGraph 拿到首个稳定大版本</td>
+</tr>
+<tr>
+<td>2026.10</td>
+<td>langchain 1.4.7 / langgraph 1.2.17</td>
+<td>当前版本，承诺 2.0 之前不再破坏性变更</td>
+</tr>
+</tbody></table>
+<p>有两条线值得单独说。</p>
+<p><strong>第一条：LangGraph 不是「LangChain 2.0」，它是被 LangChain 的失败逼出来的。</strong></p>
+<p>官方在复盘里写得很坦率：2023 年夏天开始收到大量负面反馈——破坏性变更、隐藏的 prompt、包体膨胀、依赖冲突。这些问题大多能修，但有一条修不了：<strong>用户想要更多控制权</strong>。LangChain 为了易用性牺牲了控制力，而一旦要上生产，那些让入门变简单的高层抽象，恰恰成了障碍。</p>
+<p>于是他们用「可控性」和「运行时」两根柱子重新做了一个东西：没有隐藏 prompt、没有隐藏的上下文工程，流式、状态、人机协同、持久化执行全部一等公民。这就是 LangGraph。</p>
+<p><strong>第二条：2025 年 10 月的 1.0 是双发，而且是一次「合流」。</strong></p>
+<p>LangChain 1.0 做的事，本质上是三件：</p>
+<ul>
+<li>把重心收敛到<strong>核心 agent 循环</strong>（模型 → 工具 → 模型 → 结束），其它都往外挪；</li>
+<li>引入 <strong>middleware</strong> 这个新概念，让你在循环的每个钩子上做定制；</li>
+<li>把运行时<strong>换成 LangGraph</strong>——持久化、流式、人机协同这些能力直接继承，不用自己实现。</li>
+</ul>
+<p>同时，老的 0.x 版本被改名 <code>langchain-classic</code> 继续维护。所以你今天看到的 LangChain，和 2023 年那个 LangChain，已经是两个东西了。</p>
+<hr>
+<h2 id="二、LangChain-是什么：给-LLM-装一个万能插座"><a href="#二、LangChain-是什么：给-LLM-装一个万能插座" class="headerlink" title="二、LangChain 是什么：给 LLM 装一个万能插座"></a>二、LangChain 是什么：给 LLM 装一个万能插座</h2><p>一句话定义：<strong>LangChain 是把「模型、提示词、检索、工具」这些零件标准化并组装起来的框架。</strong></p>
+<p>它填补的坑很具体：2022 年的时候，每换一个模型厂商，调用方式、消息格式、工具定义全都不一样；每接一个数据源，加载和切分逻辑都要重写。LangChain 做的事就是抽出一层统一接口——同一套代码换个模型字符串就能跑，这是它当年爆红的最直接原因。</p>
+<p>到 1.0 之后，它的重心收敛成三块：</p>
+<table>
+<thead>
+<tr>
+<th>组成</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Model</strong></td>
+<td>统一模型接入，<code>provider:model</code> 一个字符串切换厂商</td>
+</tr>
+<tr>
+<td><strong>Tools</strong></td>
+<td>把任意 Python 函数变成模型可调用的工具（<code>@tool</code> 装饰器）</td>
+</tr>
+<tr>
+<td><strong>Agent（harness）</strong></td>
+<td><code>create_agent</code> 提供标准 agent 循环 + middleware 定制</td>
+</tr>
+</tbody></table>
+<p>这里有个概念值得单独拎出来：官方现在把 agent 定义成 <strong>Model + Harness</strong>。Harness（线束）指的是循环之外的一切——提示词、工具集、中间件。而 harness 的工作只有一个：<strong>在该给模型上下文的时候，把对的上下文给它</strong>。</p>
+<p>这也解释了 middleware 为什么是 1.0 最重要的新东西：它是「上下文工程」在框架层面的落点。1.0 内置了几类常用中间件：</p>
+<ul>
+<li><strong>Human-in-the-loop</strong>：工具执行前暂停，让人批准、修改或拒绝；</li>
+<li><strong>Summarization</strong>：历史快撑爆窗口时压缩旧消息，保留最近的；</li>
+<li><strong>PII redaction</strong>：把邮箱、手机号之类的敏感信息在送进模型前打码。</li>
+</ul>
+<p>当然也可以自己写，挂在循环的各个钩子上（<code>before_model</code>、<code>after_model</code> 等）。</p>
+<p><strong>LangChain 的气质是「默认值优先」</strong>：它替你做了一大堆决定，你接受这些默认值就能很快跑起来；一旦你的需求和默认值不符，就要动 middleware 往下挖。</p>
+<hr>
+<h2 id="三、LangGraph-是什么：给-Agent-装一个操作系统内核"><a href="#三、LangGraph-是什么：给-Agent-装一个操作系统内核" class="headerlink" title="三、LangGraph 是什么：给 Agent 装一个操作系统内核"></a>三、LangGraph 是什么：给 Agent 装一个操作系统内核</h2><p>一句话定义：<strong>LangGraph 是一个低层编排框架和运行时，把 Agent 表达成「带状态的图」。</strong></p>
+<p>它的三个核心概念，其实就是三件事：</p>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>是什么</th>
+<th>类比</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>State</strong></td>
+<td>一张贯穿全程的共享数据结构</td>
+<td>全局变量 / 数据库里的一行</td>
+</tr>
+<tr>
+<td><strong>Node</strong></td>
+<td>读写 State 的函数</td>
+<td>一个处理步骤</td>
+</tr>
+<tr>
+<td><strong>Edge</strong></td>
+<td>决定下一步走哪</td>
+<td>流程连线，可以是条件分支</td>
+</tr>
+<tr>
+<td><strong>Checkpointer</strong></td>
+<td>每一步的存档</td>
+<td>游戏存档点</td>
+</tr>
+</tbody></table>
+<p>关键在于那个<strong>环</strong>：LangGraph 允许边指回上面，所以 Agent 可以「调工具 → 看结果 → 再调一次」，而不是一条道走到黑。这也是它和 DAG 编排最本质的差别。</p>
+<p>设计来源也说明了它的定位：LangGraph 受 Google 的 <strong>Pregel</strong>（图计算）和 <strong>Apache Beam</strong> 启发，公开接口参考了 <strong>NetworkX</strong>。这不是给业务开发看的框架，是给「要控制每一步」的人用的运行时。</p>
+<p>有三个事实容易被忽略：</p>
+<ol>
+<li><strong>它可以完全脱离 LangChain 单独使用。</strong> 你用不用 LangChain 的模型抽象都行。</li>
+<li><strong>LangChain 的 agent 就跑在它上面。</strong> 所谓 <code>create_agent</code>，本质是「预置好的 LangGraph 图」。</li>
+<li><strong>它的生产验证来自大厂的长跑场景</strong>——LinkedIn、Uber、J.P. Morgan、BlackRock 这类，共同点是流程长、要审计、不能重跑。</li>
+</ol>
+<p><img src="/images/langchain/lc_stack.png" alt="它们不是竞品，是同一条栈的三层"></p>
+<p>这张图值得记住：抽象沿栈向上增加，控制力向下增加。官方给的落地建议是反直觉的——<strong>从最高层起步，被需求逼着往下掉</strong>，而不是一上来就画状态机。</p>
+<hr>
+<h2 id="四、一张表看清区别"><a href="#四、一张表看清区别" class="headerlink" title="四、一张表看清区别"></a>四、一张表看清区别</h2><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>LangChain</th>
+<th>LangGraph</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>定位</strong></td>
+<td>框架（framework）</td>
+<td>低层编排 + 运行时（runtime）</td>
+</tr>
+<tr>
+<td><strong>心智模型</strong></td>
+<td>流水线 / 链</td>
+<td>状态机 / 图</td>
+</tr>
+<tr>
+<td><strong>拓扑</strong></td>
+<td>基本是 DAG，单向</td>
+<td>有环，可回头</td>
+</tr>
+<tr>
+<td><strong>状态</strong></td>
+<td>随消息传递，偏隐式</td>
+<td>显式 State，全程可见可改</td>
+</tr>
+<tr>
+<td><strong>持久化</strong></td>
+<td>靠底层 runtime（即 LangGraph）</td>
+<td>一等公民，Checkpointer</td>
+</tr>
+<tr>
+<td><strong>中断恢复</strong></td>
+<td>内置中间件可做</td>
+<td><code>interrupt()</code> + <code>Command(resume=)</code></td>
+</tr>
+<tr>
+<td><strong>上手成本</strong></td>
+<td>低，十几行出活</td>
+<td>高，要先想清楚状态怎么设计</td>
+</tr>
+<tr>
+<td><strong>定制深度</strong></td>
+<td>通过 middleware 钩子</td>
+<td>任意，每个节点都是你的代码</td>
+</tr>
+<tr>
+<td><strong>最适合</strong></td>
+<td>快速做出可用的 Agent</td>
+<td>长流程、要审计、要断点续跑</td>
+</tr>
+</tbody></table>
+<p>如果把区别压缩成一句话：</p>
+<blockquote>
+<p><strong>LangChain 关心「你要做什么」，LangGraph 关心「这件事怎么一步步跑完」。</strong></p>
+</blockquote>
+<p><img src="/images/langchain/lc_loop.png" alt="单向流水线 vs 带环状态机"></p>
+<p>左边是 LangChain 的典型形态：输入进、结果出，中间几步串起来，走完就结束。右边是 LangGraph：模型判断要不要调工具，调完把结果塞回去，再判断一次——这个环就是 Agent 能「多轮干活」的原因。</p>
+<p><strong>环的价值不只是多轮，而是它顺带带来了两个能力：暂停和续跑。</strong> 因为没有环、没有状态存档，你既没法「跑到一半停下等人」，也没法「崩了从中间接着跑」。这两件事在 demo 里无所谓，在生产里是生死线。</p>
+<hr>
+<h2 id="五、什么时候用哪个"><a href="#五、什么时候用哪个" class="headerlink" title="五、什么时候用哪个"></a>五、什么时候用哪个</h2><p>判断标准其实只有一条，我把它放在最后，先看场景表：</p>
+<table>
+<thead>
+<tr>
+<th>你的场景</th>
+<th>建议</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>单次问答、企业 RAG、文本处理</td>
+<td>LangChain</td>
+<td>一次跑完，不需要回头</td>
+</tr>
+<tr>
+<td>快速验证一个 Agent 想法</td>
+<td>LangChain（或更上层的 Deep Agents）</td>
+<td>十几行就能跑，别过度设计</td>
+</tr>
+<tr>
+<td>多步工具编排、需要记忆</td>
+<td>LangChain + 中间件</td>
+<td><code>checkpointer</code> + <code>thread_id</code> 就够</td>
+</tr>
+<tr>
+<td><strong>流程要人工审批</strong></td>
+<td><strong>LangGraph</strong></td>
+<td><code>interrupt()</code> 是硬需求</td>
+</tr>
+<tr>
+<td><strong>长流程、失败要断点重试</strong></td>
+<td><strong>LangGraph</strong></td>
+<td>重试单步而不是整条重跑，直接省成本</td>
+</tr>
+<tr>
+<td><strong>强合规，每步要可举证</strong></td>
+<td><strong>LangGraph</strong></td>
+<td>显式状态图 + checkpoint，逐步可回溯</td>
+</tr>
+<tr>
+<td>多智能体协同</td>
+<td>LangGraph</td>
+<td>子图天然支持嵌套与共享状态</td>
+</tr>
+</tbody></table>
+<p>那条判断标准是：</p>
+<blockquote>
+<p><strong>你的流程需不需要「回头」和「中断恢复」？</strong></p>
+<p>不需要——LangChain 的流水线更轻更快，别上状态机。<br>需要——LangGraph 的 Checkpointer 就是刚需，硬用 DAG 兜不住。</p>
+</blockquote>
+<p>我在框架选型那篇里提过一个反模式，这里再强调一次：<strong>一上来就 LangGraph 画状态机，结果 80% 的节点是空转。</strong> 抽象阶梯应该从最高层起步，被需求逼下来。</p>
+<hr>
+<h2 id="六、Demo-一：用-LangChain-十几行搭一个能干活的-Agent"><a href="#六、Demo-一：用-LangChain-十几行搭一个能干活的-Agent" class="headerlink" title="六、Demo 一：用 LangChain 十几行搭一个能干活的 Agent"></a>六、Demo 一：用 LangChain 十几行搭一个能干活的 Agent</h2><p>场景：电商客服。用户问「我的订单到哪了」，Agent 要先查订单，再基于真实结果回答——不能编。</p>
+<h3 id="6-1-装环境"><a href="#6-1-装环境" class="headerlink" title="6.1 装环境"></a>6.1 装环境</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install -U langchain langchain-openai</span><br><span class="line"><span class="built_in">export</span> OPENAI_API_KEY=<span class="string">&quot;sk-...&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>最小依赖就这两个。<code>langgraph</code> 会被作为依赖自动装上，因为 LangChain 的 agent 运行时就是它——这一点很多人不知道，以为要单独装。</p>
+<h3 id="6-2-定义工具"><a href="#6-2-定义工具" class="headerlink" title="6.2 定义工具"></a>6.2 定义工具</h3><p>工具就是一个普通函数加一个装饰器，<strong>docstring 是给模型看的说明书，写得越清楚模型越少调错</strong>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.tools <span class="keyword">import</span> tool</span><br><span class="line"></span><br><span class="line"><span class="comment"># 假装是个订单库</span></span><br><span class="line">ORDERS = &#123;</span><br><span class="line">    <span class="string">&quot;A1001&quot;</span>: <span class="string">&quot;已发货，承运商顺丰，预计 10 月 28 日送达&quot;</span>,</span><br><span class="line">    <span class="string">&quot;A1002&quot;</span>: <span class="string">&quot;已签收，签收时间 10 月 20 日 14:32&quot;</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">query_order</span>(<span class="params">order_id: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;根据订单号查询订单的物流状态。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        order_id: 订单号，形如 A1001</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> ORDERS.get(order_id, <span class="string">f&quot;未找到订单 <span class="subst">&#123;order_id&#125;</span>，请核对订单号&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-3-创建-Agent"><a href="#6-3-创建-Agent" class="headerlink" title="6.3 创建 Agent"></a>6.3 创建 Agent</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.agents <span class="keyword">import</span> create_agent</span><br><span class="line"></span><br><span class="line">agent = create_agent(</span><br><span class="line">    model=<span class="string">&quot;openai:gpt-5&quot;</span>,</span><br><span class="line">    tools=[query_order],</span><br><span class="line">    system_prompt=(</span><br><span class="line">        <span class="string">&quot;你是电商客服助手。回答订单相关问题前必须先调用 query_order 查询，&quot;</span></span><br><span class="line">        <span class="string">&quot;严禁凭记忆编造物流信息。查不到就如实告知并建议用户核对订单号。&quot;</span></span><br><span class="line">    ),</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">result = agent.invoke(</span><br><span class="line">    &#123;<span class="string">&quot;messages&quot;</span>: [&#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;帮我查下 A1001 到哪儿了&quot;</span>&#125;]&#125;</span><br><span class="line">)</span><br><span class="line"><span class="built_in">print</span>(result[<span class="string">&quot;messages&quot;</span>][-<span class="number">1</span>].content)</span><br></pre></td></tr></table></figure>
+
+<p>跑起来大概会看到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">您的订单 A1001 已发货，承运商是顺丰，预计 10 月 28 日送达。</span><br></pre></td></tr></table></figure>
+
+<p>就这么多。<code>create_agent</code> 内部帮你做了：绑定工具、构造循环、解析工具调用、把结果回填、再问模型、直到它不给工具调用为止。<strong>同一段代码换成 <code>model=&quot;anthropic:claude-sonnet-4-6&quot;</code> 就能切厂商，不用改其它任何东西</strong>——这就是 LangChain 最核心的价值。</p>
+<h3 id="6-4-加三样生产必需的东西"><a href="#6-4-加三样生产必需的东西" class="headerlink" title="6.4 加三样生产必需的东西"></a>6.4 加三样生产必需的东西</h3><p>Demo 到这里只是「能跑」。真上线还差三件事：<strong>记得住上下文、看得见中间过程、不把敏感信息喂出去</strong>。</p>
+<p><strong>① 记忆：给一个 <code>thread_id</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langgraph.checkpoint.memory <span class="keyword">import</span> InMemorySaver</span><br><span class="line"></span><br><span class="line">agent = create_agent(</span><br><span class="line">    model=<span class="string">&quot;openai:gpt-5&quot;</span>,</span><br><span class="line">    tools=[query_order],</span><br><span class="line">    system_prompt=<span class="string">&quot;你是电商客服助手，查订单必须先调用工具。&quot;</span>,</span><br><span class="line">    checkpointer=InMemorySaver(),          <span class="comment"># 持久化对话状态</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">config = &#123;<span class="string">&quot;configurable&quot;</span>: &#123;<span class="string">&quot;thread_id&quot;</span>: <span class="string">&quot;user-42&quot;</span>&#125;&#125;   <span class="comment"># 同一个用户一个 thread</span></span><br><span class="line"></span><br><span class="line">agent.invoke(&#123;<span class="string">&quot;messages&quot;</span>: [&#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;A1001 到哪了&quot;</span>&#125;]&#125;, config=config)</span><br><span class="line"><span class="comment"># 第二轮不用重复订单号，它记得上文</span></span><br><span class="line">agent.invoke(&#123;<span class="string">&quot;messages&quot;</span>: [&#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;那 A1002 呢&quot;</span>&#125;]&#125;, config=config)</span><br></pre></td></tr></table></figure>
+
+<p>注意两个坑：</p>
+<ul>
+<li><code>thread_id</code> 划的是<strong>会话</strong>，不是用户。一个用户多个会话就该多个 id；</li>
+<li><code>InMemorySaver</code> <strong>只活在内存里</strong>，进程一重启全丢。生产必须换 <code>SqliteSaver</code> 或 <code>PostgresSaver</code>。</li>
+</ul>
+<p><strong>② 流式：让用户看到进度</strong></p>
+<p>一次工具调用可能等好几秒，界面干等着体验很差：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">stream = agent.stream_events(</span><br><span class="line">    &#123;<span class="string">&quot;messages&quot;</span>: [&#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;A1001 到哪了&quot;</span>&#125;]&#125;,</span><br><span class="line">    version=<span class="string">&quot;v3&quot;</span>,</span><br><span class="line">)</span><br><span class="line"><span class="keyword">for</span> snapshot <span class="keyword">in</span> stream.values:          <span class="comment"># 每个快照都是那一刻的完整状态</span></span><br><span class="line">    msg = snapshot[<span class="string">&quot;messages&quot;</span>][-<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span> msg.content:</span><br><span class="line">        <span class="built_in">print</span>(msg.content)</span><br><span class="line">    <span class="keyword">elif</span> msg.tool_calls:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;调用工具：&quot;</span>, [tc[<span class="string">&quot;name&quot;</span>] <span class="keyword">for</span> tc <span class="keyword">in</span> msg.tool_calls])</span><br></pre></td></tr></table></figure>
+
+<p><code>values</code> 给的是每个节点执行完后的<strong>完整状态</strong>，适合做「过程可视化」；如果你要逐 token 输出，用 <code>stream.messages</code> 那一路。</p>
+<p><strong>③ middleware：敏感信息打码</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.agents.middleware <span class="keyword">import</span> PIIMiddleware</span><br><span class="line"></span><br><span class="line">agent = create_agent(</span><br><span class="line">    model=<span class="string">&quot;openai:gpt-5&quot;</span>,</span><br><span class="line">    tools=[query_order],</span><br><span class="line">    system_prompt=<span class="string">&quot;你是电商客服助手。&quot;</span>,</span><br><span class="line">    middleware=[PIIMiddleware(<span class="string">&quot;email&quot;</span>)],   <span class="comment"># 送进模型前把邮箱打码</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>除了 PII，1.0 还内置了 human-in-the-loop（工具执行前暂停等人批）、summarization（历史太长时自动压缩）等中间件。<strong>这些就是「上下文工程」的现成产品化</strong>——你不用自己写，但要知道它在替你做什么。</p>
+<h3 id="6-5-顺手拿结构化输出"><a href="#6-5-顺手拿结构化输出" class="headerlink" title="6.5 顺手拿结构化输出"></a>6.5 顺手拿结构化输出</h3><p>客服系统往往要和工单系统对接，需要的是 JSON 而不是一段话：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pydantic <span class="keyword">import</span> BaseModel</span><br><span class="line"><span class="keyword">from</span> langchain.agents <span class="keyword">import</span> create_agent</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Ticket</span>(<span class="params">BaseModel</span>):</span></span><br><span class="line">    summary: <span class="built_in">str</span>          <span class="comment"># 一句话摘要</span></span><br><span class="line">    order_id: <span class="built_in">str</span> | <span class="literal">None</span>  <span class="comment"># 关联订单号</span></span><br><span class="line">    need_human: <span class="built_in">bool</span>      <span class="comment"># 是否需要人工</span></span><br><span class="line"></span><br><span class="line">agent = create_agent(</span><br><span class="line">    model=<span class="string">&quot;openai:gpt-5&quot;</span>,</span><br><span class="line">    tools=[query_order],</span><br><span class="line">    response_format=Ticket,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">out = agent.invoke(&#123;<span class="string">&quot;messages&quot;</span>: [&#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;A1001 三天没动了&quot;</span>&#125;]&#125;)</span><br><span class="line"><span class="built_in">print</span>(out[<span class="string">&quot;structured_response&quot;</span>])   <span class="comment"># Ticket(summary=..., need_human=True)</span></span><br></pre></td></tr></table></figure>
+
+<p>结果在 <code>structured_response</code> 这个键里，已经被 pydantic 校验过一遍。</p>
+<hr>
+<h2 id="七、Demo-二：用-LangGraph-搭一个能暂停等人审批的流程"><a href="#七、Demo-二：用-LangGraph-搭一个能暂停等人审批的流程" class="headerlink" title="七、Demo 二：用 LangGraph 搭一个能暂停等人审批的流程"></a>七、Demo 二：用 LangGraph 搭一个能暂停等人审批的流程</h2><p>场景：员工提交报销，金额超过 500 元必须有人审批。审批人可能三天后才点。</p>
+<p><strong>这个场景为什么非 LangGraph 不可？</strong> 因为它是「跑一半停下，三天后接着跑」——中间进程早就没了。用链式写法，你要自己做序列化、做状态恢复、做幂等，做完发现你手写了一个 LangGraph。</p>
+<p><img src="/images/langchain/lg_approval.png" alt="报销审批的状态图"></p>
+<h3 id="7-1-先想状态，再写代码"><a href="#7-1-先想状态，再写代码" class="headerlink" title="7.1 先想状态，再写代码"></a>7.1 先想状态，再写代码</h3><p>LangGraph 的开发顺序和 LangChain 相反：<strong>先定 State，再填节点</strong>。状态设计错了，后面全是返工。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">Literal</span></span><br><span class="line"><span class="keyword">from</span> typing_extensions <span class="keyword">import</span> TypedDict</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ExpenseState</span>(<span class="params">TypedDict</span>):</span></span><br><span class="line">    raw: <span class="built_in">str</span>            <span class="comment"># 用户原话</span></span><br><span class="line">    amount: <span class="built_in">float</span>       <span class="comment"># 解析出的金额</span></span><br><span class="line">    category: <span class="built_in">str</span>       <span class="comment"># 类目</span></span><br><span class="line">    approved: <span class="built_in">bool</span>      <span class="comment"># 审批结果</span></span><br><span class="line">    written_back: <span class="built_in">bool</span>  <span class="comment"># 是否已落账</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="7-2-四个节点"><a href="#7-2-四个节点" class="headerlink" title="7.2 四个节点"></a>7.2 四个节点</h3><p>每个节点就是一个「读 state、返回增量」的普通函数。<strong>注意返回值是增量，不是完整状态</strong>——LangGraph 会帮你合并。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse</span>(<span class="params">state: ExpenseState</span>) -&gt; <span class="built_in">dict</span>:</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;从自然语言里抽金额和类目（真实项目这里是一次 LLM 调用）&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;amount&quot;</span>: <span class="number">1280.0</span>, <span class="string">&quot;category&quot;</span>: <span class="string">&quot;差旅&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">validate</span>(<span class="params">state: ExpenseState</span>) -&gt; <span class="built_in">dict</span>:</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;规则校验：金额必须为正、类目必须在白名单内&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> state[<span class="string">&quot;amount&quot;</span>] &lt;= <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;金额必须大于 0&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">review</span>(<span class="params">state: ExpenseState</span>) -&gt; <span class="built_in">dict</span>:</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;人工审批：调用 interrupt() 就地把流程挂起&quot;&quot;&quot;</span></span><br><span class="line">    decision = interrupt(&#123;</span><br><span class="line">        <span class="string">&quot;question&quot;</span>: <span class="string">&quot;请确认是否批准这笔报销&quot;</span>,</span><br><span class="line">        <span class="string">&quot;amount&quot;</span>: state[<span class="string">&quot;amount&quot;</span>],</span><br><span class="line">        <span class="string">&quot;category&quot;</span>: state[<span class="string">&quot;category&quot;</span>],</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;approved&quot;</span>: <span class="built_in">bool</span>(decision)&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">execute</span>(<span class="params">state: ExpenseState</span>) -&gt; <span class="built_in">dict</span>:</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;落账：只有批准了才写财务系统&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> state[<span class="string">&quot;approved&quot;</span>]:</span><br><span class="line">        <span class="keyword">return</span> &#123;<span class="string">&quot;written_back&quot;</span>: <span class="literal">False</span>&#125;</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;written_back&quot;</span>: <span class="literal">True</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>interrupt()</code> 这一句是全篇的重点：它把当前状态存档、暂停执行、把 payload 抛给外层。<strong>三天后有人点了「批准」，流程从这一行继续</strong>，而 <code>decision</code> 拿到的就是审批结果。</p>
+<h3 id="7-3-连成图"><a href="#7-3-连成图" class="headerlink" title="7.3 连成图"></a>7.3 连成图</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langgraph.graph <span class="keyword">import</span> StateGraph, START, END</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">route</span>(<span class="params">state: ExpenseState</span>) -&gt; <span class="type">Literal</span>[&quot;review&quot;, &quot;execute&quot;]:</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;金额超过 500 走人工审批，否则直接执行&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;review&quot;</span> <span class="keyword">if</span> state[<span class="string">&quot;amount&quot;</span>] &gt; <span class="number">500</span> <span class="keyword">else</span> <span class="string">&quot;execute&quot;</span></span><br><span class="line"></span><br><span class="line">builder = StateGraph(ExpenseState)</span><br><span class="line">builder.add_node(<span class="string">&quot;parse&quot;</span>, parse)</span><br><span class="line">builder.add_node(<span class="string">&quot;validate&quot;</span>, validate)</span><br><span class="line">builder.add_node(<span class="string">&quot;review&quot;</span>, review)</span><br><span class="line">builder.add_node(<span class="string">&quot;execute&quot;</span>, execute)</span><br><span class="line"></span><br><span class="line">builder.add_edge(START, <span class="string">&quot;parse&quot;</span>)</span><br><span class="line">builder.add_edge(<span class="string">&quot;parse&quot;</span>, <span class="string">&quot;validate&quot;</span>)</span><br><span class="line">builder.add_conditional_edges(<span class="string">&quot;validate&quot;</span>, route, [<span class="string">&quot;review&quot;</span>, <span class="string">&quot;execute&quot;</span>])</span><br><span class="line">builder.add_edge(<span class="string">&quot;review&quot;</span>, <span class="string">&quot;execute&quot;</span>)</span><br><span class="line">builder.add_edge(<span class="string">&quot;execute&quot;</span>, END)</span><br><span class="line"></span><br><span class="line">graph = builder.<span class="built_in">compile</span>(checkpointer=InMemorySaver())</span><br></pre></td></tr></table></figure>
+
+<p>几个细节：</p>
+<ul>
+<li><code>add_conditional_edges</code> 的第三个参数是<strong>可能的目标列表</strong>，显式声明能让图渲染正确，也方便静态检查；</li>
+<li><code>compile()</code> 必须带 checkpointer，否则 <code>interrupt()</code> 用不了——<strong>没有存档，就没有「接着跑」这回事</strong>；</li>
+<li>想看图画成什么样：<code>graph.get_graph().draw_mermaid_png()</code>。</li>
+</ul>
+<h3 id="7-4-第一轮：跑到审批就停"><a href="#7-4-第一轮：跑到审批就停" class="headerlink" title="7.4 第一轮：跑到审批就停"></a>7.4 第一轮：跑到审批就停</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">config = &#123;<span class="string">&quot;configurable&quot;</span>: &#123;<span class="string">&quot;thread_id&quot;</span>: <span class="string">&quot;exp-2026-10-001&quot;</span>&#125;&#125;</span><br><span class="line"></span><br><span class="line">result = graph.invoke(&#123;<span class="string">&quot;raw&quot;</span>: <span class="string">&quot;打车 1280，客户拜访&quot;</span>&#125;, config)</span><br><span class="line"><span class="built_in">print</span>(result[<span class="string">&quot;__interrupt__&quot;</span>][<span class="number">0</span>].value)</span><br></pre></td></tr></table></figure>
+
+<p>输出是审批 payload：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;question&#x27;: &#x27;请确认是否批准这笔报销&#x27;, &#x27;amount&#x27;: 1280.0, &#x27;category&#x27;: &#x27;差旅&#x27;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意 <code>graph.invoke()</code> 到这里就<strong>返回</strong>了，没有报错、没有死循环。整个图的状态已经存进 checkpointer，进程可以安全退出。</p>
+<h3 id="7-5-三天后：用同一个-thread-id-接着跑"><a href="#7-5-三天后：用同一个-thread-id-接着跑" class="headerlink" title="7.5 三天后：用同一个 thread_id 接着跑"></a>7.5 三天后：用同一个 thread_id 接着跑</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langgraph.types <span class="keyword">import</span> Command</span><br><span class="line"></span><br><span class="line">result = graph.invoke(Command(resume=<span class="literal">True</span>), config)   <span class="comment"># 传 True 表示批准</span></span><br><span class="line"><span class="built_in">print</span>(result[<span class="string">&quot;approved&quot;</span>], result[<span class="string">&quot;written_back&quot;</span>])     <span class="comment"># True True</span></span><br></pre></td></tr></table></figure>
+
+<p><code>Command(resume=True)</code> 里的值，就是 <code>interrupt()</code> 那一行的返回值。</p>
+<p>这里有个<strong>必须知道的坑</strong>：恢复时，节点会<strong>从函数开头重新执行</strong>，而不是从 <code>interrupt()</code> 那一行继续。所以 <code>interrupt()</code> 之前的代码会再跑一遍。如果你的节点前半段有副作用（发短信、扣库存），要放在 <code>interrupt()</code> 之后，或者做成幂等。</p>
+<h3 id="7-6-看清它到底存了什么"><a href="#7-6-看清它到底存了什么" class="headerlink" title="7.6 看清它到底存了什么"></a>7.6 看清它到底存了什么</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">state = graph.get_state(config)</span><br><span class="line"><span class="built_in">print</span>(state.values)        <span class="comment"># 当前状态</span></span><br><span class="line"><span class="built_in">print</span>(state.<span class="built_in">next</span>)          <span class="comment"># 下一步要去哪个节点</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> snap <span class="keyword">in</span> graph.get_state_history(config):</span><br><span class="line">    <span class="built_in">print</span>(snap.metadata[<span class="string">&quot;step&quot;</span>], snap.values.get(<span class="string">&quot;approved&quot;</span>))</span><br></pre></td></tr></table></figure>
+
+<p><code>get_state_history</code> 就是「时间旅行」的入口——你能看到每一步的存档，也能用 <code>graph.update_state(...)</code> 回到某个存档、改一个字段、换个分支重跑。调试 Agent 的时候这个能力价值极高：<strong>不用重跑整条流程，就能复现某个中间状态</strong>。</p>
+<p><img src="/images/langchain/lg_checkpoint.png" alt="Checkpointer：把每一步都存成存档"></p>
+<h3 id="7-7-换成能真的活过重启的存储"><a href="#7-7-换成能真的活过重启的存储" class="headerlink" title="7.7 换成能真的活过重启的存储"></a>7.7 换成能真的活过重启的存储</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># pip install langgraph-checkpoint-sqlite</span></span><br><span class="line"><span class="keyword">from</span> langgraph.checkpoint.sqlite <span class="keyword">import</span> SqliteSaver</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> SqliteSaver.from_conn_string(<span class="string">&quot;expense.db&quot;</span>) <span class="keyword">as</span> checkpointer:</span><br><span class="line">    graph = builder.<span class="built_in">compile</span>(checkpointer=checkpointer)</span><br><span class="line">    <span class="comment"># 这次进程杀掉、机器重启，三天后照样能 resume</span></span><br></pre></td></tr></table></figure>
+
+<p>生产环境换 <code>PostgresSaver</code>，并按需清理老 checkpoint——长时间运行的会话，存档会无限增长。</p>
+<hr>
+<h2 id="八、两个-Demo-放在一起看"><a href="#八、两个-Demo-放在一起看" class="headerlink" title="八、两个 Demo 放在一起看"></a>八、两个 Demo 放在一起看</h2><p>同一个「客服 + 审批」的需求，两条路线的代码量大概是：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Demo 1（LangChain）</th>
+<th>Demo 2（LangGraph）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>核心代码</td>
+<td>约 15 行</td>
+<td>约 60 行</td>
+</tr>
+<tr>
+<td>你要想清楚的事</td>
+<td>提示词、工具描述</td>
+<td>提示词 + 状态结构 + 分支条件 + 中断点</td>
+</tr>
+<tr>
+<td>出问题怎么查</td>
+<td>看 trace，粒度是「一轮对话」</td>
+<td>看 checkpoint，粒度是「一个节点」</td>
+</tr>
+<tr>
+<td>加个人工审批</td>
+<td>加中间件（有限定制）</td>
+<td>加一个 <code>interrupt()</code> 节点（任意定制）</td>
+</tr>
+</tbody></table>
+<p>那个「60 行 vs 15 行」的差距，不是 LangGraph 啰嗦，而是<strong>那 45 行本来就是真实流程的复杂度</strong>。LangChain 用默认值把它藏起来了，LangGraph 要求你写出来。</p>
+<p>什么时候这笔账划算？我的判断是：</p>
+<ul>
+<li><strong>流程能在一次会话内跑完</strong> → 用 LangChain，藏起来是好事；</li>
+<li><strong>流程会跨越「人」和「时间」</strong> → 用 LangGraph，那 45 行不是成本，是保险。</li>
+</ul>
+<hr>
+<h2 id="九、生产上真正会踩的坑"><a href="#九、生产上真正会踩的坑" class="headerlink" title="九、生产上真正会踩的坑"></a>九、生产上真正会踩的坑</h2><p><strong>1. 把 <code>InMemorySaver</code> 带上了生产。</strong></p>
+<p>进程一重启，所有会话历史清空。这个 bug 在测试环境永远不会出现，上线第一天就会。</p>
+<p><strong>2. <code>thread_id</code> 用了用户 id。</strong></p>
+<p>一个用户同时开两个会话就会串味。<code>thread_id</code> 应该唯一标识<strong>一次会话</strong>，不是一个人。</p>
+<p><strong>3. 以为 <code>interrupt()</code> 是从断点那一行继续。</strong></p>
+<p>节点会从头重跑。有副作用的代码要么放 <code>interrupt()</code> 之后，要么做成幂等。</p>
+<p><strong>4. <code>interrupt()</code> 的 payload 塞了不可序列化的东西。</strong></p>
+<p>它必须是 JSON 可序列化的。把 ORM 对象、datetime 直接传进去会炸。</p>
+<p><strong>5. 一上来就画状态机。</strong></p>
+<p>大多数「Agent 需求」用 <code>create_agent</code> 加两个中间件就解决了。先证明简单方案不够用，再往下沉。</p>
+<p><strong>6. 忽略了版本断层。</strong></p>
+<p>0.x 时代的 <code>AgentExecutor</code>、<code>initialize_agent</code> 在 1.x 里已经不在主命名空间了（挪到了 <code>langchain-classic</code>）。照着 2023 年的博客抄代码，报错会报得莫名其妙。</p>
+<hr>
+<h2 id="十、总结"><a href="#十、总结" class="headerlink" title="十、总结"></a>十、总结</h2><p>回到开头那个问题：LangChain 和 LangGraph 的区别是什么？</p>
+<p><strong>它们不是两个框架的比较，而是一条栈上两层的分工。</strong></p>
+<ul>
+<li>LangChain 是<strong>框架</strong>：把模型、工具、检索标准化，用默认的 agent 循环和 middleware，让你在十几行代码里得到一个能用的 Agent。它替你做的决定越多，你上手越快，定制时改的也越多。</li>
+<li>LangGraph 是<strong>运行时</strong>：把 Agent 表达成带状态的图，每一步都是你的代码，每一步都有存档。它不替你做决定，但给你暂停、续跑、回溯的全部能力。</li>
+</ul>
+<p>一条判断标准，拿走就能用：<strong>流程需不需要「回头」和「中断恢复」？</strong> 不需要，就用 LangChain 的流水线；需要，就上 LangGraph 的状态机。</p>
+<p>最后一句：这两个东西的边界还会动。LangChain 1.0 已经把 agent 跑在 LangGraph 上了，未来「框架」这一层会越来越薄，「运行时」会越来越重要。<strong>所以真正值得学的不是某个 API，而是那个「带状态的循环」的模型</strong>——它才是这一代 Agent 框架共同的底层。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://blog.langchain.com/langchain-langgraph-1dot0">LangChain and LangGraph Agent Frameworks Reach v1.0 Milestones</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.langchain.com/blog/three-years-langchain">Reflections on Three Years of Building LangChain</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langgraph/persistence">LangGraph 官方文档：Persistence</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langgraph/interrupts">LangGraph 官方文档：Interrupts</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langgraph/quickstart">LangGraph Quickstart</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langchain/agents">LangChain 官方文档：Agents</a></li>
+<li>系列前篇：<a href="/2026/10/23/%E4%BC%81%E4%B8%9AAgent%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B-%E4%BB%8E%E8%A6%81%E4%B8%8D%E8%A6%81%E5%81%9A%E5%88%B0%E5%85%AD%E5%91%A8%E8%B7%91%E9%80%9A%E4%B8%80%E6%96%87%E8%AE%B2%E6%B8%85/">企业 Agent 开发框架选型：从「要不要做」到「六周跑通」，一文讲清</a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://lizejiao.github.io">李苟蛋</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://lizejiao.github.io/2026/10/26/AI%E6%8A%80%E6%9C%AF/LangChain%E4%B8%8ELangGraph%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90-%E4%BB%8E%E6%98%AF%E4%BB%80%E4%B9%88%E5%88%B0%E4%B8%A4%E4%B8%AA%E5%8F%AF%E8%BF%90%E8%A1%8CDemo/">https://lizejiao.github.io/2026/10/26/AI技术/LangChain与LangGraph全景解析-从是什么到两个可运行Demo/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://lizejiao.github.io" target="_blank">老李家の苟蛋子</a> 许可协议。转载请注明来源 <a href="https://lizejiao.github.io" target="_blank">李苟蛋の家</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI%E6%8A%80%E6%9C%AF/">AI技术</a><a class="post-meta__tags" href="/tags/Agent/">Agent</a><a class="post-meta__tags" href="/tags/%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B/">框架选型</a><a class="post-meta__tags" href="/tags/LangChain/">LangChain</a><a class="post-meta__tags" href="/tags/LangGraph/">LangGraph</a></div><div class="post-share"><div class="social-share" data-image="/images/langchain/lc_cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat_pay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat_pay.jpg" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/10/26/AI%E6%8A%80%E6%9C%AF/AI%E6%8A%80%E6%9C%AF%E9%97%AE%E7%AD%94%E6%B1%87%E6%80%BB/" title="AI 技术问答汇总"><img class="cover" src="/images/aiqa/aiqa_cover.png" onerror="onerror=null;src='/img/error_404.png'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">AI 技术问答汇总</div></div><div class="info-2"><div class="info-item-1">把 AI 技术分类下十篇文章里被反复问到的问题收成一份问答集</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/10/23/AI%E6%8A%80%E6%9C%AF/%E4%BC%81%E4%B8%9AAgent%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B-%E4%BB%8E%E8%A6%81%E4%B8%8D%E8%A6%81%E5%81%9A%E5%88%B0%E5%85%AD%E5%91%A8%E8%B7%91%E9%80%9A%E4%B8%80%E6%96%87%E8%AE%B2%E6%B8%85/" title="企业 Agent 开发框架选型：从「要不要做」到「六周跑通」，一文讲清"><img class="cover" src="/images/agentfw/af_cover.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-23</div><div class="info-item-2">企业 Agent 开发框架选型：从「要不要做」到「六周跑通」，一文讲清</div></div><div class="info-2"><div class="info-item-1">企业做 Agent 的第一个难题不是技术，是判断——哪些业务值得做、框架怎么选、多久能跑通。本文梳理 2026 年开源 Agent 框架的五派格局与完整选型打分方法，并用 30 行代码跑通一个真实可用的服务台 Agent，最后给出六周落地路线与未来趋势判断。</div></div></div></a><a class="pagination-related" href="/2026/10/26/AI%E6%8A%80%E6%9C%AF/AI%E6%8A%80%E6%9C%AF%E9%97%AE%E7%AD%94%E6%B1%87%E6%80%BB/" title="AI 技术问答汇总"><img class="cover" src="/images/aiqa/aiqa_cover.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-26</div><div class="info-item-2">AI 技术问答汇总</div></div><div class="info-2"><div class="info-item-1">把 AI 技术分类下十篇文章里被反复问到的问题收成一份问答集</div></div></div></a><a class="pagination-related" href="/2026/10/22/AI%E6%8A%80%E6%9C%AF/Agent%E8%B6%8A%E8%B7%91%E8%B6%8A%E7%AC%A8-%E9%97%AE%E9%A2%98%E4%B8%8D%E5%9C%A8%E6%A8%A1%E5%9E%8B-Context-Engineering%E7%AD%96%E7%95%A5%E8%A7%A3%E6%9E%90/" title="Agent 越跑越笨，问题不在模型：Context Engineering 策略解析"><img class="cover" src="/images/context/ce_cover.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-22</div><div class="info-item-2">Agent 越跑越笨，问题不在模型：Context Engineering 策略解析</div></div><div class="info-2"><div class="info-item-1">Agent 跑得越久，上下文堆得越多，模型就越不听话。本文从 Context 与 Context Window 的基础概念讲起，拆解长上下文的四种失效模式，系统梳理 LangChain 的 Write / Select / Compress / Isolate 四策略框架，再正面回应 Cognition「别建多 Agent」的当头棒喝，最后给出可以按步执行的五步落地顺序。</div></div></div></a><a class="pagination-related" href="/2026/10/20/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E5%86%99%E4%BB%A3%E7%A0%81%E5%88%B0%E9%80%A0%E7%8E%AF%E5%A2%83-Harness-Engineering%E8%AF%9E%E7%94%9F%E6%80%9D%E8%80%83%E4%B8%8E%E5%9B%BD%E5%86%85%E5%A4%96%E5%AE%9E%E6%88%98/" title="Harness Engineering：当工程师的核心工作从写代码变成造环境"><img class="cover" src="/images/harness/he_cover.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-20</div><div class="info-item-2">Harness Engineering：当工程师的核心工作从写代码变成造环境</div></div><div class="info-2"><div class="info-item-1">2026 年春天，Harness Engineering（驾驭工程）从一个个人习惯变成了一门正式的工程学科。本文梳理这个词的诞生时间线，拆解 OpenAI「0 行手写代码、5 个月 100 万行」的百万行实验和 Anthropic 的交接班、GAN 式评估两场实战，回应「新瓶装旧酒」「迟早被模型吃掉」两大争议，再看腾讯、阿里、字节在国内的落地打法，最后给出中小团队从一条 linter 到一套模板的渐进路线。</div></div></div></a><a class="pagination-related" href="/2026/10/14/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E8%83%BD%E8%B7%91%E5%88%B0%E8%83%BD%E7%AE%A1-%E4%BC%81%E4%B8%9A%E7%BA%A7Agent%E7%AE%A1%E7%90%86%E4%B8%8E%E6%B2%BB%E7%90%86%E5%B9%B3%E5%8F%B0%E6%9E%B6%E6%9E%84%E5%85%A8%E8%A7%A3/" title="从「能跑」到「能管」：企业级 Agent 管理与治理平台架构全解"><img class="cover" src="/images/agenthub/agenthub_cover.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-14</div><div class="info-item-2">从「能跑」到「能管」：企业级 Agent 管理与治理平台架构全解</div></div><div class="info-2"><div class="info-item-1">一篇写给工程师的企业级 Agent 治理指南：为什么「造得快」反而成了新问题、控制面与执行面如何分离、Agent/Version/Bundle 资产模型怎么设计、标准化交付与主动拉取、可观测与 Token 成本归因、Agent 身份与网关安全四道防线，附 150 行可运行的本地 Demo、开源与商业方案横向对比、四阶段落地路线，以及现存问题与趋势预测。</div></div></div></a><a class="pagination-related" href="/2026/06/25/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E5%88%B0%E7%BB%9F%E4%B8%80AI-Registry-Nacos3.1%E5%88%B03.3%E6%99%BA%E8%83%BD%E4%BD%93%E5%9F%BA%E5%BB%BA%E8%B1%AA%E8%B5%8C/" title="从微服务注册中心到统一AI Registry：Nacos 3.1→3.3的智能体基建豪赌"><img class="cover" src="/images/nacos/nacos_ai_cover.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-25</div><div class="info-item-2">从微服务注册中心到统一AI Registry：Nacos 3.1→3.3的智能体基建豪赌</div></div><div class="info-2"><div class="info-item-1">Nacos 3.x 把「服务注册发现」这套微服务成熟范式平移到了 AI 智能体生态：MCP、Agent、Skill、Prompt 全部纳入统一 AI Registry。本文含版本速览、核心能力拆解、本地 Demo 超详细搭建、企业级落地方案、现存问题与趋势预测</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="avatar"/></div><div class="author-info-name">李苟蛋</div><div class="author-info-description">欢迎来到李苟蛋的博客....</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">20</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lizejiao"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/lizejiao" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:xxxxxx@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content"><p>欢迎来到李苟蛋的个人博客，对本站的文章和技术问题有疑问或建议，欢迎留言，或者关注我的公众号：<strong>狗蛋的智栈</strong></p> <div style="text-align:center; margin-top:10px;">
+  <img src="/images/aboutme/wechat_mp.jpg" alt="公众号：狗蛋的智栈" style="width:170px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,.15);" />
+  <div style="font-size:12px; color:#999; margin-top:6px;">扫码关注「狗蛋的智栈」</div>
+</div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F%E8%A8%80"><span class="toc-text">序言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%85%88%E6%8A%8A%E6%97%B6%E9%97%B4%E7%BA%BF%E9%92%89%E4%BD%8F"><span class="toc-text">一、先把时间线钉住</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81LangChain-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9A%E7%BB%99-LLM-%E8%A3%85%E4%B8%80%E4%B8%AA%E4%B8%87%E8%83%BD%E6%8F%92%E5%BA%A7"><span class="toc-text">二、LangChain 是什么：给 LLM 装一个万能插座</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81LangGraph-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9A%E7%BB%99-Agent-%E8%A3%85%E4%B8%80%E4%B8%AA%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%86%85%E6%A0%B8"><span class="toc-text">三、LangGraph 是什么：给 Agent 装一个操作系统内核</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E4%B8%80%E5%BC%A0%E8%A1%A8%E7%9C%8B%E6%B8%85%E5%8C%BA%E5%88%AB"><span class="toc-text">四、一张表看清区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E7%94%A8%E5%93%AA%E4%B8%AA"><span class="toc-text">五、什么时候用哪个</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81Demo-%E4%B8%80%EF%BC%9A%E7%94%A8-LangChain-%E5%8D%81%E5%87%A0%E8%A1%8C%E6%90%AD%E4%B8%80%E4%B8%AA%E8%83%BD%E5%B9%B2%E6%B4%BB%E7%9A%84-Agent"><span class="toc-text">六、Demo 一：用 LangChain 十几行搭一个能干活的 Agent</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E8%A3%85%E7%8E%AF%E5%A2%83"><span class="toc-text">6.1 装环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E5%AE%9A%E4%B9%89%E5%B7%A5%E5%85%B7"><span class="toc-text">6.2 定义工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-%E5%88%9B%E5%BB%BA-Agent"><span class="toc-text">6.3 创建 Agent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-%E5%8A%A0%E4%B8%89%E6%A0%B7%E7%94%9F%E4%BA%A7%E5%BF%85%E9%9C%80%E7%9A%84%E4%B8%9C%E8%A5%BF"><span class="toc-text">6.4 加三样生产必需的东西</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-5-%E9%A1%BA%E6%89%8B%E6%8B%BF%E7%BB%93%E6%9E%84%E5%8C%96%E8%BE%93%E5%87%BA"><span class="toc-text">6.5 顺手拿结构化输出</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81Demo-%E4%BA%8C%EF%BC%9A%E7%94%A8-LangGraph-%E6%90%AD%E4%B8%80%E4%B8%AA%E8%83%BD%E6%9A%82%E5%81%9C%E7%AD%89%E4%BA%BA%E5%AE%A1%E6%89%B9%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="toc-text">七、Demo 二：用 LangGraph 搭一个能暂停等人审批的流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E5%85%88%E6%83%B3%E7%8A%B6%E6%80%81%EF%BC%8C%E5%86%8D%E5%86%99%E4%BB%A3%E7%A0%81"><span class="toc-text">7.1 先想状态，再写代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E5%9B%9B%E4%B8%AA%E8%8A%82%E7%82%B9"><span class="toc-text">7.2 四个节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-%E8%BF%9E%E6%88%90%E5%9B%BE"><span class="toc-text">7.3 连成图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-4-%E7%AC%AC%E4%B8%80%E8%BD%AE%EF%BC%9A%E8%B7%91%E5%88%B0%E5%AE%A1%E6%89%B9%E5%B0%B1%E5%81%9C"><span class="toc-text">7.4 第一轮：跑到审批就停</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-5-%E4%B8%89%E5%A4%A9%E5%90%8E%EF%BC%9A%E7%94%A8%E5%90%8C%E4%B8%80%E4%B8%AA-thread-id-%E6%8E%A5%E7%9D%80%E8%B7%91"><span class="toc-text">7.5 三天后：用同一个 thread_id 接着跑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-6-%E7%9C%8B%E6%B8%85%E5%AE%83%E5%88%B0%E5%BA%95%E5%AD%98%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-text">7.6 看清它到底存了什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-7-%E6%8D%A2%E6%88%90%E8%83%BD%E7%9C%9F%E7%9A%84%E6%B4%BB%E8%BF%87%E9%87%8D%E5%90%AF%E7%9A%84%E5%AD%98%E5%82%A8"><span class="toc-text">7.7 换成能真的活过重启的存储</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E4%B8%A4%E4%B8%AA-Demo-%E6%94%BE%E5%9C%A8%E4%B8%80%E8%B5%B7%E7%9C%8B"><span class="toc-text">八、两个 Demo 放在一起看</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D%E3%80%81%E7%94%9F%E4%BA%A7%E4%B8%8A%E7%9C%9F%E6%AD%A3%E4%BC%9A%E8%B8%A9%E7%9A%84%E5%9D%91"><span class="toc-text">九、生产上真正会踩的坑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E3%80%81%E6%80%BB%E7%BB%93"><span class="toc-text">十、总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-text">参考</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/10/26/AI%E6%8A%80%E6%9C%AF/LangChain%E4%B8%8ELangGraph%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90-%E4%BB%8E%E6%98%AF%E4%BB%80%E4%B9%88%E5%88%B0%E4%B8%A4%E4%B8%AA%E5%8F%AF%E8%BF%90%E8%A1%8CDemo/" title="LangChain 与 LangGraph 全景解析：一个让你跑得快，一个让你跑得稳"><img src="/images/langchain/lc_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="LangChain 与 LangGraph 全景解析：一个让你跑得快，一个让你跑得稳"/></a><div class="content"><a class="title" href="/2026/10/26/AI%E6%8A%80%E6%9C%AF/LangChain%E4%B8%8ELangGraph%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90-%E4%BB%8E%E6%98%AF%E4%BB%80%E4%B9%88%E5%88%B0%E4%B8%A4%E4%B8%AA%E5%8F%AF%E8%BF%90%E8%A1%8CDemo/" title="LangChain 与 LangGraph 全景解析：一个让你跑得快，一个让你跑得稳">LangChain 与 LangGraph 全景解析：一个让你跑得快，一个让你跑得稳</a><time datetime="2026-10-26T14:00:00.000Z" title="发表于 2026-10-26 22:00:00">2026-10-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/26/AI%E6%8A%80%E6%9C%AF/AI%E6%8A%80%E6%9C%AF%E9%97%AE%E7%AD%94%E6%B1%87%E6%80%BB/" title="AI 技术问答汇总"><img src="/images/aiqa/aiqa_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="AI 技术问答汇总"/></a><div class="content"><a class="title" href="/2026/10/26/AI%E6%8A%80%E6%9C%AF/AI%E6%8A%80%E6%9C%AF%E9%97%AE%E7%AD%94%E6%B1%87%E6%80%BB/" title="AI 技术问答汇总">AI 技术问答汇总</a><time datetime="2026-10-26T13:00:00.000Z" title="发表于 2026-10-26 21:00:00">2026-10-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/23/AI%E6%8A%80%E6%9C%AF/%E4%BC%81%E4%B8%9AAgent%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B-%E4%BB%8E%E8%A6%81%E4%B8%8D%E8%A6%81%E5%81%9A%E5%88%B0%E5%85%AD%E5%91%A8%E8%B7%91%E9%80%9A%E4%B8%80%E6%96%87%E8%AE%B2%E6%B8%85/" title="企业 Agent 开发框架选型：从「要不要做」到「六周跑通」，一文讲清"><img src="/images/agentfw/af_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="企业 Agent 开发框架选型：从「要不要做」到「六周跑通」，一文讲清"/></a><div class="content"><a class="title" href="/2026/10/23/AI%E6%8A%80%E6%9C%AF/%E4%BC%81%E4%B8%9AAgent%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B-%E4%BB%8E%E8%A6%81%E4%B8%8D%E8%A6%81%E5%81%9A%E5%88%B0%E5%85%AD%E5%91%A8%E8%B7%91%E9%80%9A%E4%B8%80%E6%96%87%E8%AE%B2%E6%B8%85/" title="企业 Agent 开发框架选型：从「要不要做」到「六周跑通」，一文讲清">企业 Agent 开发框架选型：从「要不要做」到「六周跑通」，一文讲清</a><time datetime="2026-10-23T12:00:00.000Z" title="发表于 2026-10-23 20:00:00">2026-10-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/22/AI%E6%8A%80%E6%9C%AF/Agent%E8%B6%8A%E8%B7%91%E8%B6%8A%E7%AC%A8-%E9%97%AE%E9%A2%98%E4%B8%8D%E5%9C%A8%E6%A8%A1%E5%9E%8B-Context-Engineering%E7%AD%96%E7%95%A5%E8%A7%A3%E6%9E%90/" title="Agent 越跑越笨，问题不在模型：Context Engineering 策略解析"><img src="/images/context/ce_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="Agent 越跑越笨，问题不在模型：Context Engineering 策略解析"/></a><div class="content"><a class="title" href="/2026/10/22/AI%E6%8A%80%E6%9C%AF/Agent%E8%B6%8A%E8%B7%91%E8%B6%8A%E7%AC%A8-%E9%97%AE%E9%A2%98%E4%B8%8D%E5%9C%A8%E6%A8%A1%E5%9E%8B-Context-Engineering%E7%AD%96%E7%95%A5%E8%A7%A3%E6%9E%90/" title="Agent 越跑越笨，问题不在模型：Context Engineering 策略解析">Agent 越跑越笨，问题不在模型：Context Engineering 策略解析</a><time datetime="2026-10-22T13:00:00.000Z" title="发表于 2026-10-22 21:00:00">2026-10-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/20/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E5%86%99%E4%BB%A3%E7%A0%81%E5%88%B0%E9%80%A0%E7%8E%AF%E5%A2%83-Harness-Engineering%E8%AF%9E%E7%94%9F%E6%80%9D%E8%80%83%E4%B8%8E%E5%9B%BD%E5%86%85%E5%A4%96%E5%AE%9E%E6%88%98/" title="Harness Engineering：当工程师的核心工作从写代码变成造环境"><img src="/images/harness/he_cover.png" onerror="this.onerror=null;this.src='/img/error_404.png'" alt="Harness Engineering：当工程师的核心工作从写代码变成造环境"/></a><div class="content"><a class="title" href="/2026/10/20/AI%E6%8A%80%E6%9C%AF/%E4%BB%8E%E5%86%99%E4%BB%A3%E7%A0%81%E5%88%B0%E9%80%A0%E7%8E%AF%E5%A2%83-Harness-Engineering%E8%AF%9E%E7%94%9F%E6%80%9D%E8%80%83%E4%B8%8E%E5%9B%BD%E5%86%85%E5%A4%96%E5%AE%9E%E6%88%98/" title="Harness Engineering：当工程师的核心工作从写代码变成造环境">Harness Engineering：当工程师的核心工作从写代码变成造环境</a><time datetime="2026-10-20T13:30:00.000Z" title="发表于 2026-10-20 21:30:00">2026-10-20</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2021 - 2026 By 李苟蛋</span></div><div class="footer_custom_text">_φ(❐_❐✧ 人丑就要多读书😂，睡觉没前途(￣o￣) . z Z　🤣</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.14/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const parseViewBox = viewBox => {
+    if (!viewBox) return null
+    const parts = viewBox.trim().split(/[\s,]+/).map(n => Number(n))
+    if (parts.length !== 4 || parts.some(n => Number.isNaN(n))) return null
+    return parts
+  }
+
+  const getSvgViewBox = svg => {
+    const attr = parseViewBox(svg.getAttribute('viewBox'))
+    if (attr) return attr
+
+    // Fallback: use bbox to build a viewBox
+    try {
+      const bbox = svg.getBBox()
+      if (bbox && bbox.width && bbox.height) return [bbox.x, bbox.y, bbox.width, bbox.height]
+    } catch (e) {
+      // getBBox may fail on some edge cases; ignore
+    }
+
+    const w = Number(svg.getAttribute('width')) || 0
+    const h = Number(svg.getAttribute('height')) || 0
+    if (w > 0 && h > 0) return [0, 0, w, h]
+    return [0, 0, 100, 100]
+  }
+
+  const setSvgViewBox = (svg, vb) => {
+    svg.setAttribute('viewBox', `${vb[0]} ${vb[1]} ${vb[2]} ${vb[3]}`)
+  }
+
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
+
+  const openSvgInNewTab = ({ source, initViewBox }) => {
+    const getClonedSvg = () => {
+      if (typeof source === 'string') {
+        const template = document.createElement('template')
+        template.innerHTML = source.trim()
+        const svg = template.content.querySelector('svg')
+        return svg ? svg.cloneNode(true) : null
+      }
+      if (source && typeof source.cloneNode === 'function') {
+        return source.cloneNode(true)
+      }
+      return null
+    }
+
+    const clone = getClonedSvg()
+    if (!clone) return
+    if (initViewBox && initViewBox.length === 4) {
+      clone.setAttribute('viewBox', initViewBox.join(' '))
+    }
+    if (!clone.getAttribute('xmlns')) clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+    if (!clone.getAttribute('xmlns:xlink') && clone.innerHTML.includes('xlink:')) {
+      clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink')
+    }
+    // inject background to match current theme
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+    const bg = getComputedStyle(document.body).backgroundColor || (isDark ? '#1e1e1e' : '#ffffff')
+    if (!clone.style.background) clone.style.background = bg
+
+    const serializer = new XMLSerializer()
+    const svgSource = serializer.serializeToString(clone)
+    const htmlSource = `<!doctype html><html><head><meta charset="utf-8" />
+      <style>
+        html, body { width: 100%; height: 100%; margin: 0; display: flex; align-items: center; justify-content: center; background: ${bg}; }
+        svg { max-width: 100%; max-height: 100%; height: auto; width: auto; }
+      </style>
+      </head><body>${svgSource}</body></html>`
+    const blob = new Blob([htmlSource], { type: 'text/html;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    window.open(url, '_blank', 'noopener')
+
+    setTimeout(() => URL.revokeObjectURL(url), 5000)
+  }
+
+  const attachMermaidViewerButton = wrap => {
+    let btn = wrap.querySelector('.mermaid-open-btn')
+    if (!btn) {
+      btn = document.createElement('button')
+      btn.type = 'button'
+      btn.className = 'mermaid-open-btn'
+      wrap.appendChild(btn)
+    }
+
+    btn.innerHTML = '<i class="fa fa-search fa-fw" aria-hidden="true"></i>'
+
+    if (!btn.__mermaidViewerBound) {
+      btn.addEventListener('click', e => {
+        e.preventDefault()
+        e.stopPropagation()
+        const svg = wrap.__mermaidOriginalSvg || wrap.querySelector('svg')
+        if (!svg) return
+        const initViewBox = wrap.__mermaidInitViewBox
+        openSvgInNewTab({ source: svg, initViewBox })
+      })
+      btn.__mermaidViewerBound = true
+    }
+  }
+
+  // Zoom around a point (px, py) in the SVG viewport (in viewBox coordinates)
+  const zoomAtPoint = (vb, factor, px, py) => {
+    const w = vb[2] * factor
+    const h = vb[3] * factor
+    const nx = px - (px - vb[0]) * factor
+    const ny = py - (py - vb[1]) * factor
+    return [nx, ny, w, h]
+  }
+
+  const initMermaidGestures = wrap => {
+    // Clean up previous event listeners and pending frames
+    if (wrap.__mermaidAbortController) {
+      wrap.__mermaidAbortController.abort()
+      if (wrap.__mermaidRafId) cancelAnimationFrame(wrap.__mermaidRafId)
+    }
+    const ac = new AbortController()
+    wrap.__mermaidAbortController = ac
+    const svg = wrap.querySelector('svg')
+    if (!svg) return
+
+    // Ensure viewBox exists so gestures always work
+    const initVb = getSvgViewBox(svg)
+    wrap.__mermaidInitViewBox = initVb
+    wrap.__mermaidCurViewBox = initVb.slice()
+    setSvgViewBox(svg, initVb)
+    // Disable default gestures to prevent scroll chaining and pinch-zoom penetration in Chrome
+    svg.style.touchAction = 'none'
+
+    // Cache BoundingClientRect, throttled on scroll to reduce reflow
+    let cachedRect = svg.getBoundingClientRect()
+    let rectDirty = false
+    const markRectDirty = () => { rectDirty = true }
+    window.addEventListener('resize', markRectDirty, { signal: ac.signal })
+    window.addEventListener('scroll', markRectDirty, { signal: ac.signal, capture: true })
+    const getRect = () => {
+      if (rectDirty) {
+        cachedRect = svg.getBoundingClientRect()
+        rectDirty = false
+      }
+      return cachedRect
+    }
+
+    // Precompute clamp bounds from initial viewBox
+    const minW = initVb[2] * 0.1
+    const maxW = initVb[2] * 10
+    const minH = initVb[3] * 0.1
+    const maxH = initVb[3] * 10
+    const clampVb = vb => {
+      const out = vb.slice()
+      out[2] = clamp(out[2], minW, maxW)
+      out[3] = clamp(out[3], minH, maxH)
+      return out
+    }
+
+    // Throttle DOM updates using requestAnimationFrame
+    let pendingVb = null
+    let rafId = null
+    const applyVb = () => {
+      if (pendingVb) {
+        wrap.__mermaidCurViewBox = pendingVb
+        setSvgViewBox(svg, pendingVb)
+        pendingVb = null
+      }
+      rafId = null
+      wrap.__mermaidRafId = null
+    }
+    const setCurVb = vb => {
+      pendingVb = clampVb(vb)
+      if (!rafId) {
+        rafId = requestAnimationFrame(applyVb)
+        wrap.__mermaidRafId = rafId
+      }
+    }
+
+    const state = {
+      pointers: new Map(),
+      startVb: null,
+      startDist: 0,
+      lastPointerX: 0,
+      lastPointerY: 0
+    }
+
+    const onPointerDown = e => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return
+      svg.setPointerCapture(e.pointerId)
+      const curVb = wrap.__mermaidCurViewBox
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+      if (state.pointers.size === 1) {
+        state.startVb = curVb.slice()
+        state.lastPointerX = e.clientX
+        state.lastPointerY = e.clientY
+      } else if (state.pointers.size === 2) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        state.startDist = Math.hypot(dx, dy)
+        state.startVb = curVb.slice()
+      }
+    }
+
+    const onPointerMove = e => {
+      if (!state.pointers.has(e.pointerId)) return
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+      const curVb = wrap.__mermaidCurViewBox
+      const rect = getRect()
+      if (state.pointers.size === 1 && state.startVb) {
+        const p = state.pointers.values().next().value
+        const dxClient = p.x - state.lastPointerX
+        const dyClient = p.y - state.lastPointerY
+        state.lastPointerX = p.x
+        state.lastPointerY = p.y
+        const dx = dxClient * (curVb[2] / rect.width)
+        const dy = dyClient * (curVb[3] / rect.height)
+        setCurVb([curVb[0] - dx, curVb[1] - dy, curVb[2], curVb[3]])
+        return
+      }
+      if (state.pointers.size === 2 && state.startVb && state.startDist > 0) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        const dist = Math.hypot(dx, dy)
+        if (!dist) return
+        const factor = state.startDist / dist
+        const cx = (pts[0].x + pts[1].x) / 2
+        const cy = (pts[0].y + pts[1].y) / 2
+        const px = curVb[0] + (cx - rect.left) * (curVb[2] / rect.width)
+        const py = curVb[1] + (cy - rect.top) * (curVb[3] / rect.height)
+        setCurVb(zoomAtPoint(state.startVb, factor, px, py))
+      }
+    }
+
+    const onPointerUpOrCancel = e => {
+      // Release PointerCapture to avoid event capture anomalies
+      if (svg.hasPointerCapture && svg.hasPointerCapture(e.pointerId)) {
+        svg.releasePointerCapture(e.pointerId)
+      }
+      state.pointers.delete(e.pointerId)
+      if (state.pointers.size === 0) {
+        state.startVb = null
+        state.startDist = 0
+      } else if (state.pointers.size === 1) {
+        const p = state.pointers.values().next().value
+        state.lastPointerX = p.x
+        state.lastPointerY = p.y
+      }
+    }
+
+    const onWheel = e => {
+      // Prevent event bubbling from triggering external scroll
+      e.preventDefault()
+      e.stopPropagation()
+      // Normalize deltaY across deltaMode (Chrome uses pixels, Safari uses lines)
+      let delta = e.deltaY
+      if (e.deltaMode === 1) delta *= 16
+      else if (e.deltaMode === 2) delta *= 400
+
+      // Continuous zoom factor: smoother than fixed 1.1/0.9 steps
+      const zoomFactor = Math.pow(1.001, delta)
+
+      const curVb = wrap.__mermaidCurViewBox
+      const rect = getRect()
+      const px = curVb[0] + (e.clientX - rect.left) * (curVb[2] / rect.width)
+      const py = curVb[1] + (e.clientY - rect.top) * (curVb[3] / rect.height)
+      setCurVb(zoomAtPoint(curVb, zoomFactor, px, py))
+    }
+
+    const onDblClick = () => {
+      const init = wrap.__mermaidInitViewBox
+      if (init) setCurVb(init)
+    }
+
+    svg.addEventListener('pointerdown', onPointerDown, { signal: ac.signal })
+    svg.addEventListener('pointermove', onPointerMove, { signal: ac.signal })
+    svg.addEventListener('pointerup', onPointerUpOrCancel, { signal: ac.signal })
+    svg.addEventListener('pointercancel', onPointerUpOrCancel, { signal: ac.signal })
+    svg.addEventListener('wheel', onWheel, { passive: false, signal: ac.signal })
+    svg.addEventListener('dblclick', onDblClick, { signal: ac.signal })
+  }
+
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      // Clean up event listeners before removing old SVG
+      if (item.__mermaidAbortController) {
+        item.__mermaidAbortController.abort()
+      }
+      const oldSvg = item.querySelector('svg')
+      if (oldSvg) oldSvg.remove()
+      let config = {}
+      try {
+        config = mermaidSrc.dataset.config ? JSON.parse(mermaidSrc.dataset.config) : {}
+      } catch (e) {
+        console.warn('[mermaid] failed to parse dataset.config:', e)
+      }
+      if (!config.theme) {
+        config.theme = theme
+      }
+      const mermaidThemeConfig = `%%{init: ${JSON.stringify(config)}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+        if (true) initMermaidGestures(item)
+        item.__mermaidOriginalSvg = svg
+        if (true) attachMermaidViewerButton(item)
+      }
+
+      const handleError = err => {
+        console.error(`[mermaid] render failed for block #${index}:`, err)
+        const errorEl = document.createElement('div')
+        errorEl.className = 'mermaid-error'
+        errorEl.textContent = `Mermaid render error: ${err.message || err}`
+        mermaidSrc.insertAdjacentElement('afterend', errorEl)
+      }
+
+      try {
+        const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+        // mermaid v9 and v10 compatibility
+        if (typeof renderFn === 'string') {
+          renderMermaid(renderFn)
+        } else {
+          renderFn.then(({ svg }) => renderMermaid(svg)).catch(handleError)
+        }
+      } catch (err) {
+        handleError(err)
+      }
+    })
+  }
+
+  const codeToMermaid = $article => {
+    const codeMermaidEle = $article.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    const $article = document.getElementById('article-container')
+    if (!$article) return
+
+    if (true) codeToMermaid($article)
+    const $mermaid = $article.querySelectorAll('.mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid@11.16.0/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script><script src="/js/chocolate.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-fluttering-ribbon.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-show-text.min.js" data-mobile="false" data-text="渴望,生锈,十七,黎明,火炉,苟蛋,善良,回家,货车,士兵" data-fontsize="15px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.7.0"></script></div></div></body></html>
